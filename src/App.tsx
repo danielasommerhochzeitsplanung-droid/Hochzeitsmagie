@@ -121,6 +121,9 @@ function App() {
     if (activeModule) {
       return (
         <div className="min-h-screen bg-white">
+          <div className="fixed top-0 left-0 bg-red-600 text-white px-4 py-1 text-xs z-50 font-mono">
+            ROOT PROOF: {window.location.pathname} | Port: {window.location.port}
+          </div>
           <LanguageSwitcher />
           <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
           <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
@@ -209,6 +212,9 @@ function App() {
 
     return (
       <div className="min-h-screen bg-white">
+        <div className="fixed top-0 left-0 bg-red-600 text-white px-4 py-1 text-xs z-50 font-mono">
+          ROOT PROOF: {window.location.pathname} | Port: {window.location.port}
+        </div>
         <LanguageSwitcher />
         <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
@@ -277,6 +283,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
+      <div className="fixed top-0 left-0 bg-red-600 text-white px-4 py-1 text-xs z-50 font-mono">
+        ROOT PROOF: {window.location.pathname} | Port: {window.location.port}
+      </div>
       <LanguageSwitcher />
       <div className="w-full max-w-md">
         <h1 className="text-3xl text-center mb-8" style={{ fontFamily: 'Cinzel, serif', color: '#3b3b3d', fontWeight: 'normal' }}>

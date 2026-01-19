@@ -6,6 +6,8 @@ import { GlobalErrorBoundary } from './components/GlobalErrorBoundary';
 import './index.css';
 import './i18n/config';
 
+console.log("VITE_ROOT_PROOF", import.meta.env.BASE_URL, window.location.href);
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <GlobalErrorBoundary>
