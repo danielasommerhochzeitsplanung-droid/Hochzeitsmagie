@@ -142,7 +142,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                   ) : (
                     <>
                       <Download className="w-5 h-5" />
-                      <span>Export Data</span>
+                      <span>Daten exportieren</span>
                     </>
                   )}
                 </button>
