@@ -50,6 +50,8 @@ export class GlobalErrorBoundary extends Component<Props, State> {
   handleExport = async (): Promise<void> => {
     this.setState({ isExporting: true, exportError: null });
 
+    let url: string | null = null;
+
     try {
       const result = await storage.exportAll();
 
@@ -57,7 +59,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
         try {
           const dataStr = JSON.stringify(result.data, null, 2);
           const blob = new Blob([dataStr], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
+          url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
 
@@ -67,25 +69,27 @@ export class GlobalErrorBoundary extends Component<Props, State> {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          URL.revokeObjectURL(url);
         } catch (downloadError) {
           console.error('Download failed:', downloadError);
           this.setState({
-            exportError: 'Export failed. Please reload and try again.'
+            exportError: 'Export nicht möglich. Bitte lade die Seite neu und versuche es erneut.'
           });
         }
       } else {
         console.error('Export failed:', result.error);
         this.setState({
-          exportError: 'Export failed. Please reload and try again.'
+          exportError: 'Export nicht möglich. Bitte lade die Seite neu und versuche es erneut.'
         });
       }
     } catch (err) {
       console.error('Failed to export data:', err);
       this.setState({
-        exportError: 'Export failed. Please reload and try again.'
+        exportError: 'Export nicht möglich. Bitte lade die Seite neu und versuche es erneut.'
       });
     } finally {
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
       this.setState({ isExporting: false });
     }
   };
@@ -130,8 +134,17 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                   disabled={this.state.isExporting}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Download className="w-5 h-5" />
-                  {this.state.isExporting ? 'Exporting...' : 'Export Data'}
+                  {this.state.isExporting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Exportiere...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-5 h-5" />
+                      <span>Export Data</span>
+                    </>
+                  )}
                 </button>
               </div>
 
