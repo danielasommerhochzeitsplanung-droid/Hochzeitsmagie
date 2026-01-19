@@ -12,6 +12,7 @@ interface State {
   errorInfo: ErrorInfo | null;
   showDetails: boolean;
   isExporting: boolean;
+  exportError: string | null;
 }
 
 export class GlobalErrorBoundary extends Component<Props, State> {
@@ -23,6 +24,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       errorInfo: null,
       showDetails: false,
       isExporting: false,
+      exportError: null,
     };
   }
 
@@ -46,27 +48,43 @@ export class GlobalErrorBoundary extends Component<Props, State> {
   };
 
   handleExport = async (): Promise<void> => {
-    this.setState({ isExporting: true });
+    this.setState({ isExporting: true, exportError: null });
 
     try {
       const result = await storage.exportAll();
 
       if (result.ok && result.data) {
-        const dataStr = JSON.stringify(result.data, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `wedding-data-emergency-backup-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        try {
+          const dataStr = JSON.stringify(result.data, null, 2);
+          const blob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+
+          const dateStr = new Date().toISOString().split('T')[0];
+          link.download = `hochzeitsplanung-backup-${dateStr}.json`;
+
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        } catch (downloadError) {
+          console.error('Download failed:', downloadError);
+          this.setState({
+            exportError: 'Export failed. Please reload and try again.'
+          });
+        }
       } else {
         console.error('Export failed:', result.error);
+        this.setState({
+          exportError: 'Export failed. Please reload and try again.'
+        });
       }
     } catch (err) {
       console.error('Failed to export data:', err);
+      this.setState({
+        exportError: 'Export failed. Please reload and try again.'
+      });
     } finally {
       this.setState({ isExporting: false });
     }
@@ -98,22 +116,30 @@ export class GlobalErrorBoundary extends Component<Props, State> {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <button
-                onClick={this.handleReload}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors font-medium"
-              >
-                <RefreshCw className="w-5 h-5" />
-                Reload Page
-              </button>
-              <button
-                onClick={this.handleExport}
-                disabled={this.state.isExporting}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Download className="w-5 h-5" />
-                {this.state.isExporting ? 'Exporting...' : 'Export Data'}
-              </button>
+            <div className="space-y-3 mb-6">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={this.handleReload}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors font-medium"
+                >
+                  <RefreshCw className="w-5 h-5" />
+                  Reload Page
+                </button>
+                <button
+                  onClick={this.handleExport}
+                  disabled={this.state.isExporting}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-5 h-5" />
+                  {this.state.isExporting ? 'Exporting...' : 'Export Data'}
+                </button>
+              </div>
+
+              {this.state.exportError && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+                  {this.state.exportError}
+                </div>
+              )}
             </div>
 
             <div className="border-t pt-4">
