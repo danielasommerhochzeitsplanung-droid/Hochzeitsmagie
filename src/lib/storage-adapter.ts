@@ -446,7 +446,7 @@ class StorageAdapter {
       const validationResult = ExportedDataSchema.safeParse(parsed);
 
       if (!validationResult.success) {
-        const zodErrors = validationResult.error.errors.map(err =>
+        const zodErrors = validationResult.error.issues.map((err: any) =>
           `${err.path.join('.')}: ${err.message}`
         );
         return {

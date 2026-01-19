@@ -3,7 +3,7 @@ import { z } from 'zod';
 const BaseEntitySchema = z.object({
   id: z.string().min(1),
   created_at: z.string().optional(),
-}).passthrough();
+});
 
 const DietaryRestrictionSchema = z.object({
   name: z.string(),
@@ -21,7 +21,7 @@ const DietaryRestrictionSchema = z.object({
   allergy_shellfish: z.boolean().default(false),
   allergy_soy: z.boolean().default(false),
   allergy_sesame: z.boolean().default(false),
-}).passthrough();
+});
 
 const GuestSchema = BaseEntitySchema.extend({
   name: z.string().min(1),
@@ -224,7 +224,7 @@ export const ExportedDataSchema = z.object({
   guest_table_assignments: z.array(GuestTableAssignmentSchema).default([]),
   wedding_data: z.array(WeddingDataSchema).default([]),
   tasks: z.array(TaskSchema).default([]),
-}).passthrough();
+});
 
 export type ValidatedExportedData = z.infer<typeof ExportedDataSchema>;
 
