@@ -3,7 +3,7 @@ import { z } from 'zod';
 const BaseEntitySchema = z.object({
   id: z.string().min(1),
   created_at: z.string().optional(),
-});
+}).strip();
 
 const DietaryRestrictionSchema = z.object({
   name: z.string(),
@@ -21,7 +21,7 @@ const DietaryRestrictionSchema = z.object({
   allergy_shellfish: z.boolean().default(false),
   allergy_soy: z.boolean().default(false),
   allergy_sesame: z.boolean().default(false),
-});
+}).strip();
 
 const GuestSchema = BaseEntitySchema.extend({
   name: z.string().min(1),
@@ -53,7 +53,7 @@ const GuestSchema = BaseEntitySchema.extend({
   seated_with_parents: z.boolean().default(true),
   table_id: z.string().optional(),
   archived: z.boolean().default(false),
-});
+}).strip();
 
 const EventSchema = BaseEntitySchema.extend({
   title: z.string().min(1),
@@ -66,7 +66,7 @@ const EventSchema = BaseEntitySchema.extend({
   transport_needed: z.boolean().default(false),
   transport_time: z.string().optional(),
   transport_departure_location: z.string().optional(),
-});
+}).strip();
 
 const VendorSchema = BaseEntitySchema.extend({
   name: z.string().min(1),
@@ -81,7 +81,7 @@ const VendorSchema = BaseEntitySchema.extend({
   deposit_paid: z.boolean().default(false),
   final_payment_due: z.string().optional(),
   archived: z.boolean().default(false),
-});
+}).strip();
 
 const LocationSchema = BaseEntitySchema.extend({
   name: z.string().min(1),
@@ -95,7 +95,7 @@ const LocationSchema = BaseEntitySchema.extend({
   capacity: z.number().int().optional(),
   notes: z.string().optional(),
   archived: z.boolean().default(false),
-});
+}).strip();
 
 const SupportTeamSchema = BaseEntitySchema.extend({
   name: z.string().min(1),
@@ -105,7 +105,7 @@ const SupportTeamSchema = BaseEntitySchema.extend({
   notes: z.string().optional(),
   archived: z.boolean().default(false),
   guest_id: z.string().optional(),
-});
+}).strip();
 
 const BudgetItemSchema = BaseEntitySchema.extend({
   category: z.string().default('other'),
@@ -116,7 +116,7 @@ const BudgetItemSchema = BaseEntitySchema.extend({
   notes: z.string().optional(),
   vendor_id: z.string().optional(),
   sync_with_vendor: z.boolean().default(false),
-});
+}).strip();
 
 const TableSchema = BaseEntitySchema.extend({
   name: z.string().min(1),
@@ -124,7 +124,7 @@ const TableSchema = BaseEntitySchema.extend({
   shape: z.string().optional(),
   table_number: z.number().int().optional(),
   event_id: z.string().optional(),
-});
+}).strip();
 
 const ProgramItemSchema = BaseEntitySchema.extend({
   title: z.string().min(1),
@@ -136,7 +136,7 @@ const ProgramItemSchema = BaseEntitySchema.extend({
   support_team_ids: z.array(z.string()).default([]),
   location: z.string().optional(),
   notes: z.string().optional(),
-});
+}).strip();
 
 const LocationContactSchema = BaseEntitySchema.extend({
   location_id: z.string().min(1),
@@ -145,7 +145,7 @@ const LocationContactSchema = BaseEntitySchema.extend({
   email: z.string().optional(),
   phone: z.string().optional(),
   is_primary: z.boolean().default(false),
-});
+}).strip();
 
 const VendorContactSchema = BaseEntitySchema.extend({
   vendor_id: z.string().min(1),
@@ -156,19 +156,19 @@ const VendorContactSchema = BaseEntitySchema.extend({
   is_primary: z.boolean().default(false),
   event_day_contact: z.boolean().default(false),
   participates_in_events: z.array(z.string()).default([]),
-});
+}).strip();
 
 const SupportTeamEventAssignmentSchema = BaseEntitySchema.extend({
   support_team_id: z.string().min(1),
   event_id: z.string().min(1),
   notes: z.string().optional(),
-});
+}).strip();
 
 const GuestTableAssignmentSchema = BaseEntitySchema.extend({
   guest_id: z.string().min(1),
   table_id: z.string().min(1),
   event_id: z.string().optional(),
-});
+}).strip();
 
 const WeddingDataSchema = BaseEntitySchema.extend({
   couple_name_1: z.string().optional(),
@@ -181,7 +181,7 @@ const WeddingDataSchema = BaseEntitySchema.extend({
   last_planning_start_date: z.string().optional(),
   last_wedding_date: z.string().optional(),
   auto_tasks_initialized: z.boolean().default(false),
-});
+}).strip();
 
 const TaskSchema = BaseEntitySchema.extend({
   title: z.string().min(1),
@@ -204,7 +204,7 @@ const TaskSchema = BaseEntitySchema.extend({
   is_system_generated: z.boolean().default(false),
   manually_modified: z.boolean().default(false),
   date_change_notice: z.string().optional(),
-});
+}).strip();
 
 export const ExportedDataSchema = z.object({
   schemaVersion: z.number().int().min(1).default(1),
@@ -224,7 +224,7 @@ export const ExportedDataSchema = z.object({
   guest_table_assignments: z.array(GuestTableAssignmentSchema).default([]),
   wedding_data: z.array(WeddingDataSchema).default([]),
   tasks: z.array(TaskSchema).default([]),
-});
+}).strip();
 
 export type ValidatedExportedData = z.infer<typeof ExportedDataSchema>;
 
