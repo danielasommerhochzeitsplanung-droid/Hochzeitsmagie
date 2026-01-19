@@ -1,8 +1,16 @@
 import { generateId } from './uuid';
+import { ExportedDataSchema, createEmptyWeddingData, countEntities, type ValidatedExportedData } from '../schemas/weddingData.schema';
 
 const STORAGE_PREFIX = 'wedding_';
 const STORAGE_VERSION = '1.2';
 const VERSION_KEY = `${STORAGE_PREFIX}version`;
+
+export interface ImportResult {
+  ok: boolean;
+  imported: number;
+  skipped: number;
+  errors: string[];
+}
 
 type StorageKey =
   | 'guests'
@@ -391,42 +399,161 @@ class StorageAdapter {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   }
 
-  exportAll() {
-    return {
-      version: STORAGE_VERSION,
-      exported: new Date().toISOString(),
-      guests: this.guests.getAll(),
-      events: this.events.getAll(),
-      vendors: this.vendors.getAll(),
-      locations: this.locations.getAll(),
-      support_team: this.supportTeam.getAll(),
-      budget_items: this.budgetItems.getAll(),
-      tables: this.tables.getAll(),
-      program_items: this.programItems.getAll(),
-      location_contacts: this.locationContacts.getAll(),
-      vendor_contacts: this.vendorContacts.getAll(),
-      support_team_event_assignments: this.supportTeamEventAssignments.getAll(),
-      guest_table_assignments: this.guestTableAssignments.getAll(),
-      wedding_data: this.weddingData.getAll(),
-      tasks: this.tasks.getAll(),
-    };
+  exportAll(): ValidatedExportedData {
+    try {
+      return {
+        schemaVersion: 1,
+        version: STORAGE_VERSION,
+        exported: new Date().toISOString(),
+        guests: this.guests.getAll(),
+        events: this.events.getAll(),
+        vendors: this.vendors.getAll(),
+        locations: this.locations.getAll(),
+        support_team: this.supportTeam.getAll(),
+        budget_items: this.budgetItems.getAll(),
+        tables: this.tables.getAll(),
+        program_items: this.programItems.getAll(),
+        location_contacts: this.locationContacts.getAll(),
+        vendor_contacts: this.vendorContacts.getAll(),
+        support_team_event_assignments: this.supportTeamEventAssignments.getAll(),
+        guest_table_assignments: this.guestTableAssignments.getAll(),
+        wedding_data: this.weddingData.getAll(),
+        tasks: this.tasks.getAll(),
+      };
+    } catch (error) {
+      console.error('Error during exportAll, returning empty data:', error);
+      return createEmptyWeddingData();
+    }
   }
 
-  importAll(data: ReturnType<typeof this.exportAll>) {
-    this.guests.replaceAll(data.guests || []);
-    this.events.replaceAll(data.events || []);
-    this.vendors.replaceAll(data.vendors || []);
-    this.locations.replaceAll(data.locations || []);
-    this.supportTeam.replaceAll(data.support_team || []);
-    this.budgetItems.replaceAll(data.budget_items || []);
-    this.tables.replaceAll(data.tables || []);
-    this.programItems.replaceAll(data.program_items || []);
-    this.locationContacts.replaceAll(data.location_contacts || []);
-    this.vendorContacts.replaceAll(data.vendor_contacts || []);
-    this.supportTeamEventAssignments.replaceAll(data.support_team_event_assignments || []);
-    this.guestTableAssignments.replaceAll(data.guest_table_assignments || []);
-    this.weddingData.replaceAll(data.wedding_data || []);
-    this.tasks.replaceAll(data.tasks || []);
+  importAll(jsonString: string): ImportResult {
+    const errors: string[] = [];
+    let previousData: ValidatedExportedData | null = null;
+
+    try {
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(jsonString);
+      } catch (parseError) {
+        return {
+          ok: false,
+          imported: 0,
+          skipped: 0,
+          errors: ['Ungültiges JSON-Format. Bitte überprüfen Sie die Datei.'],
+        };
+      }
+
+      const validationResult = ExportedDataSchema.safeParse(parsed);
+
+      if (!validationResult.success) {
+        const zodErrors = validationResult.error.errors.map(err =>
+          `${err.path.join('.')}: ${err.message}`
+        );
+        return {
+          ok: false,
+          imported: 0,
+          skipped: 0,
+          errors: [`Datenvalidierung fehlgeschlagen:`, ...zodErrors],
+        };
+      }
+
+      const validatedData = validationResult.data;
+
+      if (validatedData.schemaVersion !== 1) {
+        return {
+          ok: false,
+          imported: 0,
+          skipped: 0,
+          errors: [`Nicht unterstützte Schema-Version: ${validatedData.schemaVersion}. Erwartet: 1`],
+        };
+      }
+
+      try {
+        previousData = this.exportAll();
+      } catch (backupError) {
+        console.error('Warning: Could not create backup before import:', backupError);
+      }
+
+      try {
+        this.guests.replaceAll(validatedData.guests);
+        this.events.replaceAll(validatedData.events);
+        this.vendors.replaceAll(validatedData.vendors);
+        this.locations.replaceAll(validatedData.locations);
+        this.supportTeam.replaceAll(validatedData.support_team);
+        this.budgetItems.replaceAll(validatedData.budget_items);
+        this.tables.replaceAll(validatedData.tables);
+        this.programItems.replaceAll(validatedData.program_items);
+        this.locationContacts.replaceAll(validatedData.location_contacts);
+        this.vendorContacts.replaceAll(validatedData.vendor_contacts);
+        this.supportTeamEventAssignments.replaceAll(validatedData.support_team_event_assignments);
+        this.guestTableAssignments.replaceAll(validatedData.guest_table_assignments);
+        this.weddingData.replaceAll(validatedData.wedding_data);
+        this.tasks.replaceAll(validatedData.tasks);
+
+        const importedCount = countEntities(validatedData);
+        return {
+          ok: true,
+          imported: importedCount,
+          skipped: 0,
+          errors: [],
+        };
+      } catch (writeError) {
+        if (previousData) {
+          try {
+            this.guests.replaceAll(previousData.guests);
+            this.events.replaceAll(previousData.events);
+            this.vendors.replaceAll(previousData.vendors);
+            this.locations.replaceAll(previousData.locations);
+            this.supportTeam.replaceAll(previousData.support_team);
+            this.budgetItems.replaceAll(previousData.budget_items);
+            this.tables.replaceAll(previousData.tables);
+            this.programItems.replaceAll(previousData.program_items);
+            this.locationContacts.replaceAll(previousData.location_contacts);
+            this.vendorContacts.replaceAll(previousData.vendor_contacts);
+            this.supportTeamEventAssignments.replaceAll(previousData.support_team_event_assignments);
+            this.guestTableAssignments.replaceAll(previousData.guest_table_assignments);
+            this.weddingData.replaceAll(previousData.wedding_data);
+            this.tasks.replaceAll(previousData.tasks);
+            errors.push('Fehler beim Speichern. Vorherige Daten wurden wiederhergestellt.');
+          } catch (restoreError) {
+            errors.push('Kritischer Fehler: Daten konnten nicht wiederhergestellt werden.');
+          }
+        } else {
+          errors.push('Fehler beim Speichern. Keine Sicherung verfügbar.');
+        }
+
+        if (writeError instanceof StorageError) {
+          if (writeError.code === 'QUOTA_EXCEEDED') {
+            errors.push('Speicherplatz überschritten. Bitte löschen Sie alte Einträge und versuchen Sie es erneut.');
+          } else {
+            errors.push(`Speicherfehler: ${writeError.message}`);
+          }
+        } else if (writeError instanceof Error) {
+          errors.push(`Fehler: ${writeError.message}`);
+        } else {
+          errors.push('Unbekannter Fehler beim Speichern der Daten.');
+        }
+
+        return {
+          ok: false,
+          imported: 0,
+          skipped: 0,
+          errors,
+        };
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        errors.push(`Import fehlgeschlagen: ${error.message}`);
+      } else {
+        errors.push('Unbekannter Fehler beim Import.');
+      }
+      return {
+        ok: false,
+        imported: 0,
+        skipped: 0,
+        errors,
+      };
+    }
   }
 
   clearAll() {

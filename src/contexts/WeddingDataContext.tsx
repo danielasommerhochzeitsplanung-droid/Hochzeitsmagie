@@ -4,6 +4,7 @@ import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
 import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutomation';
 import { taskTemplateData } from '../data/taskTemplateData';
 import { generateId } from '../lib/uuid';
+import { useImportFeedback } from '../hooks/useImportFeedback';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -82,6 +83,7 @@ const WeddingDataContext = createContext<WeddingDataContextType | undefined>(und
 export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const { showFeedback, FeedbackComponent } = useImportFeedback();
 
   const [weddingData, setWeddingData] = useState<WeddingData>(() => {
     const data = storage.weddingData.getAll();
@@ -375,10 +377,11 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   };
 
   const importData = (jsonData: string) => {
-    try {
-      const data = JSON.parse(jsonData);
-      storage.importAll(data);
+    const result = storage.importAll(jsonData);
 
+    showFeedback(result);
+
+    if (result.ok) {
       const allWeddingData = storage.weddingData.getAll();
       setWeddingData(allWeddingData.length > 0 ? allWeddingData[0] : getDefaultWeddingData());
       setGuests(storage.guests.getAll());
@@ -391,9 +394,6 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       setProgramItems(storage.programItems.getAll());
       setTasks(storage.tasks.getAll());
       showSaveIndicator();
-    } catch (error) {
-      console.error('Error importing data:', error);
-      throw new Error('Invalid data format');
     }
   };
 
@@ -469,6 +469,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
         status={saveState.status}
         errorMessage={saveState.errorMessage}
       />
+      <FeedbackComponent />
     </WeddingDataContext.Provider>
   );
 }
