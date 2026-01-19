@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>localStorage Debug Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 { color: #d6b15b; }
+    h2 { color: #333; margin-top: 30px; }
+    pre {
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      border: 1px solid #ddd;
+    }
+    .error { color: red; }
+    .success { color: green; }
+    button {
+      background: #d6b15b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px 5px 10px 0;
+    }
+    button:hover { opacity: 0.9; }
+    .danger {
+      background: #dc3545;
+    }
+    .info-box {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 localStorage Debug Tool</h1>
+    <p>Dieses Tool zeigt dir alle gespeicherten Daten aus dem localStorage deines Browsers.</p>
+
+    <div class="info-box">
+      <strong>⚠️ Wichtig:</strong> Diese Seite muss auf der gleichen Domain geöffnet werden wie deine Hochzeitsplaner-App!
+    </div>
+
+    <h2>Hochzeitsdatum</h2>
+    <div id="wedding-date"></div>
+
+    <h2>Tasks (erste 5)</h2>
+    <div id="tasks"></div>
+
+    <h2>Alle localStorage Keys</h2>
+    <div id="all-keys"></div>
+
+    <h2>Aktionen</h2>
+    <button onclick="fixDates()">✅ Alle Task-Daten auf neues Hochzeitsdatum neu berechnen</button>
+    <button onclick="showAllData()">📋 Alle Daten anzeigen</button>
+    <button onclick="clearTasks()" class="danger">🗑️ Alle Tasks löschen (VORSICHT!)</button>
+    <button onclick="location.reload()">🔄 Seite neu laden</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function loadData() {
+      // Wedding Date
+      const weddingDataRaw = localStorage.getItem('wedding_wedding_data');
+      if (weddingDataRaw) {
+        try {
+          const weddingData = JSON.parse(weddingDataRaw);
+          const data = weddingData[0] || {};
+          document.getElementById('wedding-date').innerHTML = `
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+            <p><strong>Aktuelles Hochzeitsdatum:</strong> ${data.wedding_date || 'NICHT GESETZT!'}</p>
+          `;
+        } catch (e) {
+          document.getElementById('wedding-date').innerHTML = `<p class="error">Fehler beim Parsen: ${e.message}</p>`;
+        }
+      } else {
+        document.getElementById('wedding-date').innerHTML = '<p class="error">Keine wedding_data gefunden!</p>';
+      }
+
+      // Tasks
+      const tasksRaw = localStorage.getItem('wedding_tasks');
+      if (tasksRaw) {
+        try {
+          const tasks = JSON.parse(tasksRaw);
+          const first5 = tasks.slice(0, 5);
+          document.getElementById('tasks').innerHTML = `
+            <p><strong>Gesamt:</strong> ${tasks.length} Tasks</p>
+            <p><strong>Erste 5 Tasks:</strong></p>
+            <pre>${JSON.stringify(first5, null, 2)}</pre>
+          `;
+        } catch (e) {
+          document.getElementById('tasks').innerHTML = `<p class="error">Fehler beim Parsen: ${e.message}</p>`;
+        }
+      } else {
+        document.getElementById('tasks').innerHTML = '<p class="error">Keine Tasks gefunden!</p>';
+      }
+
+      // All Keys
+      const allKeys = Object.keys(localStorage).filter(k => k.startsWith('wedding_'));
+      document.getElementById('all-keys').innerHTML = `
+        <p><strong>Gefundene Keys:</strong> ${allKeys.length}</p>
+        <pre>${allKeys.join('\n')}</pre>
+      `;
+    }
+
+    function fixDates() {
+      const result = document.getElementById('result');
+
+      try {
+        // Get wedding date
+        const weddingDataRaw = localStorage.getItem('wedding_wedding_data');
+        if (!weddingDataRaw) {
+          result.innerHTML = '<div class="info-box"><p class="error">Kein Hochzeitsdatum gefunden! Bitte zuerst in den Einstellungen festlegen.</p></div>';
+          return;
+        }
+
+        const weddingData = JSON.parse(weddingDataRaw);
+        const weddingDate = weddingData[0]?.wedding_date;
+
+        if (!weddingDate) {
+          result.innerHTML = '<div class="info-box"><p class="error">Hochzeitsdatum ist nicht gesetzt! Bitte zuerst in den Einstellungen festlegen.</p></div>';
+          return;
+        }
+
+        // Get tasks
+        const tasksRaw = localStorage.getItem('wedding_tasks');
+        if (!tasksRaw) {
+          result.innerHTML = '<div class="info-box"><p class="error">Keine Tasks gefunden!</p></div>';
+          return;
+        }
+
+        const tasks = JSON.parse(tasksRaw);
+        const weddingDateObj = new Date(weddingDate + 'T12:00:00');
+
+        // Task templates (months before wedding)
+        const templates = {
+          'Budget festlegen': 12,
+          'Hochzeitstermin festlegen': 12,
+          'Gästeliste erstellen (erste Version)': 12,
+          'Location-Recherche starten': 12,
+          'Location buchen': 11,
+          'Hochzeitsplaner beauftragen (optional)': 11,
+          'Fotografen/Videografen recherchieren': 10,
+          'Fotografen/Videografen buchen': 9,
+          'Caterer auswählen und buchen': 9,
+          'Band/DJ recherchieren und buchen': 9,
+          'Save-the-Dates verschicken': 9,
+          'Brautkleid/Anzug kaufen': 8,
+          'Florist beauftragen': 8,
+          'Trauzeugen auswählen': 8,
+          'Konditor für Hochzeitstorte beauftragen': 7,
+          'Hotel-Kontingent für Gäste reservieren': 7,
+          'Einladungen gestalten': 6,
+          'Standesamt-Termin buchen': 6,
+          'Einladungen drucken und verschicken': 5,
+          'Friseur/Make-up-Artist buchen': 5,
+          'Transportmittel organisieren': 5,
+          'Dekoration planen': 5,
+          'Ringe kaufen': 4,
+          'Programmablauf erstellen': 4,
+          'Brautkleid/Anzug erste Anprobe': 4,
+          'Gastgeschenke besorgen': 3,
+          'Menükarten und Tischkarten gestalten': 3,
+          'Sitzordnung planen': 2,
+          'Playlist mit DJ/Band abstimmen': 2,
+          'Brautkleid/Anzug finale Anprobe': 1,
+          'Notfalltasche packen': 1,
+          'Dokumente für Standesamt vorbereiten': 1,
+          'Finale Gästeliste bestätigen': 0.5,
+          'Trauringe abholen': 0.5,
+          'Probe-Hairstyling': 0.5,
+          'Zahlungen an Dienstleister finalisieren': 0.25,
+          'Dekoration abholen/liefern lassen': 0.25,
+          'Hochzeitsrede vorbereiten (optional)': 0.25,
+          'Koffer für Hochzeitsreise packen': 0.25,
+          'Timeline für den Hochzeitstag erstellen': 0.25,
+        };
+
+        let updatedCount = 0;
+        tasks.forEach(task => {
+          if (task.is_system_generated && !task.completed) {
+            const monthsBefore = templates[task.title];
+            if (monthsBefore !== undefined) {
+              const dueDate = new Date(weddingDateObj);
+              const fullMonths = Math.floor(monthsBefore);
+              const remainingDays = Math.round((monthsBefore - fullMonths) * 30);
+
+              dueDate.setMonth(dueDate.getMonth() - fullMonths);
+              dueDate.setDate(dueDate.getDate() - remainingDays);
+
+              const startDate = new Date(dueDate);
+              startDate.setDate(startDate.getDate() - 7);
+
+              task.due_date = dueDate.toISOString().split('T')[0];
+              task.start_date = startDate.toISOString().split('T')[0];
+              updatedCount++;
+            }
+          }
+        });
+
+        // Save back
+        localStorage.setItem('wedding_tasks', JSON.stringify(tasks));
+
+        result.innerHTML = `
+          <div class="info-box">
+            <p class="success">✅ <strong>Erfolgreich!</strong></p>
+            <p>${updatedCount} automatische Tasks wurden basierend auf dem Hochzeitsdatum <strong>${new Date(weddingDate).toLocaleDateString('de-DE')}</strong> neu berechnet.</p>
+            <p><strong>WICHTIG:</strong> Lade jetzt die Hochzeitsplaner-App neu, damit die Änderungen sichtbar werden!</p>
+          </div>
+        `;
+
+        // Reload data display
+        setTimeout(loadData, 500);
+
+      } catch (e) {
+        result.innerHTML = `<div class="info-box"><p class="error">Fehler: ${e.message}</p></div>`;
+      }
+    }
+
+    function showAllData() {
+      const result = document.getElementById('result');
+      const allData = {};
+
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('wedding_')) {
+          try {
+            allData[key] = JSON.parse(localStorage.getItem(key));
+          } catch (e) {
+            allData[key] = localStorage.getItem(key);
+          }
+        }
+      });
+
+      result.innerHTML = `
+        <h3>Alle localStorage Daten:</h3>
+        <pre>${JSON.stringify(allData, null, 2)}</pre>
+      `;
+    }
+
+    function clearTasks() {
+      if (confirm('ACHTUNG: Alle Tasks werden gelöscht! Bist du sicher?')) {
+        localStorage.removeItem('wedding_tasks');
+        document.getElementById('result').innerHTML = '<div class="info-box"><p class="success">✅ Tasks gelöscht! Seite neu laden um neue Tasks zu generieren.</p></div>';
+        loadData();
+      }
+    }
+
+    // Load on page load
+    loadData();
+  </script>
+</body>
+</html>

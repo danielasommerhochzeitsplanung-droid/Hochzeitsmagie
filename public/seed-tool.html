@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hochzeitsmagie - Testdaten Tool</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #3b3b3d;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #d6b15b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button.danger {
+            background: #e74c3c;
+        }
+        .info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+        ul {
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hochzeitsmagie Testdaten Tool</h1>
+
+        <div class="info">
+            <strong>📋 Dieses Tool lädt folgende Testdaten:</strong>
+            <ul>
+                <li><strong>6 Events:</strong> Verlobungsfeier, Getting Ready, Standesamt, Nachmittagsprogramm, Abendprogramm</li>
+                <li><strong>Programmpunkte:</strong> Ankunft, Sektempfang, Fotoshooting, etc.</li>
+                <li><strong>10 Dienstleister:</strong> mit Planungs- und Event-Tag Ansprechpartnern</li>
+                <li><strong>5 Locations:</strong> für alle Events</li>
+            </ul>
+        </div>
+
+        <button onclick="loadSeedData()">✨ Testdaten Laden</button>
+        <button class="danger" onclick="clearAllData()">🗑️ Alle Daten Löschen</button>
+
+        <div class="success" id="successMessage">
+            ✅ Testdaten erfolgreich geladen! Du kannst die App jetzt neu laden.
+        </div>
+    </div>
+
+    <script>
+        function generateId() {
+            return crypto.randomUUID();
+        }
+
+        function loadSeedData() {
+            if (!confirm('Möchtest du die Testdaten wirklich laden? Bestehende Daten werden überschrieben!')) {
+                return;
+            }
+
+            const weddingDate = '2026-06-20';
+            const engagementDate = '2026-03-07';
+
+            // Locations
+            const locations = [
+                {
+                    id: generateId(),
+                    name: 'Standesamt Stadtmitte',
+                    address: 'Rathausplatz 1, 12345 Stadt',
+                    contact_person: 'Frau Schmidt',
+                    contact_email: 'schmidt@standesamt-stadt.de',
+                    contact_phone: '+49 123 456789',
+                    capacity: 50,
+                    notes: 'Historisches Gebäude, barrierefrei',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Hotel Rosengarten',
+                    address: 'Gartenweg 15, 12345 Stadt',
+                    contact_person: 'Herr Müller',
+                    contact_email: 'mueller@hotel-rosengarten.de',
+                    contact_phone: '+49 123 987654',
+                    capacity: 120,
+                    notes: 'Luxushotel mit Gartensaal und Übernachtungsmöglichkeiten',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Schloss Belvedere',
+                    address: 'Schlossallee 1, 12346 Umland',
+                    contact_person: 'Frau Wagner',
+                    contact_email: 'wagner@schloss-belvedere.de',
+                    contact_phone: '+49 123 111222',
+                    capacity: 150,
+                    notes: 'Traumhafte Location für Fotoshooting und Feier',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Restaurant Seeblick',
+                    address: 'Seepromenade 42, 12347 Stadt',
+                    contact_person: 'Herr Fischer',
+                    contact_email: 'info@restaurant-seeblick.de',
+                    contact_phone: '+49 123 333444',
+                    capacity: 80,
+                    notes: 'Verlobungsfeier Location mit wunderschönem Ausblick',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Brautsuite Villa Eleganza',
+                    address: 'Parkstraße 23, 12345 Stadt',
+                    contact_person: 'Frau Klein',
+                    contact_email: 'klein@villa-eleganza.de',
+                    contact_phone: '+49 123 555666',
+                    capacity: 10,
+                    notes: 'Exklusive Suite für Getting Ready',
+                    archived: false
+                }
+            ];
+
+            // Events
+            const events = [
+                {
+                    id: generateId(),
+                    name: 'Verlobungsfeier',
+                    date: engagementDate,
+                    time: '18:00',
+                    location_id: locations[3].id,
+                    description: 'Feier mit Familie und engen Freunden',
+                    guests: [],
+                    budget: 2500,
+                    transport_option: 'Eigene Anreise',
+                    transport_details: 'Parkplätze vorhanden'
+                },
+                {
+                    id: generateId(),
+                    name: 'Getting Ready',
+                    date: weddingDate,
+                    time: '08:00',
+                    location_id: locations[4].id,
+                    description: 'Vorbereitung von Braut und Bräutigam',
+                    guests: [],
+                    budget: 1500,
+                    transport_option: 'Keine',
+                    transport_details: 'Vor Ort'
+                },
+                {
+                    id: generateId(),
+                    name: 'Standesamtliche Trauung',
+                    date: weddingDate,
+                    time: '14:00',
+                    location_id: locations[0].id,
+                    description: 'Offizielle Trauung mit anschließendem Sektempfang',
+                    guests: [],
+                    budget: 800,
+                    transport_option: 'Shuttlebus',
+                    transport_time: '13:30',
+                    transport_details: 'Shuttle vom Hotel zur Standesamt'
+                },
+                {
+                    id: generateId(),
+                    name: 'Fotoshooting',
+                    date: weddingDate,
+                    time: '15:30',
+                    location_id: locations[2].id,
+                    description: 'Professionelles Fotoshooting im Schlosspark',
+                    guests: [],
+                    budget: 1200,
+                    transport_option: 'Hochzeitslimousine',
+                    transport_details: 'Fahrt mit Brautpaar und engsten Vertrauten'
+                },
+                {
+                    id: generateId(),
+                    name: 'Empfang und Dinner',
+                    date: weddingDate,
+                    time: '18:00',
+                    location_id: locations[1].id,
+                    description: 'Festliches Abendessen im Gartensaal',
+                    guests: [],
+                    budget: 8500,
+                    transport_option: 'Shuttlebus',
+                    transport_time: '17:30',
+                    transport_details: 'Shuttle vom Schloss zum Hotel'
+                },
+                {
+                    id: generateId(),
+                    name: 'Party und Tanz',
+                    date: weddingDate,
+                    time: '21:00',
+                    location_id: locations[1].id,
+                    description: 'Ausgelassene Feier bis in die Morgenstunden',
+                    guests: [],
+                    budget: 3500
+                }
+            ];
+
+            // Vendors
+            const vendors = [
+                {
+                    id: generateId(),
+                    name: 'Blumen Paradies',
+                    category: 'Floristik',
+                    contact_email: 'info@blumen-paradies.de',
+                    contact_phone: '+49 123 777888',
+                    website: 'www.blumen-paradies.de',
+                    cost: 2500,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: 'Brautstrauß, Tischdeko, Kirchenschmuck',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Foto Studio Lichtblick',
+                    category: 'Fotografie',
+                    contact_email: 'kontakt@studio-lichtblick.de',
+                    contact_phone: '+49 123 999000',
+                    website: 'www.studio-lichtblick.de',
+                    cost: 1800,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: 'Ganztagesbegleitung inkl. Fotoshooting',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Video Dreams',
+                    category: 'Videografie',
+                    contact_email: 'info@video-dreams.de',
+                    contact_phone: '+49 123 222333',
+                    website: 'www.video-dreams.de',
+                    cost: 2200,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: 'Hochzeitsvideo mit Drohnenaufnahmen',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Catering Deluxe',
+                    category: 'Catering',
+                    contact_email: 'bestellung@catering-deluxe.de',
+                    contact_phone: '+49 123 444555',
+                    website: 'www.catering-deluxe.de',
+                    cost: 8500,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: '3-Gänge Menü für 120 Personen',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'DJ Felix Events',
+                    category: 'Musik/DJ',
+                    contact_email: 'felix@felix-events.de',
+                    contact_phone: '+49 123 666777',
+                    website: 'www.felix-events.de',
+                    cost: 1500,
+                    deposit_paid: false,
+                    contract_signed: true,
+                    notes: 'DJ für Party ab 21 Uhr',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Limousinen Service Premium',
+                    category: 'Transport',
+                    contact_email: 'info@limo-premium.de',
+                    contact_phone: '+49 123 888999',
+                    website: 'www.limo-premium.de',
+                    cost: 800,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: 'Stretch-Limousine für Brautpaar',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Hair & Make-up Atelier',
+                    category: 'Beauty',
+                    contact_email: 'termin@hairmakeup-atelier.de',
+                    contact_phone: '+49 123 111333',
+                    website: 'www.hairmakeup-atelier.de',
+                    cost: 450,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: 'Brautstyling inkl. Probetermin',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Hochzeitstorten Manufaktur',
+                    category: 'Konditorei',
+                    contact_email: 'bestellung@torten-manufaktur.de',
+                    contact_phone: '+49 123 555777',
+                    website: 'www.torten-manufaktur.de',
+                    cost: 650,
+                    deposit_paid: false,
+                    contract_signed: true,
+                    notes: '3-stöckige Hochzeitstorte für 120 Personen',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Druckerei Kreativ',
+                    category: 'Druckerei',
+                    contact_email: 'auftrag@druckerei-kreativ.de',
+                    contact_phone: '+49 123 222555',
+                    website: 'www.druckerei-kreativ.de',
+                    cost: 380,
+                    deposit_paid: true,
+                    contract_signed: true,
+                    notes: 'Einladungen, Menükarten, Tischkarten',
+                    archived: false
+                },
+                {
+                    id: generateId(),
+                    name: 'Event Deko Zauber',
+                    category: 'Dekoration',
+                    contact_email: 'info@deko-zauber.de',
+                    contact_phone: '+49 123 888111',
+                    website: 'www.deko-zauber.de',
+                    cost: 1800,
+                    deposit_paid: false,
+                    contract_signed: false,
+                    notes: 'Saal- und Tischdekoration',
+                    archived: false
+                }
+            ];
+
+            // Program Items
+            const programItems = [
+                // Verlobungsfeier
+                {
+                    id: generateId(),
+                    event_id: events[0].id,
+                    time: '18:00',
+                    title: 'Empfang der Gäste',
+                    description: 'Begrüßung mit Sektempfang',
+                    duration_minutes: 60,
+                    location: 'Foyer Restaurant Seeblick',
+                    notes: 'Hintergrundmusik'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[0].id,
+                    time: '19:00',
+                    title: 'Dinner',
+                    description: 'Festliches 3-Gänge Menü',
+                    duration_minutes: 120,
+                    location: 'Hauptsaal',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[0].id,
+                    time: '21:00',
+                    title: 'Ankündigung der Verlobung',
+                    description: 'Offizielle Bekanntgabe',
+                    duration_minutes: 30,
+                    location: 'Hauptsaal',
+                    notes: 'Mit Ansprache und Ringtausch'
+                },
+                // Getting Ready
+                {
+                    id: generateId(),
+                    event_id: events[1].id,
+                    time: '08:00',
+                    title: 'Frühstück',
+                    description: 'Gemeinsames Frühstück mit Brautjungfern',
+                    duration_minutes: 60,
+                    location: 'Suite',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[1].id,
+                    time: '09:00',
+                    title: 'Hair & Make-up Braut',
+                    description: 'Professionelles Brautstyling',
+                    duration_minutes: 180,
+                    location: 'Suite',
+                    notes: 'Make-up Artist kommt zur Suite'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[1].id,
+                    time: '12:00',
+                    title: 'Ankleiden der Braut',
+                    description: 'Brautkleid anziehen mit Brautjungfern',
+                    duration_minutes: 60,
+                    location: 'Suite',
+                    notes: 'Fotograf dokumentiert'
+                },
+                // Standesamt
+                {
+                    id: generateId(),
+                    event_id: events[2].id,
+                    time: '13:30',
+                    title: 'Ankunft der Gäste',
+                    description: 'Gäste treffen ein und nehmen Platz',
+                    duration_minutes: 30,
+                    location: 'Standesamt',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[2].id,
+                    time: '14:00',
+                    title: 'Trauungszeremonie',
+                    description: 'Offizielle standesamtliche Trauung',
+                    duration_minutes: 30,
+                    location: 'Trausaal',
+                    notes: 'Einzug der Braut mit Musikuntermalung'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[2].id,
+                    time: '14:30',
+                    title: 'Gratulationen',
+                    description: 'Empfang vor dem Standesamt',
+                    duration_minutes: 30,
+                    location: 'Vor dem Standesamt',
+                    notes: 'Blumen, Reiswerfen, Gruppenfotos'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[2].id,
+                    time: '15:00',
+                    title: 'Sektempfang',
+                    description: 'Anstoßen mit allen Gästen',
+                    duration_minutes: 30,
+                    location: 'Garten des Standesamts',
+                    notes: 'Sekt, Aperol, alkoholfreie Getränke'
+                },
+                // Fotoshooting
+                {
+                    id: generateId(),
+                    event_id: events[3].id,
+                    time: '15:30',
+                    title: 'Ankunft am Schloss',
+                    description: 'Fahrt mit Limousine zum Schloss',
+                    duration_minutes: 15,
+                    location: 'Schloss Belvedere',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[3].id,
+                    time: '15:45',
+                    title: 'Paarfotos im Park',
+                    description: 'Romantische Aufnahmen im Schlosspark',
+                    duration_minutes: 60,
+                    location: 'Schlosspark',
+                    notes: 'Verschiedene Locations im Park'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[3].id,
+                    time: '16:45',
+                    title: 'Gruppenfotos',
+                    description: 'Fotos mit Familie und Trauzeugen',
+                    duration_minutes: 45,
+                    location: 'Schlossterrasse',
+                    notes: ''
+                },
+                // Empfang und Dinner
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '18:00',
+                    title: 'Empfang im Gartensaal',
+                    description: 'Begrüßung der Gäste mit Aperitif',
+                    duration_minutes: 60,
+                    location: 'Gartensaal',
+                    notes: 'Fingerfood und Getränke'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '19:00',
+                    title: 'Einzug des Brautpaars',
+                    description: 'Feierlicher Einzug ins Dinner',
+                    duration_minutes: 10,
+                    location: 'Gartensaal',
+                    notes: 'Mit musikalischer Begleitung'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '19:10',
+                    title: 'Begrüßungsrede',
+                    description: 'Willkommensworte durch Trauzeugen',
+                    duration_minutes: 10,
+                    location: 'Gartensaal',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '19:20',
+                    title: 'Dinner - Gang 1',
+                    description: 'Vorspeise',
+                    duration_minutes: 30,
+                    location: 'Gartensaal',
+                    notes: 'Carpaccio vom Rind'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '19:50',
+                    title: 'Erste Reden',
+                    description: 'Ansprachen der Eltern',
+                    duration_minutes: 20,
+                    location: 'Gartensaal',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '20:10',
+                    title: 'Dinner - Gang 2',
+                    description: 'Hauptgang',
+                    duration_minutes: 40,
+                    location: 'Gartensaal',
+                    notes: 'Filetsteak oder Seebarsch'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[4].id,
+                    time: '20:50',
+                    title: 'Anschneiden der Torte',
+                    description: 'Traditionelles Tortenanschneiden',
+                    duration_minutes: 10,
+                    location: 'Gartensaal',
+                    notes: 'Mit Fotoshooting'
+                },
+                // Party
+                {
+                    id: generateId(),
+                    event_id: events[5].id,
+                    time: '21:00',
+                    title: 'Eröffnungstanz',
+                    description: 'Erster Tanz des Brautpaars',
+                    duration_minutes: 10,
+                    location: 'Tanzfläche',
+                    notes: 'Walzer'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[5].id,
+                    time: '21:10',
+                    title: 'Elterntänze',
+                    description: 'Traditionelle Tänze mit Eltern',
+                    duration_minutes: 20,
+                    location: 'Tanzfläche',
+                    notes: ''
+                },
+                {
+                    id: generateId(),
+                    event_id: events[5].id,
+                    time: '21:30',
+                    title: 'Party-Eröffnung',
+                    description: 'DJ startet das Tanzprogramm',
+                    duration_minutes: 150,
+                    location: 'Tanzfläche',
+                    notes: 'Verschiedene Musikrichtungen'
+                },
+                {
+                    id: generateId(),
+                    event_id: events[5].id,
+                    time: '00:00',
+                    title: 'Mitternachtssnack',
+                    description: 'Buffet mit Snacks',
+                    duration_minutes: 30,
+                    location: 'Foyer',
+                    notes: 'Burger, Pommes, etc.'
+                }
+            ];
+
+            // Vendor Contacts (Planungs-Ansprechpartner und Event-Tag Kontakte)
+            const vendorContacts = [
+                // Blumen Paradies
+                {
+                    id: generateId(),
+                    vendor_id: vendors[0].id,
+                    name: 'Sandra Blume',
+                    role: 'Inhaberin',
+                    email: 's.blume@blumen-paradies.de',
+                    phone: '+49 123 777888',
+                    is_primary: true,
+                    event_day_contact: false,
+                    participates_in_events: []
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[0].id,
+                    name: 'Michael Grün',
+                    role: 'Event-Florist',
+                    email: 'm.gruen@blumen-paradies.de',
+                    phone: '+49 123 777889',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[2].id, events[4].id]
+                },
+                // Foto Studio Lichtblick
+                {
+                    id: generateId(),
+                    vendor_id: vendors[1].id,
+                    name: 'Thomas Licht',
+                    role: 'Fotograf',
+                    email: 't.licht@studio-lichtblick.de',
+                    phone: '+49 123 999000',
+                    is_primary: true,
+                    event_day_contact: true,
+                    participates_in_events: [events[1].id, events[2].id, events[3].id, events[4].id]
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[1].id,
+                    name: 'Julia Schneider',
+                    role: 'Assistentin',
+                    email: 'j.schneider@studio-lichtblick.de',
+                    phone: '+49 123 999001',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[2].id, events[3].id, events[4].id]
+                },
+                // Video Dreams
+                {
+                    id: generateId(),
+                    vendor_id: vendors[2].id,
+                    name: 'Marco Videoman',
+                    role: 'Videograf',
+                    email: 'm.videoman@video-dreams.de',
+                    phone: '+49 123 222333',
+                    is_primary: true,
+                    event_day_contact: true,
+                    participates_in_events: [events[2].id, events[3].id, events[4].id, events[5].id]
+                },
+                // Catering Deluxe
+                {
+                    id: generateId(),
+                    vendor_id: vendors[3].id,
+                    name: 'Stefan Koch',
+                    role: 'Event-Manager',
+                    email: 's.koch@catering-deluxe.de',
+                    phone: '+49 123 444555',
+                    is_primary: true,
+                    event_day_contact: false,
+                    participates_in_events: []
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[3].id,
+                    name: 'Maria Gastro',
+                    role: 'Küchenchefin',
+                    email: 'm.gastro@catering-deluxe.de',
+                    phone: '+49 123 444556',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[4].id]
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[3].id,
+                    name: 'Peter Service',
+                    role: 'Service-Leitung',
+                    email: 'p.service@catering-deluxe.de',
+                    phone: '+49 123 444557',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[4].id]
+                },
+                // DJ Felix Events
+                {
+                    id: generateId(),
+                    vendor_id: vendors[4].id,
+                    name: 'Felix Soundmaster',
+                    role: 'DJ',
+                    email: 'felix@felix-events.de',
+                    phone: '+49 123 666777',
+                    is_primary: true,
+                    event_day_contact: true,
+                    participates_in_events: [events[5].id]
+                },
+                // Limousinen Service Premium
+                {
+                    id: generateId(),
+                    vendor_id: vendors[5].id,
+                    name: 'Robert Fahren',
+                    role: 'Geschäftsführer',
+                    email: 'r.fahren@limo-premium.de',
+                    phone: '+49 123 888999',
+                    is_primary: true,
+                    event_day_contact: false,
+                    participates_in_events: []
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[5].id,
+                    name: 'Klaus Chauffeur',
+                    role: 'Fahrer',
+                    email: 'k.chauffeur@limo-premium.de',
+                    phone: '+49 123 888998',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[2].id, events[3].id]
+                },
+                // Hair & Make-up Atelier
+                {
+                    id: generateId(),
+                    vendor_id: vendors[6].id,
+                    name: 'Lisa Beauty',
+                    role: 'Make-up Artist',
+                    email: 'l.beauty@hairmakeup-atelier.de',
+                    phone: '+49 123 111333',
+                    is_primary: true,
+                    event_day_contact: true,
+                    participates_in_events: [events[1].id]
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[6].id,
+                    name: 'Nina Hairstyle',
+                    role: 'Friseurin',
+                    email: 'n.hairstyle@hairmakeup-atelier.de',
+                    phone: '+49 123 111334',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[1].id]
+                },
+                // Hochzeitstorten Manufaktur
+                {
+                    id: generateId(),
+                    vendor_id: vendors[7].id,
+                    name: 'Andrea Süß',
+                    role: 'Konditorin',
+                    email: 'a.suess@torten-manufaktur.de',
+                    phone: '+49 123 555777',
+                    is_primary: true,
+                    event_day_contact: false,
+                    participates_in_events: []
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[7].id,
+                    name: 'Tim Torte',
+                    role: 'Lieferant',
+                    email: 't.torte@torten-manufaktur.de',
+                    phone: '+49 123 555778',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[4].id]
+                },
+                // Druckerei Kreativ
+                {
+                    id: generateId(),
+                    vendor_id: vendors[8].id,
+                    name: 'Markus Print',
+                    role: 'Vertrieb',
+                    email: 'm.print@druckerei-kreativ.de',
+                    phone: '+49 123 222555',
+                    is_primary: true,
+                    event_day_contact: false,
+                    participates_in_events: []
+                },
+                // Event Deko Zauber
+                {
+                    id: generateId(),
+                    vendor_id: vendors[9].id,
+                    name: 'Simone Dekoration',
+                    role: 'Event-Designerin',
+                    email: 's.deko@deko-zauber.de',
+                    phone: '+49 123 888111',
+                    is_primary: true,
+                    event_day_contact: false,
+                    participates_in_events: []
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[9].id,
+                    name: 'Frank Aufbau',
+                    role: 'Aufbau-Team-Leiter',
+                    email: 'f.aufbau@deko-zauber.de',
+                    phone: '+49 123 888112',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[4].id]
+                },
+                {
+                    id: generateId(),
+                    vendor_id: vendors[9].id,
+                    name: 'Petra Blumen',
+                    role: 'Deko-Assistentin',
+                    email: 'p.blumen@deko-zauber.de',
+                    phone: '+49 123 888113',
+                    is_primary: false,
+                    event_day_contact: true,
+                    participates_in_events: [events[4].id]
+                }
+            ];
+
+            // Location Contacts
+            const locationContacts = [
+                // Standesamt Stadtmitte
+                {
+                    id: generateId(),
+                    location_id: locations[0].id,
+                    name: 'Frau Schmidt',
+                    role: 'Standesbeamtin',
+                    email: 'schmidt@standesamt-stadt.de',
+                    phone: '+49 123 456789',
+                    is_primary: true
+                },
+                // Hotel Rosengarten
+                {
+                    id: generateId(),
+                    location_id: locations[1].id,
+                    name: 'Herr Müller',
+                    role: 'Event-Manager',
+                    email: 'mueller@hotel-rosengarten.de',
+                    phone: '+49 123 987654',
+                    is_primary: true
+                },
+                {
+                    id: generateId(),
+                    location_id: locations[1].id,
+                    name: 'Anna Restaurant',
+                    role: 'Restaurant-Managerin',
+                    email: 'a.restaurant@hotel-rosengarten.de',
+                    phone: '+49 123 987655',
+                    is_primary: false
+                },
+                // Schloss Belvedere
+                {
+                    id: generateId(),
+                    location_id: locations[2].id,
+                    name: 'Frau Wagner',
+                    role: 'Schlossmanagerin',
+                    email: 'wagner@schloss-belvedere.de',
+                    phone: '+49 123 111222',
+                    is_primary: true
+                },
+                // Restaurant Seeblick
+                {
+                    id: generateId(),
+                    location_id: locations[3].id,
+                    name: 'Herr Fischer',
+                    role: 'Inhaber',
+                    email: 'info@restaurant-seeblick.de',
+                    phone: '+49 123 333444',
+                    is_primary: true
+                },
+                // Brautsuite Villa Eleganza
+                {
+                    id: generateId(),
+                    location_id: locations[4].id,
+                    name: 'Frau Klein',
+                    role: 'Inhaberin',
+                    email: 'klein@villa-eleganza.de',
+                    phone: '+49 123 555666',
+                    is_primary: true
+                }
+            ];
+
+            // Wedding Data
+            const weddingData = {
+                couple_name_1: 'Anna',
+                couple_name_2: 'Max',
+                wedding_date: weddingDate,
+                total_budget: 35000
+            };
+
+            // Save to localStorage
+            localStorage.setItem('wedding_wedding_data', JSON.stringify(weddingData));
+            localStorage.setItem('wedding_events', JSON.stringify(events));
+            localStorage.setItem('wedding_vendors', JSON.stringify(vendors));
+            localStorage.setItem('wedding_locations', JSON.stringify(locations));
+            localStorage.setItem('wedding_program_items', JSON.stringify(programItems));
+            localStorage.setItem('wedding_vendor_contacts', JSON.stringify(vendorContacts));
+            localStorage.setItem('wedding_location_contacts', JSON.stringify(locationContacts));
+            localStorage.setItem('wedding_guests', JSON.stringify([]));
+            localStorage.setItem('wedding_support_team', JSON.stringify([]));
+            localStorage.setItem('wedding_budget_items', JSON.stringify([]));
+            localStorage.setItem('wedding_tables', JSON.stringify([]));
+
+            document.getElementById('successMessage').style.display = 'block';
+
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        }
+
+        function clearAllData() {
+            if (!confirm('Möchtest du wirklich ALLE Daten löschen? Dies kann nicht rückgängig gemacht werden!')) {
+                return;
+            }
+
+            localStorage.clear();
+            alert('Alle Daten wurden gelöscht!');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
