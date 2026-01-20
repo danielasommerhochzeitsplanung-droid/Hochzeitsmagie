@@ -49,9 +49,13 @@ class LocalStorageAdapter<T extends BaseEntity> {
 
   private handleStorageError(error: unknown): never {
     if (error instanceof DOMException) {
-      if (error.name === 'QuotaExceededError') {
+      if (
+        error.name === 'QuotaExceededError' ||
+        error.code === 22 ||
+        error.code === 1014
+      ) {
         throw new StorageError(
-          'Speicherplatz überschritten. Bitte exportieren Sie Ihre Daten und löschen Sie alte Einträge.',
+          'Speichern nicht möglich. Dein Browser-Speicher ist fast voll. Bitte exportiere deine Daten und lösche dann alte Einträge.',
           'QUOTA_EXCEEDED'
         );
       }

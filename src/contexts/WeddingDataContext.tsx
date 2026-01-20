@@ -102,9 +102,12 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const [programItems, setProgramItems] = useState<ProgramItem[]>(() => storage.programItems.getAll());
   const [tasks, setTasks] = useState<Task[]>(() => storage.tasks.getAll());
 
+  const incrementStorageCounter = useCallback(() => {
+    setStorageChangeCounter(prev => prev + 1);
+  }, []);
+
   const showSaveIndicator = useCallback(() => {
     setSaveState({ status: 'saving' });
-    setStorageChangeCounter(prev => prev + 1);
 
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -172,6 +175,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       }
 
       setWeddingData(updatedData);
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -183,6 +187,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newGuest = storage.guests.create(guest);
       setGuests(prev => [...prev, newGuest]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newGuest;
     } catch (error) {
@@ -195,6 +200,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.guests.update(id, guest);
       setGuests(prev => prev.map(g => g.id === id ? { ...g, ...guest } : g));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -206,6 +212,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.guests.delete(id);
       setGuests(prev => prev.filter(g => g.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -217,6 +224,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newEvent = storage.events.create(event);
       setEvents(prev => [...prev, newEvent]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newEvent;
     } catch (error) {
@@ -229,6 +237,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.events.update(id, event);
       setEvents(prev => prev.map(e => e.id === id ? { ...e, ...event } : e));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -240,6 +249,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.events.delete(id);
       setEvents(prev => prev.filter(e => e.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -251,6 +261,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newVendor = storage.vendors.create(vendor);
       setVendors(prev => [...prev, newVendor]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newVendor;
     } catch (error) {
@@ -263,6 +274,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.vendors.update(id, vendor);
       setVendors(prev => prev.map(v => v.id === id ? { ...v, ...vendor } : v));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -274,6 +286,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.vendors.delete(id);
       setVendors(prev => prev.filter(v => v.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -285,6 +298,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newLocation = storage.locations.create(location);
       setLocations(prev => [...prev, newLocation]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newLocation;
     } catch (error) {
@@ -297,6 +311,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.locations.update(id, location);
       setLocations(prev => prev.map(l => l.id === id ? { ...l, ...location } : l));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -308,6 +323,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.locations.delete(id);
       setLocations(prev => prev.filter(l => l.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -319,6 +335,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newMember = storage.supportTeam.create(member);
       setSupportTeam(prev => [...prev, newMember]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newMember;
     } catch (error) {
@@ -331,6 +348,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.supportTeam.update(id, member);
       setSupportTeam(prev => prev.map(m => m.id === id ? { ...m, ...member } : m));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -342,6 +360,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.supportTeam.delete(id);
       setSupportTeam(prev => prev.filter(m => m.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -353,6 +372,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newItem = storage.budgetItems.create(item);
       setBudgetItems(prev => [...prev, newItem]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newItem;
     } catch (error) {
@@ -365,6 +385,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.budgetItems.update(id, item);
       setBudgetItems(prev => prev.map(i => i.id === id ? { ...i, ...item } : i));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -376,6 +397,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.budgetItems.delete(id);
       setBudgetItems(prev => prev.filter(i => i.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -387,6 +409,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newTable = storage.tables.create(table);
       setTables(prev => [...prev, newTable]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newTable;
     } catch (error) {
@@ -399,6 +422,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.tables.update(id, table);
       setTables(prev => prev.map(t => t.id === id ? { ...t, ...table } : t));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -410,6 +434,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.tables.delete(id);
       setTables(prev => prev.filter(t => t.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -421,6 +446,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       const newItem = storage.programItems.create(item);
       setProgramItems(prev => [...prev, newItem]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newItem;
     } catch (error) {
@@ -433,6 +459,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.programItems.update(id, item);
       setProgramItems(prev => prev.map(i => i.id === id ? { ...i, ...item } : i));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -444,6 +471,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.programItems.delete(id);
       setProgramItems(prev => prev.filter(i => i.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -459,6 +487,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       };
       const newTask = storage.tasks.create(taskWithDefaults);
       setTasks(prev => [...prev, newTask]);
+      incrementStorageCounter();
       showSaveIndicator();
       return newTask;
     } catch (error) {
@@ -471,6 +500,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.tasks.update(id, task);
       setTasks(prev => prev.map(t => t.id === id ? { ...t, ...task } : t));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);
@@ -482,6 +512,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     try {
       storage.tasks.delete(id);
       setTasks(prev => prev.filter(t => t.id !== id));
+      incrementStorageCounter();
       showSaveIndicator();
     } catch (error) {
       handleStorageError(error);

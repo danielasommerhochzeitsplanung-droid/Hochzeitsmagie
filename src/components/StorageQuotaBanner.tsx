@@ -18,7 +18,13 @@ export default function StorageQuotaBanner({ onExport, storageChangeCounter }: S
 
       const isCritical = quotaInfo.percentageUsed >= 90;
       const sessionKey = 'storageQuotaBannerDismissed';
-      const isDismissed = sessionStorage.getItem(sessionKey) === 'true';
+
+      let isDismissed = false;
+      try {
+        isDismissed = sessionStorage.getItem(sessionKey) === 'true';
+      } catch (error) {
+        console.error('Error accessing sessionStorage:', error);
+      }
 
       if (quotaInfo.percentageUsed >= 80) {
         if (isCritical) {
@@ -30,7 +36,11 @@ export default function StorageQuotaBanner({ onExport, storageChangeCounter }: S
         }
       } else {
         setShowBanner(false);
-        sessionStorage.removeItem(sessionKey);
+        try {
+          sessionStorage.removeItem(sessionKey);
+        } catch (error) {
+          console.error('Error accessing sessionStorage:', error);
+        }
       }
     };
 
@@ -39,8 +49,12 @@ export default function StorageQuotaBanner({ onExport, storageChangeCounter }: S
 
   const handleDismiss = () => {
     if (percentageUsed < 90) {
-      sessionStorage.setItem('storageQuotaBannerDismissed', 'true');
-      setShowBanner(false);
+      try {
+        sessionStorage.setItem('storageQuotaBannerDismissed', 'true');
+        setShowBanner(false);
+      } catch (error) {
+        console.error('Error accessing sessionStorage:', error);
+      }
     }
   };
 
