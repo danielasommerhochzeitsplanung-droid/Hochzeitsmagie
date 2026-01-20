@@ -121,13 +121,6 @@ function App() {
     if (activeModule) {
       return (
         <div className="min-h-screen bg-white">
-          {import.meta.env.DEV && (
-            <div className="fixed top-0 left-0 bg-black text-green-400 px-3 py-2 text-xs z-[9999] font-mono max-w-full overflow-x-auto whitespace-nowrap shadow-lg border border-green-400">
-              <div>📍 href: {window.location.href}</div>
-              <div>📦 meta.url: {import.meta.url}</div>
-              <div>🔧 mode: {import.meta.env.MODE}</div>
-            </div>
-          )}
           <LanguageSwitcher />
           <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
           <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
@@ -216,13 +209,6 @@ function App() {
 
     return (
       <div className="min-h-screen bg-white">
-        {import.meta.env.DEV && (
-          <div className="fixed top-0 left-0 bg-black text-green-400 px-3 py-2 text-xs z-[9999] font-mono max-w-full overflow-x-auto whitespace-nowrap shadow-lg border border-green-400">
-            <div>📍 href: {window.location.href}</div>
-            <div>📦 meta.url: {import.meta.url}</div>
-            <div>🔧 mode: {import.meta.env.MODE}</div>
-          </div>
-        )}
         <LanguageSwitcher />
         <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
@@ -291,13 +277,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6">
-      {import.meta.env.DEV && (
-        <div className="fixed top-0 left-0 bg-black text-green-400 px-3 py-2 text-xs z-[9999] font-mono max-w-full overflow-x-auto whitespace-nowrap shadow-lg border border-green-400">
-          <div>📍 href: {window.location.href}</div>
-          <div>📦 meta.url: {import.meta.url}</div>
-          <div>🔧 mode: {import.meta.env.MODE}</div>
-        </div>
-      )}
       <LanguageSwitcher />
       <div className="w-full max-w-md">
         <h1 className="text-3xl text-center mb-8" style={{ fontFamily: 'Cinzel, serif', color: '#3b3b3d', fontWeight: 'normal' }}>
