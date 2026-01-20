@@ -4,9 +4,10 @@ import { getStorageQuotaInfo } from '../utils/storageQuota';
 
 interface StorageQuotaBannerProps {
   onExport: () => void;
+  storageChangeCounter: number;
 }
 
-export default function StorageQuotaBanner({ onExport }: StorageQuotaBannerProps) {
+export default function StorageQuotaBanner({ onExport, storageChangeCounter }: StorageQuotaBannerProps) {
   const [showBanner, setShowBanner] = useState(false);
   const [percentageUsed, setPercentageUsed] = useState(0);
 
@@ -15,22 +16,32 @@ export default function StorageQuotaBanner({ onExport }: StorageQuotaBannerProps
       const quotaInfo = getStorageQuotaInfo();
       setPercentageUsed(quotaInfo.percentageUsed);
 
+      const isCritical = quotaInfo.percentageUsed >= 90;
       const sessionKey = 'storageQuotaBannerDismissed';
       const isDismissed = sessionStorage.getItem(sessionKey) === 'true';
 
-      if (quotaInfo.percentageUsed >= 80 && !isDismissed) {
-        setShowBanner(true);
+      if (quotaInfo.percentageUsed >= 80) {
+        if (isCritical) {
+          setShowBanner(true);
+        } else if (!isDismissed) {
+          setShowBanner(true);
+        } else {
+          setShowBanner(false);
+        }
       } else {
         setShowBanner(false);
+        sessionStorage.removeItem(sessionKey);
       }
     };
 
     checkQuota();
-  }, []);
+  }, [storageChangeCounter]);
 
   const handleDismiss = () => {
-    sessionStorage.setItem('storageQuotaBannerDismissed', 'true');
-    setShowBanner(false);
+    if (percentageUsed < 90) {
+      sessionStorage.setItem('storageQuotaBannerDismissed', 'true');
+      setShowBanner(false);
+    }
   };
 
   if (!showBanner) {
@@ -66,13 +77,15 @@ export default function StorageQuotaBanner({ onExport }: StorageQuotaBannerProps
           <Download className="w-4 h-4" />
           Daten exportieren
         </button>
-        <button
-          onClick={handleDismiss}
-          className="p-1.5 rounded-lg hover:bg-white hover:bg-opacity-20 transition-all"
-          title="Ausblenden"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {!isCritical && (
+          <button
+            onClick={handleDismiss}
+            className="p-1.5 rounded-lg hover:bg-white hover:bg-opacity-20 transition-all"
+            title="Ausblenden"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
     </div>
   );

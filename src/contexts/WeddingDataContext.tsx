@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useEffect } from 'react';
-import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task } from '../lib/storage-adapter';
+import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
 import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutomation';
 import { taskTemplateData } from '../data/taskTemplateData';
@@ -31,6 +31,7 @@ interface WeddingDataContextType {
   tables: Table[];
   programItems: ProgramItem[];
   tasks: Task[];
+  storageChangeCounter: number;
 
   updateWeddingData: (data: Partial<WeddingData>) => void;
 
@@ -82,6 +83,7 @@ const WeddingDataContext = createContext<WeddingDataContextType | undefined>(und
 
 export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
+  const [storageChangeCounter, setStorageChangeCounter] = useState(0);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const idleTimeoutRef = useRef<NodeJS.Timeout>();
   const { showFeedback, FeedbackComponent } = useImportFeedback();
@@ -102,6 +104,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
   const showSaveIndicator = useCallback(() => {
     setSaveState({ status: 'saving' });
+    setStorageChangeCounter(prev => prev + 1);
 
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -116,6 +119,15 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     }, 300);
   }, []);
 
+  const handleStorageError = useCallback((error: unknown) => {
+    if (error instanceof StorageError) {
+      setSaveState({ status: 'error', errorMessage: error.message });
+      setTimeout(() => setSaveState({ status: 'idle' }), 5000);
+      return true;
+    }
+    return false;
+  }, []);
+
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
@@ -128,213 +140,353 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateWeddingData = (data: Partial<WeddingData>) => {
-    const allData = storage.weddingData.getAll();
-    let updatedData: WeddingData;
-    const oldData = allData.length > 0 ? allData[0] : null;
+    try {
+      const allData = storage.weddingData.getAll();
+      let updatedData: WeddingData;
+      const oldData = allData.length > 0 ? allData[0] : null;
 
-    if (allData.length > 0) {
-      updatedData = storage.weddingData.update(allData[0].id, data) || allData[0];
-    } else {
-      updatedData = storage.weddingData.create(data);
-    }
-
-    if (oldData && updatedData.id && updatedData.auto_tasks_enabled) {
-      const oldPlanningStartDate = oldData.last_planning_start_date || oldData.planning_start_date;
-      const oldWeddingDate = oldData.last_wedding_date || oldData.wedding_date;
-      const newPlanningStartDate = updatedData.planning_start_date;
-      const newWeddingDate = updatedData.wedding_date;
-
-      if (newWeddingDate && (oldPlanningStartDate !== newPlanningStartDate || oldWeddingDate !== newWeddingDate)) {
-        handleDateChange(
-          updatedData.id,
-          newPlanningStartDate || null,
-          newWeddingDate,
-          oldPlanningStartDate || null,
-          oldWeddingDate || null
-        );
-
-        const refreshedTasks = storage.tasks.getAll();
-        setTasks(refreshedTasks);
+      if (allData.length > 0) {
+        updatedData = storage.weddingData.update(allData[0].id, data) || allData[0];
+      } else {
+        updatedData = storage.weddingData.create(data);
       }
-    }
 
-    setWeddingData(updatedData);
-    showSaveIndicator();
+      if (oldData && updatedData.id && updatedData.auto_tasks_enabled) {
+        const oldPlanningStartDate = oldData.last_planning_start_date || oldData.planning_start_date;
+        const oldWeddingDate = oldData.last_wedding_date || oldData.wedding_date;
+        const newPlanningStartDate = updatedData.planning_start_date;
+        const newWeddingDate = updatedData.wedding_date;
+
+        if (newWeddingDate && (oldPlanningStartDate !== newPlanningStartDate || oldWeddingDate !== newWeddingDate)) {
+          handleDateChange(
+            updatedData.id,
+            newPlanningStartDate || null,
+            newWeddingDate,
+            oldPlanningStartDate || null,
+            oldWeddingDate || null
+          );
+
+          const refreshedTasks = storage.tasks.getAll();
+          setTasks(refreshedTasks);
+        }
+      }
+
+      setWeddingData(updatedData);
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addGuest = (guest: Omit<Guest, 'id'>) => {
-    const newGuest = storage.guests.create(guest);
-    setGuests(prev => [...prev, newGuest]);
-    showSaveIndicator();
-    return newGuest;
+    try {
+      const newGuest = storage.guests.create(guest);
+      setGuests(prev => [...prev, newGuest]);
+      showSaveIndicator();
+      return newGuest;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateGuest = (id: string, guest: Partial<Guest>) => {
-    storage.guests.update(id, guest);
-    setGuests(prev => prev.map(g => g.id === id ? { ...g, ...guest } : g));
-    showSaveIndicator();
+    try {
+      storage.guests.update(id, guest);
+      setGuests(prev => prev.map(g => g.id === id ? { ...g, ...guest } : g));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteGuest = (id: string) => {
-    storage.guests.delete(id);
-    setGuests(prev => prev.filter(g => g.id !== id));
-    showSaveIndicator();
+    try {
+      storage.guests.delete(id);
+      setGuests(prev => prev.filter(g => g.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addEvent = (event: Omit<Event, 'id'>) => {
-    const newEvent = storage.events.create(event);
-    setEvents(prev => [...prev, newEvent]);
-    showSaveIndicator();
-    return newEvent;
+    try {
+      const newEvent = storage.events.create(event);
+      setEvents(prev => [...prev, newEvent]);
+      showSaveIndicator();
+      return newEvent;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateEvent = (id: string, event: Partial<Event>) => {
-    storage.events.update(id, event);
-    setEvents(prev => prev.map(e => e.id === id ? { ...e, ...event } : e));
-    showSaveIndicator();
+    try {
+      storage.events.update(id, event);
+      setEvents(prev => prev.map(e => e.id === id ? { ...e, ...event } : e));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteEvent = (id: string) => {
-    storage.events.delete(id);
-    setEvents(prev => prev.filter(e => e.id !== id));
-    showSaveIndicator();
+    try {
+      storage.events.delete(id);
+      setEvents(prev => prev.filter(e => e.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addVendor = (vendor: Omit<Vendor, 'id'>) => {
-    const newVendor = storage.vendors.create(vendor);
-    setVendors(prev => [...prev, newVendor]);
-    showSaveIndicator();
-    return newVendor;
+    try {
+      const newVendor = storage.vendors.create(vendor);
+      setVendors(prev => [...prev, newVendor]);
+      showSaveIndicator();
+      return newVendor;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateVendor = (id: string, vendor: Partial<Vendor>) => {
-    storage.vendors.update(id, vendor);
-    setVendors(prev => prev.map(v => v.id === id ? { ...v, ...vendor } : v));
-    showSaveIndicator();
+    try {
+      storage.vendors.update(id, vendor);
+      setVendors(prev => prev.map(v => v.id === id ? { ...v, ...vendor } : v));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteVendor = (id: string) => {
-    storage.vendors.delete(id);
-    setVendors(prev => prev.filter(v => v.id !== id));
-    showSaveIndicator();
+    try {
+      storage.vendors.delete(id);
+      setVendors(prev => prev.filter(v => v.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addLocation = (location: Omit<Location, 'id'>) => {
-    const newLocation = storage.locations.create(location);
-    setLocations(prev => [...prev, newLocation]);
-    showSaveIndicator();
-    return newLocation;
+    try {
+      const newLocation = storage.locations.create(location);
+      setLocations(prev => [...prev, newLocation]);
+      showSaveIndicator();
+      return newLocation;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateLocation = (id: string, location: Partial<Location>) => {
-    storage.locations.update(id, location);
-    setLocations(prev => prev.map(l => l.id === id ? { ...l, ...location } : l));
-    showSaveIndicator();
+    try {
+      storage.locations.update(id, location);
+      setLocations(prev => prev.map(l => l.id === id ? { ...l, ...location } : l));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteLocation = (id: string) => {
-    storage.locations.delete(id);
-    setLocations(prev => prev.filter(l => l.id !== id));
-    showSaveIndicator();
+    try {
+      storage.locations.delete(id);
+      setLocations(prev => prev.filter(l => l.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addSupportTeamMember = (member: Omit<SupportTeam, 'id'>) => {
-    const newMember = storage.supportTeam.create(member);
-    setSupportTeam(prev => [...prev, newMember]);
-    showSaveIndicator();
-    return newMember;
+    try {
+      const newMember = storage.supportTeam.create(member);
+      setSupportTeam(prev => [...prev, newMember]);
+      showSaveIndicator();
+      return newMember;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateSupportTeamMember = (id: string, member: Partial<SupportTeam>) => {
-    storage.supportTeam.update(id, member);
-    setSupportTeam(prev => prev.map(m => m.id === id ? { ...m, ...member } : m));
-    showSaveIndicator();
+    try {
+      storage.supportTeam.update(id, member);
+      setSupportTeam(prev => prev.map(m => m.id === id ? { ...m, ...member } : m));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteSupportTeamMember = (id: string) => {
-    storage.supportTeam.delete(id);
-    setSupportTeam(prev => prev.filter(m => m.id !== id));
-    showSaveIndicator();
+    try {
+      storage.supportTeam.delete(id);
+      setSupportTeam(prev => prev.filter(m => m.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addBudgetItem = (item: Omit<BudgetItem, 'id'>) => {
-    const newItem = storage.budgetItems.create(item);
-    setBudgetItems(prev => [...prev, newItem]);
-    showSaveIndicator();
-    return newItem;
+    try {
+      const newItem = storage.budgetItems.create(item);
+      setBudgetItems(prev => [...prev, newItem]);
+      showSaveIndicator();
+      return newItem;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateBudgetItem = (id: string, item: Partial<BudgetItem>) => {
-    storage.budgetItems.update(id, item);
-    setBudgetItems(prev => prev.map(i => i.id === id ? { ...i, ...item } : i));
-    showSaveIndicator();
+    try {
+      storage.budgetItems.update(id, item);
+      setBudgetItems(prev => prev.map(i => i.id === id ? { ...i, ...item } : i));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteBudgetItem = (id: string) => {
-    storage.budgetItems.delete(id);
-    setBudgetItems(prev => prev.filter(i => i.id !== id));
-    showSaveIndicator();
+    try {
+      storage.budgetItems.delete(id);
+      setBudgetItems(prev => prev.filter(i => i.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addTable = (table: Omit<Table, 'id'>) => {
-    const newTable = storage.tables.create(table);
-    setTables(prev => [...prev, newTable]);
-    showSaveIndicator();
-    return newTable;
+    try {
+      const newTable = storage.tables.create(table);
+      setTables(prev => [...prev, newTable]);
+      showSaveIndicator();
+      return newTable;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateTable = (id: string, table: Partial<Table>) => {
-    storage.tables.update(id, table);
-    setTables(prev => prev.map(t => t.id === id ? { ...t, ...table } : t));
-    showSaveIndicator();
+    try {
+      storage.tables.update(id, table);
+      setTables(prev => prev.map(t => t.id === id ? { ...t, ...table } : t));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteTable = (id: string) => {
-    storage.tables.delete(id);
-    setTables(prev => prev.filter(t => t.id !== id));
-    showSaveIndicator();
+    try {
+      storage.tables.delete(id);
+      setTables(prev => prev.filter(t => t.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addProgramItem = (item: Omit<ProgramItem, 'id'>) => {
-    const newItem = storage.programItems.create(item);
-    setProgramItems(prev => [...prev, newItem]);
-    showSaveIndicator();
-    return newItem;
+    try {
+      const newItem = storage.programItems.create(item);
+      setProgramItems(prev => [...prev, newItem]);
+      showSaveIndicator();
+      return newItem;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateProgramItem = (id: string, item: Partial<ProgramItem>) => {
-    storage.programItems.update(id, item);
-    setProgramItems(prev => prev.map(i => i.id === id ? { ...i, ...item } : i));
-    showSaveIndicator();
+    try {
+      storage.programItems.update(id, item);
+      setProgramItems(prev => prev.map(i => i.id === id ? { ...i, ...item } : i));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteProgramItem = (id: string) => {
-    storage.programItems.delete(id);
-    setProgramItems(prev => prev.filter(i => i.id !== id));
-    showSaveIndicator();
+    try {
+      storage.programItems.delete(id);
+      setProgramItems(prev => prev.filter(i => i.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const addTask = (task: Omit<Task, 'id' | 'created_at'>) => {
-    const taskWithDefaults = {
-      ...task,
-      is_system_generated: task.is_system_generated ?? false
-    };
-    const newTask = storage.tasks.create(taskWithDefaults);
-    setTasks(prev => [...prev, newTask]);
-    showSaveIndicator();
-    return newTask;
+    try {
+      const taskWithDefaults = {
+        ...task,
+        is_system_generated: task.is_system_generated ?? false
+      };
+      const newTask = storage.tasks.create(taskWithDefaults);
+      setTasks(prev => [...prev, newTask]);
+      showSaveIndicator();
+      return newTask;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const updateTask = (id: string, task: Partial<Task>) => {
-    storage.tasks.update(id, task);
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, ...task } : t));
-    showSaveIndicator();
+    try {
+      storage.tasks.update(id, task);
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, ...task } : t));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const deleteTask = (id: string) => {
-    storage.tasks.delete(id);
-    setTasks(prev => prev.filter(t => t.id !== id));
-    showSaveIndicator();
+    try {
+      storage.tasks.delete(id);
+      setTasks(prev => prev.filter(t => t.id !== id));
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
   };
 
   const initializeAutoTasks = () => {
@@ -462,6 +614,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     tables,
     programItems,
     tasks,
+    storageChangeCounter,
     updateWeddingData,
     addGuest,
     updateGuest,

@@ -5,25 +5,34 @@ export interface StorageQuotaInfo {
 }
 
 export function getStorageQuotaInfo(): StorageQuotaInfo {
-  let usedBytes = 0;
+  try {
+    let usedBytes = 0;
 
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key) {
-      const value = localStorage.getItem(key) || '';
-      usedBytes += key.length + value.length;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        const value = localStorage.getItem(key) || '';
+        usedBytes += key.length + value.length;
+      }
     }
+
+    usedBytes *= 2;
+
+    const estimatedLimitBytes = 5 * 1024 * 1024;
+
+    const percentageUsed = Math.min(100, (usedBytes / estimatedLimitBytes) * 100);
+
+    return {
+      usedBytes,
+      estimatedLimitBytes,
+      percentageUsed,
+    };
+  } catch (error) {
+    console.error('Error accessing localStorage:', error);
+    return {
+      usedBytes: 0,
+      estimatedLimitBytes: 5 * 1024 * 1024,
+      percentageUsed: 0,
+    };
   }
-
-  usedBytes *= 2;
-
-  const estimatedLimitBytes = 5 * 1024 * 1024;
-
-  const percentageUsed = Math.min(100, (usedBytes / estimatedLimitBytes) * 100);
-
-  return {
-    usedBytes,
-    estimatedLimitBytes,
-    percentageUsed,
-  };
 }

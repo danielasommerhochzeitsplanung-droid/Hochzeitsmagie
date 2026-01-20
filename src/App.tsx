@@ -27,7 +27,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
@@ -122,7 +122,7 @@ function App() {
     if (activeModule) {
       return (
         <div className="min-h-screen bg-white">
-          <StorageQuotaBanner onExport={handleDownload} />
+          <StorageQuotaBanner onExport={handleDownload} storageChangeCounter={storageChangeCounter} />
           <LanguageSwitcher />
           <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
           <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
@@ -211,7 +211,7 @@ function App() {
 
     return (
       <div className="min-h-screen bg-white">
-        <StorageQuotaBanner onExport={handleDownload} />
+        <StorageQuotaBanner onExport={handleDownload} storageChangeCounter={storageChangeCounter} />
         <LanguageSwitcher />
         <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
