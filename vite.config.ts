@@ -1,16 +1,28 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
-// https://vitejs.dev/config/
+const projectRoot = path.resolve(__dirname);
+
 export default defineConfig({
-  root: __dirname,
+  root: projectRoot,
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(projectRoot, './src'),
+    },
+  },
   optimizeDeps: {
     exclude: ['lucide-react'],
+  },
+  server: {
+    fs: {
+      strict: false,
+      allow: [projectRoot],
+    },
   },
 });
