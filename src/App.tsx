@@ -4,6 +4,7 @@ import { Settings, Save, Download, Upload } from 'lucide-react';
 import { useWeddingData } from './contexts/WeddingDataContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import SettingsModal from './components/SettingsModal';
+import StorageQuotaBanner from './components/StorageQuotaBanner';
 import ModuleCard from './components/ModuleCard';
 import GuestsModule from './components/GuestsModule';
 import VendorsModule from './components/VendorsModule';
@@ -121,6 +122,7 @@ function App() {
     if (activeModule) {
       return (
         <div className="min-h-screen bg-white">
+          <StorageQuotaBanner onExport={handleDownload} />
           <LanguageSwitcher />
           <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
           <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
@@ -209,6 +211,7 @@ function App() {
 
     return (
       <div className="min-h-screen bg-white">
+        <StorageQuotaBanner onExport={handleDownload} />
         <LanguageSwitcher />
         <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
