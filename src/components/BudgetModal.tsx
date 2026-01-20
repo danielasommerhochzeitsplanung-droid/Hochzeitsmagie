@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { BudgetItem } from './BudgetModule';
-import { storage } from '../lib/storage-adapter';
+import { storage, Vendor } from '../lib/storage-adapter';
 import { BUDGET_CATEGORIES } from './budgetCategories';
 
 interface BudgetModalProps {
@@ -10,11 +10,6 @@ interface BudgetModalProps {
   onClose: () => void;
   onSave: (item: Omit<BudgetItem, 'id' | 'created_at' | 'updated_at'>) => void;
   item: BudgetItem | null;
-}
-
-interface Vendor {
-  id: string;
-  company_name: string;
 }
 
 export default function BudgetModal({ isOpen, onClose, onSave, item }: BudgetModalProps) {
@@ -56,9 +51,8 @@ export default function BudgetModal({ isOpen, onClose, onSave, item }: BudgetMod
 
   const loadVendors = () => {
     const data = storage.vendors.getAll()
-      .filter((v: any) => !v.archived)
-      .map((v: any) => ({ id: v.id, company_name: v.company_name }))
-      .sort((a: any, b: any) => a.company_name.localeCompare(b.company_name));
+      .filter((v) => !v.archived)
+      .sort((a, b) => a.name.localeCompare(b.name));
     setVendors(data);
   };
 
@@ -206,7 +200,7 @@ export default function BudgetModal({ isOpen, onClose, onSave, item }: BudgetMod
                 <option value="">{t('budget.noVendor')}</option>
                 {vendors.map((vendor) => (
                   <option key={vendor.id} value={vendor.id}>
-                    {vendor.company_name}
+                    {vendor.name}
                   </option>
                 ))}
               </select>

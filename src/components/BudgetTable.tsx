@@ -3,17 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2, AlertCircle, Building2 } from 'lucide-react';
 import { BudgetItem } from './BudgetModule';
 import { getCategoryEmoji } from './budgetCategories';
-import { storage } from '../lib/storage-adapter';
+import { storage, Vendor } from '../lib/storage-adapter';
 
 interface BudgetTableProps {
   items: BudgetItem[];
   onEdit: (item: BudgetItem) => void;
   onDelete: (id: string) => void;
-}
-
-interface Vendor {
-  id: string;
-  company_name: string;
 }
 
 export default function BudgetTable({ items, onEdit, onDelete }: BudgetTableProps) {
@@ -29,10 +24,10 @@ export default function BudgetTable({ items, onEdit, onDelete }: BudgetTableProp
     if (vendorIds.length === 0) return;
 
     const data = storage.vendors.getAll()
-      .filter((v: any) => vendorIds.includes(v.id));
+      .filter((v) => vendorIds.includes(v.id));
 
-    const vendorMap = data.reduce((acc: Record<string, Vendor>, vendor: any) => {
-      acc[vendor.id] = { id: vendor.id, company_name: vendor.company_name };
+    const vendorMap = data.reduce((acc: Record<string, Vendor>, vendor) => {
+      acc[vendor.id] = vendor;
       return acc;
     }, {} as Record<string, Vendor>);
     setVendors(vendorMap);
@@ -161,7 +156,7 @@ export default function BudgetTable({ items, onEdit, onDelete }: BudgetTableProp
                   {item.vendor_id && vendors[item.vendor_id] ? (
                     <div className="flex items-center gap-2">
                       <Building2 size={14} style={{ color: '#d6b15b' }} />
-                      <span className="text-sm">{vendors[item.vendor_id].company_name}</span>
+                      <span className="text-sm">{vendors[item.vendor_id].name}</span>
                     </div>
                   ) : (
                     <span className="text-sm text-gray-400">-</span>

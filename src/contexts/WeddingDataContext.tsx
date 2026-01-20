@@ -83,6 +83,7 @@ const WeddingDataContext = createContext<WeddingDataContextType | undefined>(und
 export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const idleTimeoutRef = useRef<NodeJS.Timeout>();
   const { showFeedback, FeedbackComponent } = useImportFeedback();
 
   const [weddingData, setWeddingData] = useState<WeddingData>(() => {
@@ -105,11 +106,25 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
+    if (idleTimeoutRef.current) {
+      clearTimeout(idleTimeoutRef.current);
+    }
 
     saveTimeoutRef.current = setTimeout(() => {
       setSaveState({ status: 'saved' });
-      setTimeout(() => setSaveState({ status: 'idle' }), 2000);
+      idleTimeoutRef.current = setTimeout(() => setSaveState({ status: 'idle' }), 2000);
     }, 300);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      if (idleTimeoutRef.current) {
+        clearTimeout(idleTimeoutRef.current);
+      }
+    };
   }, []);
 
   const updateWeddingData = (data: Partial<WeddingData>) => {
@@ -377,23 +392,44 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   };
 
   const importData = (jsonData: string) => {
-    const result = storage.importAll(jsonData);
+    const MAX_JSON_SIZE = 2 * 1024 * 1024;
 
-    showFeedback(result);
+    if (jsonData.length > MAX_JSON_SIZE) {
+      showFeedback({
+        ok: false,
+        message: 'Import fehlgeschlagen: Datei ist zu groß (maximal 2 MB erlaubt).',
+        imported: 0,
+        errors: []
+      });
+      return;
+    }
 
-    if (result.ok) {
-      const allWeddingData = storage.weddingData.getAll();
-      setWeddingData(allWeddingData.length > 0 ? allWeddingData[0] : getDefaultWeddingData());
-      setGuests(storage.guests.getAll());
-      setEvents(storage.events.getAll());
-      setVendors(storage.vendors.getAll());
-      setLocations(storage.locations.getAll());
-      setSupportTeam(storage.supportTeam.getAll());
-      setBudgetItems(storage.budgetItems.getAll());
-      setTables(storage.tables.getAll());
-      setProgramItems(storage.programItems.getAll());
-      setTasks(storage.tasks.getAll());
-      showSaveIndicator();
+    try {
+      const result = storage.importAll(jsonData);
+      showFeedback(result);
+
+      if (result.ok) {
+        const allWeddingData = storage.weddingData.getAll();
+        setWeddingData(allWeddingData.length > 0 ? allWeddingData[0] : getDefaultWeddingData());
+        setGuests(storage.guests.getAll());
+        setEvents(storage.events.getAll());
+        setVendors(storage.vendors.getAll());
+        setLocations(storage.locations.getAll());
+        setSupportTeam(storage.supportTeam.getAll());
+        setBudgetItems(storage.budgetItems.getAll());
+        setTables(storage.tables.getAll());
+        setProgramItems(storage.programItems.getAll());
+        setTasks(storage.tasks.getAll());
+        showSaveIndicator();
+      }
+    } catch (error) {
+      console.error('Import error:', error);
+      showFeedback({
+        ok: false,
+        message: 'Import fehlgeschlagen: Ungültiges Dateiformat oder beschädigte Daten.',
+        imported: 0,
+        errors: []
+      });
     }
   };
 

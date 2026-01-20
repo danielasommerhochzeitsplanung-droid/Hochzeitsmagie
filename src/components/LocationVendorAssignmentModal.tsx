@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { storage } from '../lib/storage-adapter';
-
-interface Vendor {
-  id: string;
-  company_name: string;
-  category: string;
-}
+import { storage, Vendor } from '../lib/storage-adapter';
 
 interface LocationVendorAssignment {
   id?: string;
@@ -57,8 +51,7 @@ export function LocationVendorAssignmentModal({
 
   const loadVendors = () => {
     const data = storage.vendors.getAll()
-      .map((v: any) => ({ id: v.id, company_name: v.company_name, category: v.category }))
-      .sort((a: any, b: any) => a.company_name.localeCompare(b.company_name));
+      .sort((a, b) => a.name.localeCompare(b.name));
     setVendors(data);
   };
 
@@ -100,7 +93,7 @@ export function LocationVendorAssignmentModal({
               <option value="">{t('selectVendor')}</option>
               {vendors.map((vendor) => (
                 <option key={vendor.id} value={vendor.id}>
-                  {vendor.company_name} ({t(vendor.category)})
+                  {vendor.name} ({vendor.category})
                 </option>
               ))}
             </select>

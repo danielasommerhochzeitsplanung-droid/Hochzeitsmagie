@@ -88,7 +88,6 @@ class LocalStorageAdapter<T extends BaseEntity> {
       } as T;
       items.push(newItem);
       localStorage.setItem(this.getStorageKey(), JSON.stringify(items));
-      console.log(`💾 Saving to localStorage: ${this.getStorageKey()} | CREATE | Total items: ${items.length}`);
       return newItem;
     } catch (error) {
       this.handleStorageError(error);
@@ -103,7 +102,6 @@ class LocalStorageAdapter<T extends BaseEntity> {
 
       items[index] = { ...items[index], ...data };
       localStorage.setItem(this.getStorageKey(), JSON.stringify(items));
-      console.log(`💾 Saving to localStorage: ${this.getStorageKey()} | UPDATE | ID: ${id.substring(0, 8)}...`);
       return items[index];
     } catch (error) {
       this.handleStorageError(error);
@@ -117,7 +115,6 @@ class LocalStorageAdapter<T extends BaseEntity> {
       if (filtered.length === items.length) return false;
 
       localStorage.setItem(this.getStorageKey(), JSON.stringify(filtered));
-      console.log(`💾 Saving to localStorage: ${this.getStorageKey()} | DELETE | ID: ${id.substring(0, 8)}... | Remaining items: ${filtered.length}`);
       return true;
     } catch (error) {
       this.handleStorageError(error);
@@ -127,7 +124,6 @@ class LocalStorageAdapter<T extends BaseEntity> {
   replaceAll(data: T[]): void {
     try {
       localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
-      console.log(`💾 Saving to localStorage: ${this.getStorageKey()} | REPLACE ALL | Total items: ${data.length}`);
     } catch (error) {
       this.handleStorageError(error);
     }

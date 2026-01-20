@@ -1422,7 +1422,6 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
               <button
                 type="button"
                 onClick={() => {
-                  console.log('Support Team zuweisen - Feature wird später implementiert');
                   onClose();
                 }}
                 className="flex items-center gap-2 px-6 py-2 border rounded-lg transition-all"

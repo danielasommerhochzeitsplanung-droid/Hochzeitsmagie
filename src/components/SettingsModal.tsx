@@ -135,6 +135,13 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     input.onchange = (e: any) => {
       const file = e.target.files[0];
       if (file) {
+        const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
+        if (file.size > MAX_FILE_SIZE) {
+          alert(t('settings.importFileTooLarge') || 'Die Datei ist zu groß (maximal 2 MB erlaubt).');
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = (event: any) => {
           try {
@@ -144,8 +151,12 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               window.location.reload();
             }
           } catch (error) {
-            alert('Fehler beim Importieren der Daten');
+            console.error('Import error:', error);
+            alert(t('settings.importError') || 'Fehler beim Importieren der Daten. Bitte überprüfen Sie das Dateiformat.');
           }
+        };
+        reader.onerror = () => {
+          alert(t('settings.importReadError') || 'Fehler beim Lesen der Datei.');
         };
         reader.readAsText(file);
       }
