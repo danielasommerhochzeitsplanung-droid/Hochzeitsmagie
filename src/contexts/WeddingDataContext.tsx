@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useCallback, use
 import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
 import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutomation';
-import { loadTaskTemplates } from '../utils/templateLoader';
+import { taskTemplateData } from '../data/taskTemplateData';
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
 
@@ -520,7 +520,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const initializeAutoTasks = async () => {
+  const initializeAutoTasks = () => {
     if (!weddingData.wedding_date) {
       console.error('Wedding date is required to initialize auto tasks');
       return;
@@ -528,12 +528,10 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
     const planningStartDate = weddingData.planning_start_date || new Date().toISOString().split('T')[0];
 
-    const templates = await loadTaskTemplates();
-
     const generatedTasks = generateTasksFromTemplates(
       planningStartDate,
       weddingData.wedding_date,
-      templates
+      taskTemplateData
     );
 
     generatedTasks.forEach(task => {
