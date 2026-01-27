@@ -10,6 +10,11 @@ export async function loadTaskTemplates(): Promise<TaskTemplate[]> {
     return templateCache;
   }
 
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Supabase credentials not found');
+    return [];
+  }
+
   try {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/task_templates?select=*`, {
       headers: {
@@ -19,10 +24,12 @@ export async function loadTaskTemplates(): Promise<TaskTemplate[]> {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to load templates');
+      console.error('Failed to load templates:', response.status, response.statusText);
+      return [];
     }
 
     const templates = await response.json();
+    console.log('Loaded templates:', templates.length);
     templateCache = templates;
     return templates;
   } catch (error) {
