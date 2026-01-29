@@ -3,7 +3,7 @@ import { TaskTemplate } from '../utils/taskAutomation';
 export const taskTemplateData: TaskTemplate[] = [
   {
     id: 'planung-1',
-    category: 'Planung',
+    category: 'planning',
     task_name: 'Namenswahl besprechen',
     description: 'Entscheiden, welche(n) Namen Sie nach der Hochzeit führen möchten: Behalten beide Partner ihren Namen? Nimmt ein Partner den Namen des anderen an? Wird ein Doppelname gewählt? Diese Entscheidung muss vor der Anmeldung beim Standesamt getroffen werden.',
     priority: 'high',
@@ -12,7 +12,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'planung-2',
-    category: 'Planung',
+    category: 'planning',
     task_name: 'Trauzeugen auswählen',
     description: 'Überlegen Sie, wen Sie als Trauzeugen haben möchten. Trauzeugen sind in Deutschland nicht mehr gesetzlich vorgeschrieben, aber viele Paare möchten trotzdem welche haben. Sie können die Namen später beim Standesamt angeben.',
     priority: 'high',
@@ -21,7 +21,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'location-1',
-    category: 'Location',
+    category: 'location',
     task_name: 'Locations recherchieren und besichtigen',
     description: 'Verschiedene Locations anschauen und vergleichen',
     priority: 'high',
@@ -30,7 +30,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'location-2',
-    category: 'Location',
+    category: 'location',
     task_name: 'Location buchen',
     description: 'Vertrag abschließen und Anzahlung leisten',
     priority: 'high',
@@ -39,7 +39,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'location-3',
-    category: 'Location',
+    category: 'location',
     task_name: 'Detailplanung mit Location',
     description: 'Raumaufteilung, Zeitplan, technische Details klären',
     priority: 'medium',
@@ -48,7 +48,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'location-4',
-    category: 'Location',
+    category: 'location',
     task_name: 'Final Walk-Through',
     description: 'Letzte Absprachen vor Ort',
     priority: 'high',
@@ -57,7 +57,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'catering-1',
-    category: 'Catering',
+    category: 'catering',
     task_name: 'Catering-Anbieter recherchieren',
     description: 'Verschiedene Caterer vergleichen und Angebote einholen',
     priority: 'high',
@@ -66,7 +66,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'catering-2',
-    category: 'Catering',
+    category: 'catering',
     task_name: 'Menü-Verkostung',
     description: 'Probemenü mit Caterer durchführen',
     priority: 'medium',
@@ -75,7 +75,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'catering-3',
-    category: 'Catering',
+    category: 'catering',
     task_name: 'Catering buchen',
     description: 'Vertrag abschließen und Menü festlegen',
     priority: 'high',
@@ -84,7 +84,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'catering-4',
-    category: 'Catering',
+    category: 'catering',
     task_name: 'Finale Gästezahl mitteilen',
     description: 'Endgültige Anzahl und Sonderwünsche bestätigen',
     priority: 'high',
@@ -93,7 +93,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'fotograf-1',
-    category: 'Fotograf',
+    category: 'planning',
     task_name: 'Fotografen recherchieren',
     description: 'Portfolio verschiedener Fotografen anschauen',
     priority: 'high',
@@ -102,7 +102,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'fotograf-2',
-    category: 'Fotograf',
+    category: 'planning',
     task_name: 'Fotografen buchen',
     description: 'Vertrag abschließen und Zeitplan besprechen',
     priority: 'high',
@@ -111,7 +111,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'fotograf-3',
-    category: 'Fotograf',
+    category: 'planning',
     task_name: 'Engagement Shooting',
     description: 'Vorab-Fotoshooting zur Vorbereitung',
     priority: 'low',
@@ -120,7 +120,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'fotograf-4',
-    category: 'Fotograf',
+    category: 'planning',
     task_name: 'Shot List erstellen',
     description: 'Wunschfotos und wichtige Momente festhalten',
     priority: 'medium',
@@ -129,7 +129,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'deko-1',
-    category: 'Dekoration',
+    category: 'decoration',
     task_name: 'Deko-Konzept entwickeln',
     description: 'Farbschema und Stil festlegen',
     priority: 'medium',
@@ -138,7 +138,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'deko-2',
-    category: 'Dekoration',
+    category: 'decoration',
     task_name: 'Florist recherchieren und buchen',
     description: 'Blumenschmuck planen und bestellen',
     priority: 'medium',
@@ -147,7 +147,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'deko-3',
-    category: 'Dekoration',
+    category: 'decoration',
     task_name: 'Deko-Material besorgen',
     description: 'DIY-Material und zusätzliche Deko kaufen',
     priority: 'low',
@@ -156,7 +156,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'deko-4',
-    category: 'Dekoration',
+    category: 'decoration',
     task_name: 'Finale Deko-Details',
     description: 'Letzte Abstimmung mit Florist und Location',
     priority: 'medium',
@@ -165,7 +165,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'musik-1',
-    category: 'Musik',
+    category: 'catering',
     task_name: 'DJ/Band recherchieren',
     description: 'Verschiedene Musiker vergleichen',
     priority: 'medium',
@@ -174,7 +174,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'musik-2',
-    category: 'Musik',
+    category: 'catering',
     task_name: 'DJ/Band buchen',
     description: 'Vertrag abschließen',
     priority: 'high',
@@ -183,7 +183,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'musik-3',
-    category: 'Musik',
+    category: 'catering',
     task_name: 'Playlist besprechen',
     description: 'Musikwünsche und No-Gos festlegen',
     priority: 'medium',
@@ -192,7 +192,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'musik-4',
-    category: 'Musik',
+    category: 'catering',
     task_name: 'Ablaufplan für Musik erstellen',
     description: 'Zeitplan für erste Tanz, Einzug, etc.',
     priority: 'medium',
@@ -201,7 +201,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'einladungen-1',
-    category: 'Einladungen',
+    category: 'guests',
     task_name: 'Design festlegen',
     description: 'Stil und Layout der Einladungen wählen',
     priority: 'medium',
@@ -210,7 +210,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'einladungen-2',
-    category: 'Einladungen',
+    category: 'guests',
     task_name: 'Save-the-Dates versenden',
     description: 'Vorab-Information an Gäste',
     priority: 'medium',
@@ -219,7 +219,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'einladungen-3',
-    category: 'Einladungen',
+    category: 'guests',
     task_name: 'Einladungen drucken',
     description: 'Finale Version drucken lassen',
     priority: 'high',
@@ -228,7 +228,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'einladungen-4',
-    category: 'Einladungen',
+    category: 'guests',
     task_name: 'Einladungen versenden',
     description: 'An alle Gäste verschicken',
     priority: 'high',
@@ -237,7 +237,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'kleidung-1',
-    category: 'Kleidung',
+    category: 'couple',
     task_name: 'Brautkleid-Termine vereinbaren',
     description: 'Verschiedene Geschäfte besuchen',
     priority: 'high',
@@ -246,7 +246,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'kleidung-2',
-    category: 'Kleidung',
+    category: 'couple',
     task_name: 'Brautkleid kaufen',
     description: 'Kleid bestellen',
     priority: 'high',
@@ -255,7 +255,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'kleidung-3',
-    category: 'Kleidung',
+    category: 'couple',
     task_name: 'Anzug/Smoking besorgen',
     description: 'Outfit für Bräutigam',
     priority: 'high',
@@ -264,7 +264,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'kleidung-4',
-    category: 'Kleidung',
+    category: 'couple',
     task_name: 'Anproben Brautkleid',
     description: 'Finale Anpassungen',
     priority: 'high',
@@ -273,7 +273,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'standesamt-1',
-    category: 'Standesamt',
+    category: 'planning',
     task_name: 'Erforderliche Dokumente prüfen und beantragen',
     description: `Folgende Dokumente werden für die Anmeldung zur Eheschließung benötigt:
 
@@ -302,7 +302,7 @@ export const taskTemplateData: TaskTemplate[] = [
   },
   {
     id: 'standesamt-2',
-    category: 'Standesamt',
+    category: 'planning',
     task_name: 'Anmeldung zur Eheschließung beim Standesamt',
     description: `Vereinbaren Sie einen Termin beim Standesamt zur Anmeldung Ihrer Eheschließung. Beide Partner müssen persönlich erscheinen.
 
@@ -328,7 +328,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'ringe-1',
-    category: 'Ringe',
+    category: 'couple',
     task_name: 'Ringe anschauen',
     description: 'Verschiedene Juweliere besuchen',
     priority: 'high',
@@ -337,7 +337,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'ringe-2',
-    category: 'Ringe',
+    category: 'couple',
     task_name: 'Ringe bestellen',
     description: 'Auswahl treffen und bestellen',
     priority: 'high',
@@ -346,7 +346,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'ringe-3',
-    category: 'Ringe',
+    category: 'couple',
     task_name: 'Gravur festlegen',
     description: 'Text für Ringinnenseite wählen',
     priority: 'low',
@@ -355,7 +355,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'transport-1',
-    category: 'Transport',
+    category: 'planning',
     task_name: 'Hochzeitsauto organisieren',
     description: 'Fahrzeug für Brautpaar buchen',
     priority: 'low',
@@ -364,7 +364,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'transport-2',
-    category: 'Transport',
+    category: 'planning',
     task_name: 'Gäste-Transport planen',
     description: 'Shuttle oder Fahrgemeinschaften organisieren',
     priority: 'medium',
@@ -373,7 +373,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'unterhaltung-1',
-    category: 'Unterhaltung',
+    category: 'catering',
     task_name: 'Zusätzliche Unterhaltung planen',
     description: 'Photobooth, Spiele, Animation',
     priority: 'low',
@@ -382,7 +382,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'unterhaltung-2',
-    category: 'Unterhaltung',
+    category: 'catering',
     task_name: 'Kinderprogramm organisieren',
     description: 'Betreuung und Aktivitäten für Kinder',
     priority: 'medium',
@@ -391,7 +391,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'flitterwochen-1',
-    category: 'Flitterwochen',
+    category: 'planning',
     task_name: 'Reiseziel festlegen',
     description: 'Honeymoon planen',
     priority: 'low',
@@ -400,7 +400,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'flitterwochen-2',
-    category: 'Flitterwochen',
+    category: 'planning',
     task_name: 'Flitterwochen buchen',
     description: 'Flüge und Unterkunft reservieren',
     priority: 'medium',
@@ -409,7 +409,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'papeterie-1',
-    category: 'Papeterie',
+    category: 'decoration',
     task_name: 'Menükarten gestalten',
     description: 'Design und Druck',
     priority: 'low',
@@ -418,7 +418,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'papeterie-2',
-    category: 'Papeterie',
+    category: 'decoration',
     task_name: 'Tischkarten erstellen',
     description: 'Namen und Sitzplätze',
     priority: 'medium',
@@ -427,7 +427,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'papeterie-3',
-    category: 'Papeterie',
+    category: 'decoration',
     task_name: 'Programmheft erstellen',
     description: 'Ablauf für Gäste',
     priority: 'low',
@@ -436,7 +436,7 @@ Manchmal können die Dokumente (erweiterte Geburtsurkunde, Meldebescheinigung) d
   },
   {
     id: 'wichtige-themen-1',
-    category: 'Wichtige Themen',
+    category: 'planning',
     task_name: 'Ehevertrag und Güterstand besprechen',
     description: `Nehmen Sie sich Zeit, um über rechtliche und finanzielle Regelungen zu sprechen:
 
@@ -461,7 +461,7 @@ Diese Aufgabe dient zunächst als Reminder, sich über diese Themen zu informier
   },
   {
     id: 'rechtliche-vorsorge-1',
-    category: 'Rechtliche Vorsorge',
+    category: 'planning',
     task_name: 'Vollmachten und Testament aktualisieren',
     description: `Nach der Heirat sollten Sie wichtige Vorsorgedokumente überprüfen und ggf. aktualisieren:
 
@@ -485,7 +485,7 @@ Bei Bedarf können Sie einen Notar, Rechtsanwalt oder Beratungsstelle konsultier
   },
   {
     id: 'kirchliche-trauung-1',
-    category: 'Kirchliche Trauung',
+    category: 'planning',
     task_name: 'Gespräch mit Pfarrer/Gemeinde vereinbaren',
     description: 'Erstes Kennenlerngespräch und Terminvereinbarung für kirchliche Trauung',
     priority: 'high',
@@ -494,7 +494,7 @@ Bei Bedarf können Sie einen Notar, Rechtsanwalt oder Beratungsstelle konsultier
   },
   {
     id: 'kirchliche-trauung-2',
-    category: 'Kirchliche Trauung',
+    category: 'planning',
     task_name: 'Traugespräche und Vorbereitung',
     description: 'Teilnahme an Traugesprächen, Auswahl von Texten, Liedern und Ablauf der Zeremonie',
     priority: 'high',
@@ -503,7 +503,7 @@ Bei Bedarf können Sie einen Notar, Rechtsanwalt oder Beratungsstelle konsultier
   },
   {
     id: 'kirchliche-trauung-3',
-    category: 'Kirchliche Trauung',
+    category: 'planning',
     task_name: 'Details für kirchliche Trauung finalisieren',
     description: 'Finale Absprachen zu Dekoration, Musik, Programm und organisatorischen Details',
     priority: 'medium',
@@ -512,7 +512,7 @@ Bei Bedarf können Sie einen Notar, Rechtsanwalt oder Beratungsstelle konsultier
   },
   {
     id: 'nach-trauung-1',
-    category: 'Nach der Trauung',
+    category: 'planning',
     task_name: 'Dokumente und Verträge aktualisieren',
     description: `Nach der Eheschließung sollten verschiedene Dokumente und Verträge aktualisiert werden:
 
