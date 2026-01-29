@@ -19,6 +19,7 @@ export default function TodosModule() {
   const [view, setView] = useState<'list' | 'timeline'>('list');
   const [isMobile, setIsMobile] = useState(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const [newTask, setNewTask] = useState({
     title: '',
@@ -218,6 +219,18 @@ export default function TodosModule() {
         newSet.delete(taskId);
       } else {
         newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleCategoryExpansion = (category: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(category)) {
+        newSet.delete(category);
+      } else {
+        newSet.add(category);
       }
       return newSet;
     });
@@ -536,6 +549,7 @@ export default function TodosModule() {
             Array.from(groupedTasks.entries()).map(([category, categoryTasks]) => {
               const categoryInfo = taskCategories.find(c => c.id === category);
               const completedCount = categoryTasks.filter(t => t.completed).length;
+              const isCategoryExpanded = expandedCategories.has(category);
 
               return (
                 <div
@@ -543,20 +557,29 @@ export default function TodosModule() {
                   className="bg-white rounded-lg border-2 hover:shadow-md transition-all"
                   style={{ borderColor: '#d6b15b' }}
                 >
-                  <div className="flex items-center gap-3 p-4 border-b-2" style={{ borderColor: '#f3f4f6' }}>
-                    <div className={`w-10 h-10 rounded-lg ${getCategoryColor(category)} flex items-center justify-center text-white text-xl`}>
+                  <div
+                    className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => toggleCategoryExpansion(category)}
+                  >
+                    <div className={`w-10 h-10 rounded-lg ${getCategoryColor(category)} flex items-center justify-center text-white text-xl flex-shrink-0`}>
                       {categoryInfo?.icon || '📋'}
                     </div>
                     <h3 className="text-lg font-bold flex-1" style={{ color: '#3b3b3d' }}>
                       {categoryInfo?.label || category}
                     </h3>
                     <span className="text-sm font-medium text-gray-500">
-                      ({completedCount}/{categoryTasks.length})
+                      {completedCount}/{categoryTasks.length}
                     </span>
+                    {isCategoryExpanded ? (
+                      <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                    )}
                   </div>
 
-                  <div className="divide-y-2" style={{ borderColor: '#f3f4f6' }}>
-                    {categoryTasks.map(task => {
+                  {isCategoryExpanded && (
+                    <div className="divide-y-2 border-t-2" style={{ borderColor: '#f3f4f6' }}>
+                      {categoryTasks.map(task => {
                       const isExpanded = expandedTasks.has(task.id);
                       const blockedBy = getBlockedTasks(task);
                       const isBlocked = blockedBy.length > 0;
@@ -750,7 +773,8 @@ export default function TodosModule() {
                         </div>
                       );
                     })}
-                  </div>
+                    </div>
+                  )}
                 </div>
               );
             })
