@@ -10,6 +10,9 @@ export interface SupportTeamMember {
   role: string;
   phone: string;
   email: string;
+  briefing_date?: string;
+  availability_start?: string;
+  availability_end?: string;
   responsibilities: string;
   notes: string;
   created_at?: string;
@@ -46,6 +49,9 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
     role: '',
     phone: '',
     email: '',
+    briefing_date: '',
+    availability_start: '',
+    availability_end: '',
     responsibilities: '',
     notes: ''
   });
@@ -124,6 +130,9 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
         role: selectedMember.role,
         phone: selectedMember.phone,
         email: selectedMember.email,
+        briefing_date: selectedMember.briefing_date || '',
+        availability_start: selectedMember.availability_start || '',
+        availability_end: selectedMember.availability_end || '',
         responsibilities: selectedMember.responsibilities,
         notes: selectedMember.notes
       });
@@ -145,6 +154,9 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
         role: member.role,
         phone: member.phone,
         email: member.email,
+        briefing_date: member.briefing_date || '',
+        availability_start: member.availability_start || '',
+        availability_end: member.availability_end || '',
         responsibilities: member.responsibilities,
         notes: member.notes
       });
@@ -165,6 +177,9 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
         role: '',
         phone: prefilledData.phone,
         email: prefilledData.email,
+        briefing_date: '',
+        availability_start: '',
+        availability_end: '',
         responsibilities: '',
         notes: ''
       });
@@ -178,6 +193,9 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
         role: '',
         phone: '',
         email: '',
+        briefing_date: '',
+        availability_start: '',
+        availability_end: '',
         responsibilities: '',
         notes: ''
       });
@@ -476,6 +494,52 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
                 placeholder={t('supportTeam.emailPlaceholder')}
                 disabled={(selectionMode === 'guest' && !selectedGuestId) || (selectionMode === 'existing' && !selectedTeamMemberId)}
               />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+              Termine
+            </h3>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Briefing-Termin
+                </label>
+                <input
+                  type="date"
+                  value={formData.briefing_date || ''}
+                  onChange={(e) => setFormData({ ...formData, briefing_date: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Verfügbar von
+                </label>
+                <input
+                  type="date"
+                  value={formData.availability_start || ''}
+                  onChange={(e) => setFormData({ ...formData, availability_start: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Verfügbar bis
+                </label>
+                <input
+                  type="date"
+                  value={formData.availability_end || ''}
+                  onChange={(e) => setFormData({ ...formData, availability_end: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                />
+              </div>
             </div>
           </div>
 

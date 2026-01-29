@@ -8,7 +8,7 @@ import TimelineView from './TimelineView';
 
 export default function TodosModule() {
   const { t } = useTranslation();
-  const { weddingData, tasks, addTask, updateTask, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData } = useWeddingData();
+  const { weddingData, tasks, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData } = useWeddingData();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showRecalculateDialog, setShowRecalculateDialog] = useState(false);
@@ -504,9 +504,15 @@ export default function TodosModule() {
         weddingData?.wedding_date ? (
           <TimelineView
             tasks={sortedTasks}
+            events={events}
+            vendors={vendors}
+            locations={locations}
+            supportTeam={supportTeam}
             weddingDate={weddingData.wedding_date}
             onToggleTask={toggleTaskCompletion}
             onEditTask={handleEditTask}
+            onUpdateTask={updateTask}
+            onUpdateEvent={updateEvent}
             getBlockedTasks={getBlockedTasks}
           />
         ) : (

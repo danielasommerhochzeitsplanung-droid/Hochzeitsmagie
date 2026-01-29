@@ -10,6 +10,8 @@ export interface Location {
   contact_name: string;
   contact_phone: string;
   contact_email: string;
+  viewing_date?: string;
+  reservation_date?: string;
   notes: string;
   archived?: boolean;
   created_at?: string;
@@ -42,6 +44,8 @@ export default function LocationModal({ isOpen, onClose, onSave, location }: Loc
     contact_name: '',
     contact_phone: '',
     contact_email: '',
+    viewing_date: '',
+    reservation_date: '',
     notes: ''
   });
 
@@ -54,6 +58,8 @@ export default function LocationModal({ isOpen, onClose, onSave, location }: Loc
         contact_name: location.contact_name,
         contact_phone: location.contact_phone,
         contact_email: location.contact_email,
+        viewing_date: location.viewing_date || '',
+        reservation_date: location.reservation_date || '',
         notes: location.notes
       });
     } else {
@@ -64,6 +70,8 @@ export default function LocationModal({ isOpen, onClose, onSave, location }: Loc
         contact_name: '',
         contact_phone: '',
         contact_email: '',
+        viewing_date: '',
+        reservation_date: '',
         notes: ''
       });
     }
@@ -179,6 +187,39 @@ export default function LocationModal({ isOpen, onClose, onSave, location }: Loc
                     style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h3 className="text-sm font-semibold mb-3" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+              Termine
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Besichtigungstermin
+                </label>
+                <input
+                  type="date"
+                  value={formData.viewing_date}
+                  onChange={(e) => setFormData({ ...formData, viewing_date: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Reservierungstermin
+                </label>
+                <input
+                  type="date"
+                  value={formData.reservation_date}
+                  onChange={(e) => setFormData({ ...formData, reservation_date: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                />
               </div>
             </div>
           </div>

@@ -213,6 +213,9 @@ export interface Vendor extends BaseEntity {
   contract_signed: boolean;
   deposit_paid: boolean;
   final_payment_due?: string;
+  first_contact_date?: string;
+  next_appointment?: string;
+  cancellation_deadline?: string;
   archived: boolean;
 }
 
@@ -227,6 +230,8 @@ export interface Location extends BaseEntity {
   website?: string;
   capacity?: number;
   notes?: string;
+  viewing_date?: string;
+  reservation_date?: string;
   archived: boolean;
 }
 
@@ -236,6 +241,9 @@ export interface SupportTeam extends BaseEntity {
   email?: string;
   phone?: string;
   notes?: string;
+  briefing_date?: string;
+  availability_start?: string;
+  availability_end?: string;
   archived: boolean;
   guest_id?: string;
 }
