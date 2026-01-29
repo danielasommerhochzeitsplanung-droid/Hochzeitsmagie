@@ -4,6 +4,7 @@ import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
+import TimelineView from './TimelineView';
 
 export default function TodosModule() {
   const { t } = useTranslation();
@@ -308,120 +309,6 @@ export default function TodosModule() {
     return cat?.color || 'bg-gray-500';
   };
 
-  const GanttChart = () => {
-    if (!weddingData?.wedding_date) {
-      return (
-        <div className="text-center py-12 text-gray-500">
-          Bitte setzen Sie zuerst ein Hochzeitsdatum in den Einstellungen
-        </div>
-      );
-    }
-
-    const weddingDate = new Date(weddingData.wedding_date);
-    const today = new Date();
-    const earliestTask = sortedTasks.reduce((earliest, task) => {
-      if (!task.start_date) return earliest;
-      const taskDate = new Date(task.start_date);
-      return !earliest || taskDate < earliest ? taskDate : earliest;
-    }, null as Date | null);
-
-    const startDate = earliestTask || new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
-    const totalDays = Math.ceil((weddingDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    const todayPercent = Math.max(0, Math.min(100, ((today.getTime() - startDate.getTime()) / (weddingDate.getTime() - startDate.getTime())) * 100));
-
-    const getTaskPosition = (task: Task) => {
-      if (!task.start_date || !task.due_date) return null;
-
-      const taskStart = new Date(task.start_date);
-      const taskEnd = new Date(task.due_date);
-
-      const startPercent = ((taskStart.getTime() - startDate.getTime()) / (totalDays * 24 * 60 * 60 * 1000)) * 100;
-      const durationPercent = ((taskEnd.getTime() - taskStart.getTime()) / (totalDays * 24 * 60 * 60 * 1000)) * 100;
-
-      return { left: Math.max(0, startPercent), width: Math.max(2, durationPercent) };
-    };
-
-    return (
-      <div className="space-y-4">
-        <div className="relative bg-white rounded-lg border-2" style={{ borderColor: '#d6b15b' }}>
-          <div className="p-4 border-b" style={{ borderColor: '#e5e5e5' }}>
-            <div className="flex justify-between text-xs font-semibold" style={{ color: '#666' }}>
-              <span>Heute</span>
-              <span>Hochzeitstag ({weddingDate.toLocaleDateString('de-DE')})</span>
-            </div>
-          </div>
-
-          <div className="relative" style={{ minHeight: '400px' }}>
-            <div
-              className="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-10"
-              style={{ left: `${todayPercent}%` }}
-            >
-              <div className="absolute -top-1 -left-2 w-4 h-4 bg-rose-500 rounded-full" />
-            </div>
-
-            <div className="p-4 space-y-3">
-              {sortedTasks.map(task => {
-                const position = getTaskPosition(task);
-                if (!position) return null;
-
-                const blockedBy = getBlockedTasks(task);
-                const isBlocked = blockedBy.length > 0;
-
-                return (
-                  <div key={task.id} className="relative group">
-                    <div className="flex items-center gap-3 mb-1">
-                      <button
-                        onClick={() => toggleTaskCompletion(task)}
-                        className="flex-shrink-0"
-                      >
-                        {task.completed ? (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                        ) : (
-                          <Circle className="w-5 h-5 text-gray-400" />
-                        )}
-                      </button>
-                      <span
-                        className={`text-sm ${task.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}
-                        style={{ fontFamily: 'Open Sans, sans-serif' }}
-                      >
-                        {task.title}
-                      </span>
-                      {isBlocked && !task.completed && (
-                        <AlertCircle className="w-4 h-4 text-amber-500" />
-                      )}
-                    </div>
-
-                    <div className="relative h-8 bg-gray-100 rounded-md overflow-hidden">
-                      <div
-                        className={`absolute h-full ${getCategoryColor(task.category)} ${
-                          task.completed ? 'opacity-50' : 'opacity-90'
-                        } rounded-md transition-all`}
-                        style={{
-                          left: `${position.left}%`,
-                          width: `${position.width}%`,
-                        }}
-                      >
-                        <div className="px-2 py-1 text-xs text-white truncate">
-                          {task.category}
-                        </div>
-                      </div>
-                    </div>
-
-                    {isBlocked && !task.completed && (
-                      <div className="mt-1 text-xs text-amber-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                        Wartet auf: {blockedBy.join(', ')}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const showAutoTaskBanner = tasks.length === 0 && weddingData?.wedding_date && !weddingData?.auto_tasks_initialized;
 
   return (
@@ -614,7 +501,22 @@ export default function TodosModule() {
       )}
 
       {view === 'timeline' ? (
-        <GanttChart />
+        weddingData?.wedding_date ? (
+          <TimelineView
+            tasks={sortedTasks}
+            weddingDate={weddingData.wedding_date}
+            onToggleTask={toggleTaskCompletion}
+            onEditTask={handleEditTask}
+            getBlockedTasks={getBlockedTasks}
+          />
+        ) : (
+          <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
+            <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
+            <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+              Bitte setzen Sie zuerst ein Hochzeitsdatum in den Einstellungen
+            </p>
+          </div>
+        )
       ) : (
         <div className="space-y-6">
           {sortedTasks.length === 0 ? (
