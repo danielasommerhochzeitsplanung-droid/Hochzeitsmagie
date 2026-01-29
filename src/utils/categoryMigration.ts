@@ -16,7 +16,8 @@ const OLD_TO_NEW_CATEGORY_MAP: Record<string, string> = {
   'Nach der Trauung': 'planning',
 };
 
-const MIGRATION_KEY = 'category_migration_v1_completed';
+const MIGRATION_KEY = 'category_migration_v2_completed';
+const TASKS_STORAGE_KEY = 'wedding_tasks';
 
 export function migrateCategoriesIfNeeded(): boolean {
   if (typeof window === 'undefined') return false;
@@ -27,37 +28,38 @@ export function migrateCategoriesIfNeeded(): boolean {
   }
 
   try {
-    const weddingDataStr = localStorage.getItem('wedding-data');
-    if (!weddingDataStr) {
+    const tasksStr = localStorage.getItem(TASKS_STORAGE_KEY);
+    if (!tasksStr) {
       localStorage.setItem(MIGRATION_KEY, 'true');
       return false;
     }
 
-    const weddingData = JSON.parse(weddingDataStr);
+    const tasks = JSON.parse(tasksStr);
     let migratedCount = 0;
 
-    if (weddingData.todos && Array.isArray(weddingData.todos)) {
-      weddingData.todos = weddingData.todos.map((todo: any) => {
-        if (todo.category && OLD_TO_NEW_CATEGORY_MAP[todo.category]) {
+    if (Array.isArray(tasks)) {
+      const updatedTasks = tasks.map((task: any) => {
+        if (task.category && OLD_TO_NEW_CATEGORY_MAP[task.category]) {
           migratedCount++;
           return {
-            ...todo,
-            category: OLD_TO_NEW_CATEGORY_MAP[todo.category]
+            ...task,
+            category: OLD_TO_NEW_CATEGORY_MAP[task.category]
           };
         }
-        return todo;
+        return task;
       });
-    }
 
-    if (migratedCount > 0) {
-      localStorage.setItem('wedding-data', JSON.stringify(weddingData));
-      console.log(`✅ Migration completed: ${migratedCount} tasks updated`);
+      if (migratedCount > 0) {
+        localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(updatedTasks));
+        console.log(`✅ Migration completed: ${migratedCount} tasks updated`);
+      }
     }
 
     localStorage.setItem(MIGRATION_KEY, 'true');
     return migratedCount > 0;
   } catch (error) {
     console.error('Migration failed:', error);
+    localStorage.setItem(MIGRATION_KEY, 'true');
     return false;
   }
 }
