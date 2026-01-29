@@ -5,6 +5,7 @@ import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
 import TimelineView from './TimelineView';
+import GanttChart from './GanttChart';
 
 export default function TodosModule() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export default function TodosModule() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [view, setView] = useState<'list' | 'timeline'>('list');
+  const [view, setView] = useState<'list' | 'timeline' | 'gantt'>('list');
   const [isMobile, setIsMobile] = useState(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
@@ -416,6 +417,17 @@ export default function TodosModule() {
             >
               Timeline
             </button>
+            <button
+              onClick={() => setView('gantt')}
+              className={`px-4 py-2 text-sm font-medium transition-all ${
+                view === 'gantt'
+                  ? 'text-white'
+                  : 'text-gray-700 bg-white hover:bg-gray-50'
+              }`}
+              style={view === 'gantt' ? { backgroundColor: '#d6b15b' } : {}}
+            >
+              Gantt
+            </button>
           </div>
 
           <button
@@ -499,7 +511,7 @@ export default function TodosModule() {
         </div>
       </div>
 
-      {view === 'timeline' && isMobile && (
+      {(view === 'timeline' || view === 'gantt') && isMobile && (
         <div className="bg-amber-50 border-2 border-amber-500 rounded-lg p-4 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
@@ -507,7 +519,7 @@ export default function TodosModule() {
               Desktop empfohlen
             </div>
             <div className="text-sm text-amber-700">
-              Für die Timeline-Ansicht nutzen Sie bitte einen Desktop-Browser für die beste Darstellung.
+              Für die {view === 'gantt' ? 'Gantt' : 'Timeline'}-Ansicht nutzen Sie bitte einen Desktop-Browser für die beste Darstellung.
             </div>
           </div>
         </div>
@@ -527,6 +539,28 @@ export default function TodosModule() {
             onUpdateTask={updateTask}
             onUpdateEvent={updateEvent}
             getBlockedTasks={getBlockedTasks}
+          />
+        ) : (
+          <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
+            <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
+            <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+              Bitte setzen Sie zuerst ein Hochzeitsdatum in den Einstellungen
+            </p>
+          </div>
+        )
+      ) : view === 'gantt' ? (
+        weddingData?.wedding_date ? (
+          <GanttChart
+            tasks={sortedTasks}
+            events={events}
+            vendors={vendors}
+            locations={locations}
+            supportTeam={supportTeam}
+            weddingDate={weddingData.wedding_date}
+            onToggleTask={toggleTaskCompletion}
+            onEditTask={handleEditTask}
+            onUpdateTask={updateTask}
+            onUpdateEvent={updateEvent}
           />
         ) : (
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
