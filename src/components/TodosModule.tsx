@@ -561,7 +561,7 @@ export default function TodosModule() {
                     className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => toggleCategoryExpansion(category)}
                   >
-                    <div className={`w-10 h-10 rounded-lg ${getCategoryColor(category)} flex items-center justify-center text-white text-xl flex-shrink-0`}>
+                    <div className="text-3xl flex-shrink-0">
                       {categoryInfo?.icon || '📋'}
                     </div>
                     <h3 className="text-lg font-bold flex-1" style={{ color: '#3b3b3d' }}>
