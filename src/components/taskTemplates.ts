@@ -11,7 +11,7 @@ export interface TaskTemplate {
 export const taskCategories = [
   { id: 'planning', label: 'Planung & Organisation', color: 'bg-blue-500', icon: '📋' },
   { id: 'location', label: 'Location & Räumlichkeiten', color: 'bg-emerald-500', icon: '🏛️' },
-  { id: 'couple', label: 'Brautpaar', color: 'bg-pink-500', icon: '💍' },
+  { id: 'couple', label: 'Hochzeitspaar', color: 'bg-pink-500', icon: '👫' },
   { id: 'guests', label: 'Gäste & Einladungen', color: 'bg-amber-500', icon: '👥' },
   { id: 'catering', label: 'Catering & Unterhaltung', color: 'bg-orange-500', icon: '🍽️' },
   { id: 'decoration', label: 'Dekoration & Floristik', color: 'bg-cyan-500', icon: '🎨' },
