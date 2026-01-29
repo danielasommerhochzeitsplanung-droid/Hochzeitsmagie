@@ -5,6 +5,7 @@ import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutom
 import { loadTaskTemplates } from '../lib/taskTemplates';
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
+import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -89,6 +90,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const { showFeedback, FeedbackComponent } = useImportFeedback();
 
   const [weddingData, setWeddingData] = useState<WeddingData>(() => {
+    migrateCategoriesIfNeeded();
     const data = storage.weddingData.getAll();
     return data.length > 0 ? data[0] : getDefaultWeddingData();
   });
