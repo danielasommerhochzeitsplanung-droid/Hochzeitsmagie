@@ -34,8 +34,8 @@ export default function TodosModule() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handleEnableAutoTasks = () => {
-    initializeAutoTasks();
+  const handleEnableAutoTasks = async () => {
+    await initializeAutoTasks();
   };
 
   const handleSkipAutoTasks = () => {

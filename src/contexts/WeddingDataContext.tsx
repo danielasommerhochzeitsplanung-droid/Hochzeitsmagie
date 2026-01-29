@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useCallback, use
 import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
 import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutomation';
-import { taskTemplateData } from '../data/taskTemplateData';
+import { loadTaskTemplates } from '../lib/taskTemplates';
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
 
@@ -70,7 +70,7 @@ interface WeddingDataContextType {
   addTask: (task: Omit<Task, 'id' | 'created_at'>) => Task;
   updateTask: (id: string, task: Partial<Task>) => void;
   deleteTask: (id: string) => void;
-  initializeAutoTasks: () => void;
+  initializeAutoTasks: () => Promise<void>;
   dismissTaskWarning: (id: string) => void;
 
   exportData: () => void;
@@ -520,7 +520,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const initializeAutoTasks = () => {
+  const initializeAutoTasks = async () => {
     if (!weddingData.wedding_date) {
       console.error('Wedding date is required to initialize auto tasks');
       return;
@@ -528,10 +528,17 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
     const planningStartDate = weddingData.planning_start_date || new Date().toISOString().split('T')[0];
 
+    const templates = await loadTaskTemplates();
+
+    if (templates.length === 0) {
+      console.error('No task templates found in database');
+      return;
+    }
+
     const generatedTasks = generateTasksFromTemplates(
       planningStartDate,
       weddingData.wedding_date,
-      taskTemplateData
+      templates
     );
 
     generatedTasks.forEach(task => {
