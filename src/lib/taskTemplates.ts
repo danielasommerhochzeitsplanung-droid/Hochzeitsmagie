@@ -1,7 +1,13 @@
 import { supabase } from './supabase';
 import { TaskTemplate } from '../utils/taskAutomation';
+import { taskTemplateData } from '../data/taskTemplateData';
 
 export async function loadTaskTemplates(): Promise<TaskTemplate[]> {
+  if (!supabase) {
+    console.warn('Supabase not available, using fallback templates');
+    return taskTemplateData;
+  }
+
   try {
     const { data, error } = await supabase
       .from('task_templates')
@@ -10,11 +16,13 @@ export async function loadTaskTemplates(): Promise<TaskTemplate[]> {
 
     if (error) {
       console.error('Error loading task templates from database:', error);
-      return [];
+      console.warn('Using fallback templates');
+      return taskTemplateData;
     }
 
-    if (!data) {
-      return [];
+    if (!data || data.length === 0) {
+      console.warn('No templates in database, using fallback');
+      return taskTemplateData;
     }
 
     return data.map(template => ({
@@ -28,6 +36,7 @@ export async function loadTaskTemplates(): Promise<TaskTemplate[]> {
     }));
   } catch (error) {
     console.error('Failed to load task templates:', error);
-    return [];
+    console.warn('Using fallback templates');
+    return taskTemplateData;
   }
 }
