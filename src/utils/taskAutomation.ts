@@ -16,6 +16,9 @@ export interface TaskTemplate {
     '18_months'?: boolean;
   };
   weeks_before_wedding?: number;
+  main_category?: string;
+  depends_on?: string[];
+  planning_timeline?: string[];
 }
 
 export interface Task {
@@ -32,6 +35,7 @@ export interface Task {
   offset_type?: string;
   needs_adjustment_warning?: boolean;
   warning_dismissed?: boolean;
+  depends_on?: string[];
 }
 
 export function calculatePlanningWindow(planningStartDate: string, weddingDate: string): string {

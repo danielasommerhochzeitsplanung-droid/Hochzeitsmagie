@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
@@ -622,28 +622,45 @@ export default function TodosModule() {
                       return (
                         <div key={task.id}>
                           <div
-                            className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                            className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${isBlocked && !task.completed ? 'bg-gray-50 opacity-75' : ''}`}
                             onClick={() => toggleTaskExpansion(task.id)}
                           >
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleTaskCompletion(task);
+                                if (!isBlocked) {
+                                  toggleTaskCompletion(task);
+                                }
                               }}
                               className="flex-shrink-0"
+                              disabled={isBlocked && !task.completed}
+                              title={isBlocked && !task.completed ? `Warte auf: ${blockedBy.join(', ')}` : ''}
                             >
                               {task.completed ? (
                                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                              ) : isBlocked ? (
+                                <Lock className="w-5 h-5 text-amber-500" />
                               ) : (
                                 <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
                               )}
                             </button>
 
                             <h4
-                              className={`flex-1 font-medium ${task.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}
+                              className={`flex-1 font-medium ${
+                                task.completed
+                                  ? 'line-through text-gray-400'
+                                  : isBlocked
+                                    ? 'text-gray-500'
+                                    : 'text-gray-900'
+                              }`}
                               style={{ fontFamily: 'Open Sans, sans-serif' }}
                             >
                               {task.title}
+                              {isBlocked && !task.completed && (
+                                <span className="ml-2 text-xs text-amber-600">
+                                  ({blockedBy.length} {blockedBy.length === 1 ? 'Abhängigkeit' : 'Abhängigkeiten'})
+                                </span>
+                              )}
                             </h4>
 
                             {isExpanded ? (
