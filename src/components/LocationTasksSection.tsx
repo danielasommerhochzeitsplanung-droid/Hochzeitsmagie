@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle2, Circle, Calendar, Plus, Edit2, X } from 'lucide-react';
-import { useWeddingData, Task } from '../contexts/WeddingDataContext';
+import { useWeddingData } from '../contexts/WeddingDataContext';
+import { Task } from '../lib/storage-adapter';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -187,11 +188,16 @@ export default function LocationTasksSection() {
   });
 
   return (
-    <div className="mt-8 space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-          Tasks für Locations & Räumlichkeiten
-        </h3>
+    <div className="mt-8 space-y-4 p-6 bg-white rounded-lg border-2 shadow-sm" style={{ borderColor: '#d6b15b' }}>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-xl font-bold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+            📍 Tasks für Locations
+          </h3>
+          <p className="text-sm text-gray-600 mt-1" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+            Aufgaben spezifisch für Locations und Räumlichkeiten
+          </p>
+        </div>
         <button
           onClick={() => {
             setEditingTask(null);
@@ -213,8 +219,11 @@ export default function LocationTasksSection() {
       {sortedTasks.length === 0 ? (
         <div className="text-center py-8 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
           <Calendar className="w-10 h-10 mx-auto mb-3" style={{ color: '#d6b15b' }} />
-          <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+          <p className="text-gray-600 font-semibold" style={{ fontFamily: 'Open Sans, sans-serif' }}>
             Keine Tasks für Locations vorhanden
+          </p>
+          <p className="text-sm text-gray-500 mt-2" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+            Klicke auf "Task hinzufügen", um einen neuen Task zu erstellen
           </p>
         </div>
       ) : (
