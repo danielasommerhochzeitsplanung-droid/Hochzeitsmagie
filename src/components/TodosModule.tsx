@@ -41,8 +41,8 @@ export default function TodosModule() {
     await initializeAutoTasks();
   };
 
-  const handleSkipAutoTasks = () => {
-    updateWeddingData({ auto_tasks_initialized: true });
+  const handleSkipAutoTasks = async () => {
+    await updateWeddingData({ auto_tasks_initialized: true });
   };
 
   const generateStandardTasks = () => {

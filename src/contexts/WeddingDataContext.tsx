@@ -34,7 +34,7 @@ interface WeddingDataContextType {
   tasks: Task[];
   storageChangeCounter: number;
 
-  updateWeddingData: (data: Partial<WeddingData>) => void;
+  updateWeddingData: (data: Partial<WeddingData>) => Promise<void>;
 
   addGuest: (guest: Omit<Guest, 'id'>) => Guest;
   updateGuest: (id: string, guest: Partial<Guest>) => void;
@@ -144,7 +144,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const updateWeddingData = (data: Partial<WeddingData>) => {
+  const updateWeddingData = async (data: Partial<WeddingData>) => {
     try {
       const allData = storage.weddingData.getAll();
       let updatedData: WeddingData;
@@ -156,7 +156,48 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
         updatedData = storage.weddingData.create(data);
       }
 
-      if (oldData && updatedData.id && updatedData.auto_tasks_enabled) {
+      if (updatedData.wedding_date && updatedData.planning_start_date && !updatedData.auto_tasks_initialized) {
+        const planningStartDate = updatedData.planning_start_date;
+        const weddingDate = updatedData.wedding_date;
+
+        const templates = await loadTaskTemplates();
+
+        if (templates.length > 0) {
+          const generatedTasks = generateTasksFromTemplates(
+            planningStartDate,
+            weddingDate,
+            templates
+          );
+
+          generatedTasks.forEach(task => {
+            const newTask = storage.tasks.create({
+              title: task.title,
+              description: task.description || '',
+              category: task.category,
+              due_date: task.dueDate,
+              completed: false,
+              priority: task.priority as 'high' | 'medium' | 'low',
+              is_system_task: true,
+              is_system_generated: true,
+              template_id: task.template_id,
+              offset_weeks: task.offset_weeks,
+              offset_type: task.offset_type
+            });
+          });
+
+          updatedData = storage.weddingData.update(updatedData.id, {
+            auto_tasks_enabled: true,
+            auto_tasks_initialized: true,
+            last_planning_start_date: planningStartDate,
+            last_wedding_date: weddingDate
+          }) || updatedData;
+
+          const refreshedTasks = storage.tasks.getAll();
+          setTasks(refreshedTasks);
+        }
+      }
+
+      if (oldData && updatedData.id && updatedData.auto_tasks_enabled && updatedData.auto_tasks_initialized) {
         const oldPlanningStartDate = oldData.last_planning_start_date || oldData.planning_start_date;
         const oldWeddingDate = oldData.last_wedding_date || oldData.wedding_date;
         const newPlanningStartDate = updatedData.planning_start_date;
@@ -559,7 +600,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       });
     });
 
-    updateWeddingData({
+    await updateWeddingData({
       auto_tasks_enabled: true,
       auto_tasks_initialized: true,
       last_planning_start_date: planningStartDate,

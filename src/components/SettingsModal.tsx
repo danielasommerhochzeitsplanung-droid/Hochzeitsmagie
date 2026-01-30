@@ -219,7 +219,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!person1.name || !person2.name) {
       alert('Bitte beide Namen eingeben');
       return;
@@ -233,13 +233,13 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       }
     }
 
-    saveSettings();
+    await saveSettings();
   };
 
-  const saveSettings = () => {
+  const saveSettings = async () => {
     setLoading(true);
     try {
-      updateWeddingData({
+      await updateWeddingData({
         couple_name_1: person1.name,
         couple_name_2: person2.name,
         total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
@@ -255,11 +255,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     }
   };
 
-  const handleDateChangeConfirm = (adjustTasks: boolean) => {
+  const handleDateChangeConfirm = async (adjustTasks: boolean) => {
     if (adjustTasks) {
       adjustAutoTasks();
     }
-    saveSettings();
+    await saveSettings();
     setShowDateChangeDialog(false);
   };
 
@@ -582,8 +582,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   <input
                     type="checkbox"
                     checked={weddingData.auto_tasks_enabled || false}
-                    onChange={(e) => {
-                      updateWeddingData({ auto_tasks_enabled: e.target.checked });
+                    onChange={async (e) => {
+                      await updateWeddingData({ auto_tasks_enabled: e.target.checked });
                     }}
                     className="sr-only peer"
                   />

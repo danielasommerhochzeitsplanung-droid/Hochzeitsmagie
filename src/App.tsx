@@ -65,12 +65,12 @@ function App() {
     setDaysRemaining(days);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!brideName || !groomName || !weddingDate) return;
 
-    updateWeddingData({
+    await updateWeddingData({
       couple_name_1: brideName,
       couple_name_2: groomName,
       wedding_date: weddingDate,
