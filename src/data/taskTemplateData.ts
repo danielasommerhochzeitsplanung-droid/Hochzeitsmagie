@@ -22,38 +22,155 @@ export const taskTemplateData: TaskTemplate[] = [
   {
     id: 'location-1',
     category: 'location',
-    task_name: 'Locations recherchieren und besichtigen',
-    description: 'Verschiedene Locations anschauen und vergleichen',
+    task_name: 'Budget für Location festlegen',
+    description: 'Definieren Sie Ihr Gesamtbudget für die Location und legen Sie fest, welchen Anteil die Locationmiete ausmachen darf. Berücksichtigen Sie dabei auch Nebenkosten wie Strom, Heizung, Reinigung, Versicherung.',
     priority: 'high',
-    default_duration: 14,
-    timing_rules: { '12_months': true, '18_months': true }
+    default_duration: 7,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue'
   },
   {
     id: 'location-2',
     category: 'location',
-    task_name: 'Location buchen',
-    description: 'Vertrag abschließen und Anzahlung leisten',
+    task_name: 'Anforderungen definieren (Gästezahl, Stil, Must-haves)',
+    description: 'Erstellen Sie eine Liste mit allen wichtigen Anforderungen: Wie viele Gäste erwarten Sie? Welcher Stil gefällt Ihnen (rustikal, modern, romantisch)? Was sind absolute Must-haves (z.B. Barrierefreiheit, Übernachtungsmöglichkeiten, Indoor/Outdoor)?',
     priority: 'high',
     default_duration: 7,
-    timing_rules: { '9_months': true, '12_months': true, '18_months': true }
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-1']
   },
   {
     id: 'location-3',
     category: 'location',
-    task_name: 'Detailplanung mit Location',
-    description: 'Raumaufteilung, Zeitplan, technische Details klären',
-    priority: 'medium',
+    task_name: 'Locations recherchieren (online, Empfehlungen)',
+    description: 'Suchen Sie online nach passenden Locations, fragen Sie Freunde und Familie nach Empfehlungen, schauen Sie sich Hochzeitsblogs und Instagram an. Erstellen Sie eine Shortlist von 5-10 interessanten Locations.',
+    priority: 'high',
     default_duration: 14,
-    timing_rules: { '3_months': true, '6_months': true }
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-2']
   },
   {
     id: 'location-4',
     category: 'location',
-    task_name: 'Final Walk-Through',
-    description: 'Letzte Absprachen vor Ort',
+    task_name: 'Besichtigungstermine vereinbaren',
+    description: 'Kontaktieren Sie die Locations auf Ihrer Shortlist und vereinbaren Sie Besichtigungstermine. Fragen Sie vorab nach Verfügbarkeit an Ihrem Wunschtermin und groben Preisinformationen.',
+    priority: 'high',
+    default_duration: 7,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-3']
+  },
+  {
+    id: 'location-5',
+    category: 'location',
+    task_name: 'Locations besichtigen',
+    description: 'Besuchen Sie die Locations persönlich. Achten Sie auf: Raumgröße, Atmosphäre, Parkplätze, Akustik, Lichtverhältnisse, sanitäre Anlagen, Küche/Catering-Möglichkeiten. Machen Sie Fotos und Notizen.',
+    priority: 'high',
+    default_duration: 14,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-4']
+  },
+  {
+    id: 'location-6',
+    category: 'location',
+    task_name: 'Pro/Contra-Liste erstellen',
+    description: 'Vergleichen Sie alle besichtigten Locations anhand Ihrer Kriterien: Preis, Atmosphäre, Kapazität, Ausstattung, Flexibilität, Service. Gewichten Sie die Faktoren nach Wichtigkeit.',
+    priority: 'high',
+    default_duration: 7,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-5']
+  },
+  {
+    id: 'location-7',
+    category: 'location',
+    task_name: 'Entscheidung treffen',
+    description: 'Treffen Sie gemeinsam die finale Entscheidung für eine Location. Besprechen Sie eventuelle Bedenken und stellen Sie sicher, dass beide Partner mit der Wahl glücklich sind.',
     priority: 'high',
     default_duration: 3,
-    timing_rules: { 'immediate': true }
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-6']
+  },
+  {
+    id: 'location-8',
+    category: 'location',
+    task_name: 'Vertrag unterschreiben & Anzahlung leisten',
+    description: 'Prüfen Sie den Vertrag sorgfältig: Mietpreis, Nebenkosten, Stornierungsbedingungen, inkludierte Leistungen, Haftung. Unterschreiben Sie den Vertrag und leisten Sie die Anzahlung. Bewahren Sie alle Unterlagen gut auf.',
+    priority: 'high',
+    default_duration: 7,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-7']
+  },
+  {
+    id: 'location-9',
+    category: 'location',
+    task_name: 'Grundriss + Raumaufteilung besprechen',
+    description: 'Planen Sie mit der Location die genaue Raumaufteilung: Wo steht die Tafel/Tische? Wo ist die Tanzfläche? Wo der Empfangsbereich? Klären Sie Bestuhlung für die Zeremonie (falls vor Ort). Erstellen Sie einen Grundriss-Plan.',
+    priority: 'high',
+    default_duration: 14,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-8']
+  },
+  {
+    id: 'location-10',
+    category: 'location',
+    task_name: 'Catering-Optionen abklären',
+    description: 'Besprechen Sie mit der Location die Catering-Möglichkeiten: Gibt es einen Exklusiv-Caterer? Dürfen Sie einen eigenen Caterer mitbringen? Welche Küche ist vorhanden? Gibt es Geschirr, Besteck, Gläser? Welche Kosten entstehen?',
+    priority: 'high',
+    default_duration: 7,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-8']
+  },
+  {
+    id: 'location-11',
+    category: 'location',
+    task_name: 'Technik-Check (Sound, Licht, Beamer)',
+    description: 'Prüfen Sie die technische Ausstattung: Welche Soundanlage ist vorhanden? Gibt es Mikrofone? Wie ist die Beleuchtung? Gibt es einen Beamer für Präsentationen? Was muss extern gemietet werden? Wer ist für den technischen Support zuständig?',
+    priority: 'medium',
+    default_duration: 7,
+    timing_rules: { '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-8']
+  },
+  {
+    id: 'location-12',
+    category: 'location',
+    task_name: 'Timeline final abstimmen',
+    description: 'Erstellen Sie gemeinsam mit der Location einen detaillierten Zeitplan für den Hochzeitstag: Aufbau-Beginn, Einlass, Zeremonie, Essen, Tortenanschnitt, Erste Tanz, Party, Abbau. Klären Sie Zeitfenster für Lieferanten.',
+    priority: 'high',
+    default_duration: 7,
+    timing_rules: { 'immediate': true, '3_months': true, '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-9', 'location-10', 'location-11']
+  },
+  {
+    id: 'location-13',
+    category: 'location',
+    task_name: 'Ansprechpartner am Hochzeitstag festlegen',
+    description: 'Definieren Sie klare Ansprechpartner: Wer ist vor Ort für die Location verantwortlich? Welche Telefonnummern sind im Notfall erreichbar? Gibt es einen Koordinator/Service-Mitarbeiter während der Feier?',
+    priority: 'high',
+    default_duration: 3,
+    timing_rules: { 'immediate': true, '3_months': true, '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-12']
+  },
+  {
+    id: 'location-14',
+    category: 'location',
+    task_name: 'Notfallplan besprechen',
+    description: 'Klären Sie mit der Location alle Notfall-Szenarien: Was passiert bei Regen (wenn Outdoor geplant)? Gibt es einen Plan B-Raum? Was gilt bei Stromausfall? Wo sind Erste-Hilfe-Kasten und Feuerlöscher? Welche Versicherungen greifen?',
+    priority: 'medium',
+    default_duration: 3,
+    timing_rules: { 'immediate': true, '3_months': true, '6_months': true, '9_months': true, '12_months': true, '18_months': true },
+    main_category: 'location_venue',
+    depends_on: ['location-12']
   },
   {
     id: 'catering-1',
