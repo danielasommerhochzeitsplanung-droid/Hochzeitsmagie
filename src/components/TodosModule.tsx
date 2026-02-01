@@ -484,22 +484,20 @@ export default function TodosModule() {
             Aufgabe hinzufügen
           </button>
 
-          {tasks.filter(t => t.is_system_generated && !t.completed).length > 0 && (
-            <button
-              onClick={() => setShowRecalculateDialog(true)}
-              className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2"
-              style={{
-                borderColor: '#d6b15b',
-                color: '#3b3b3d',
-                fontFamily: 'Open Sans, sans-serif',
-                fontWeight: 600
-              }}
-              title="Automatische Tasks neu berechnen"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Neu berechnen
-            </button>
-          )}
+          <button
+            onClick={() => setShowRecalculateDialog(true)}
+            className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2"
+            style={{
+              borderColor: '#d6b15b',
+              color: '#3b3b3d',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 600
+            }}
+            title="Automatische Tasks neu berechnen"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Neu berechnen
+          </button>
         </div>
       </div>
 
