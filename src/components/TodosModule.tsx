@@ -241,6 +241,14 @@ export default function TodosModule() {
     setExpandedTasks(initialExpanded);
   }, [groupedTasks.size]);
 
+  useEffect(() => {
+    const initialExpandedCategories = new Set<string>();
+    groupedByPhase.forEach((_, category) => {
+      initialExpandedCategories.add(category);
+    });
+    setExpandedCategories(initialExpandedCategories);
+  }, [groupedByPhase.size]);
+
   const toggleTaskExpansion = (taskId: string) => {
     setExpandedTasks(prev => {
       const newSet = new Set(prev);
