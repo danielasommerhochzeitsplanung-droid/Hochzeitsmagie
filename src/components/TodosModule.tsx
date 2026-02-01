@@ -621,9 +621,10 @@ export default function TodosModule() {
               </p>
             </div>
           ) : (
-            Array.from(groupedTasks.entries()).map(([category, categoryTasks]) => {
+            Array.from(groupedByPhase.entries()).map(([category, phaseGroups]) => {
               const categoryInfo = taskCategories.find(c => c.id === category);
-              const completedCount = categoryTasks.filter(t => t.completed).length;
+              const allCategoryTasks = Array.from(phaseGroups.values()).flat();
+              const completedCount = allCategoryTasks.filter(t => t.completed).length;
               const isCategoryExpanded = expandedCategories.has(category);
 
               return (
@@ -643,7 +644,7 @@ export default function TodosModule() {
                       {categoryInfo?.label || category}
                     </h3>
                     <span className="text-sm font-medium text-gray-500">
-                      {completedCount}/{categoryTasks.length}
+                      {completedCount}/{allCategoryTasks.length}
                     </span>
                     {isCategoryExpanded ? (
                       <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
@@ -653,236 +654,282 @@ export default function TodosModule() {
                   </div>
 
                   {isCategoryExpanded && (
-                    <div className="divide-y-2 border-t-2" style={{ borderColor: '#f3f4f6' }}>
-                      {categoryTasks.map(task => {
-                      const isExpanded = expandedTasks.has(task.id);
-                      const blockedBy = getBlockedTasks(task);
-                      const isBlocked = blockedBy.length > 0;
-                      const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
+                    <div className="border-t-2" style={{ borderColor: '#f3f4f6' }}>
+                      {Array.from(phaseGroups.entries()).map(([phaseId, phaseTasks]) => {
+                        if (phaseTasks.length === 0) return null;
 
-                      return (
-                        <div key={task.id}>
-                          <div
-                            className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${isBlocked && !task.completed ? 'bg-gray-50 opacity-75' : ''}`}
-                            onClick={() => toggleTaskExpansion(task.id)}
-                          >
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (!isBlocked) {
-                                  toggleTaskCompletion(task);
-                                }
-                              }}
-                              className="flex-shrink-0"
-                              disabled={isBlocked && !task.completed}
-                              title={isBlocked && !task.completed ? `Warte auf: ${blockedBy.join(', ')}` : ''}
+                        const phase = phaseId === 'no-phase' ? null : phases.find(p => p.id === phaseId);
+                        const phaseKey = `${category}-${phaseId}`;
+                        const isPhaseExpanded = expandedPhases.has(phaseKey);
+                        const phaseCompletedCount = phaseTasks.filter(t => t.completed).length;
+
+                        return (
+                          <div key={phaseKey} className="border-b-2 last:border-b-0" style={{ borderColor: '#f3f4f6' }}>
+                            <div
+                              className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors bg-gray-50/50"
+                              onClick={() => togglePhaseExpansion(phaseKey)}
                             >
-                              {task.completed ? (
-                                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                              ) : isBlocked ? (
-                                <Lock className="w-5 h-5 text-amber-500" />
+                              {isPhaseExpanded ? (
+                                <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
                               ) : (
-                                <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
                               )}
-                            </button>
-
-                            <h4
-                              className={`flex-1 font-medium ${
-                                task.completed
-                                  ? 'line-through text-gray-400'
-                                  : isBlocked
-                                    ? 'text-gray-500'
-                                    : 'text-gray-900'
-                              }`}
-                              style={{ fontFamily: 'Open Sans, sans-serif' }}
-                            >
-                              {task.title}
-                              {isBlocked && !task.completed && (
-                                <span className="ml-2 text-xs text-amber-600">
-                                  ({blockedBy.length} {blockedBy.length === 1 ? 'Abhängigkeit' : 'Abhängigkeiten'})
+                              {phase ? (
+                                <span
+                                  className="inline-flex items-center px-3 py-1 rounded text-sm font-semibold"
+                                  style={{
+                                    backgroundColor: phase.color,
+                                    color: 'white'
+                                  }}
+                                >
+                                  {phase.name}
+                                </span>
+                              ) : (
+                                <span className="text-sm font-medium text-gray-500">
+                                  Ohne Phase
                                 </span>
                               )}
-                            </h4>
+                              <span className="text-xs text-gray-500 ml-auto">
+                                {phaseCompletedCount}/{phaseTasks.length}
+                              </span>
+                            </div>
 
-                            {isExpanded ? (
-                              <ChevronDown className="w-5 h-5 text-gray-400" />
-                            ) : (
-                              <ChevronRight className="w-5 h-5 text-gray-400" />
-                            )}
-                          </div>
+                            {isPhaseExpanded && (
+                              <div className="divide-y" style={{ borderColor: '#f3f4f6' }}>
+                                {phaseTasks.map(task => {
+                                  const isExpanded = expandedTasks.has(task.id);
+                                  const blockedBy = getBlockedTasks(task);
+                                  const isBlocked = blockedBy.length > 0;
+                                  const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
 
-                          {isExpanded && (
-                            <div className="px-4 pb-4 bg-gray-50">
-                              <div className="pt-3 flex items-start justify-between gap-4">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    {task.is_system_generated ? (
-                                      <>
-                                        <span className="text-lg">🤖</span>
-                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 font-medium">
-                                          Empfehlung
-                                        </span>
-                                        {task.manually_modified && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700 font-medium">
-                                            Angepasst
-                                          </span>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <>
-                                        <span className="text-lg">💍</span>
-                                        {task.needs_adjustment_warning && !task.warning_dismissed && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700 font-medium">
-                                            ⚠️ Datum prüfen
-                                          </span>
-                                        )}
-                                      </>
-                                    )}
-                                  </div>
-
-                                  {task.needs_adjustment_warning && !task.warning_dismissed && !task.is_system_task && (
-                                    <div className="mt-2 bg-orange-50 border border-orange-200 rounded-lg p-3">
-                                      <div className="flex items-start gap-2">
-                                        <AlertCircle className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
-                                        <div className="flex-1 text-sm text-orange-800">
-                                          <p className="font-medium">Planungsfenster hat sich verschoben</p>
-                                          <p className="text-xs mt-1">Bitte prüfe, ob das Fälligkeitsdatum dieser Aufgabe noch passt.</p>
-                                        </div>
+                                  return (
+                                    <div key={task.id}>
+                                      <div
+                                        className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${isBlocked && !task.completed ? 'bg-gray-50 opacity-75' : ''}`}
+                                        onClick={() => toggleTaskExpansion(task.id)}
+                                      >
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            dismissTaskWarning(task.id);
+                                            if (!isBlocked) {
+                                              toggleTaskCompletion(task);
+                                            }
                                           }}
-                                          className="text-orange-600 hover:text-orange-800"
+                                          className="flex-shrink-0 ml-6"
+                                          disabled={isBlocked && !task.completed}
+                                          title={isBlocked && !task.completed ? `Warte auf: ${blockedBy.join(', ')}` : ''}
                                         >
-                                          <X className="w-4 h-4" />
+                                          {task.completed ? (
+                                            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                          ) : isBlocked ? (
+                                            <Lock className="w-5 h-5 text-amber-500" />
+                                          ) : (
+                                            <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                          )}
                                         </button>
+
+                                        <h4
+                                          className={`flex-1 font-medium ${
+                                            task.completed
+                                              ? 'line-through text-gray-400'
+                                              : isBlocked
+                                                ? 'text-gray-500'
+                                                : 'text-gray-900'
+                                          }`}
+                                          style={{ fontFamily: 'Open Sans, sans-serif' }}
+                                        >
+                                          {task.title}
+                                          {isBlocked && !task.completed && (
+                                            <span className="ml-2 text-xs text-amber-600">
+                                              ({blockedBy.length} {blockedBy.length === 1 ? 'Abhängigkeit' : 'Abhängigkeiten'})
+                                            </span>
+                                          )}
+                                        </h4>
+
+                                        {isExpanded ? (
+                                          <ChevronDown className="w-5 h-5 text-gray-400" />
+                                        ) : (
+                                          <ChevronRight className="w-5 h-5 text-gray-400" />
+                                        )}
                                       </div>
+
+                                      {isExpanded && (
+                                        <div className="px-4 pb-4 bg-gray-50 ml-6">
+                                          <div className="pt-3 flex items-start justify-between gap-4">
+                                            <div className="flex-1">
+                                              <div className="flex items-center gap-2 mb-2">
+                                                {task.is_system_generated ? (
+                                                  <>
+                                                    <span className="text-lg">🤖</span>
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 font-medium">
+                                                      Empfehlung
+                                                    </span>
+                                                    {task.manually_modified && (
+                                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700 font-medium">
+                                                        Angepasst
+                                                      </span>
+                                                    )}
+                                                  </>
+                                                ) : (
+                                                  <>
+                                                    <span className="text-lg">💍</span>
+                                                    {task.needs_adjustment_warning && !task.warning_dismissed && (
+                                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700 font-medium">
+                                                        ⚠️ Datum prüfen
+                                                      </span>
+                                                    )}
+                                                  </>
+                                                )}
+                                              </div>
+
+                                              {task.needs_adjustment_warning && !task.warning_dismissed && !task.is_system_task && (
+                                                <div className="mt-2 bg-orange-50 border border-orange-200 rounded-lg p-3">
+                                                  <div className="flex items-start gap-2">
+                                                    <AlertCircle className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+                                                    <div className="flex-1 text-sm text-orange-800">
+                                                      <p className="font-medium">Planungsfenster hat sich verschoben</p>
+                                                      <p className="text-xs mt-1">Bitte prüfe, ob das Fälligkeitsdatum dieser Aufgabe noch passt.</p>
+                                                    </div>
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        dismissTaskWarning(task.id);
+                                                      }}
+                                                      className="text-orange-600 hover:text-orange-800"
+                                                    >
+                                                      <X className="w-4 h-4" />
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              )}
+
+                                              {task.description && (
+                                                <p className="text-sm text-gray-600 mt-2">
+                                                  {task.description}
+                                                </p>
+                                              )}
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                              <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  handleEditTask(task);
+                                                }}
+                                                className="text-gray-400 hover:text-blue-500 transition-colors"
+                                                title="Aufgabe bearbeiten"
+                                              >
+                                                <Edit2 className="w-5 h-5" />
+                                              </button>
+                                              <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  deleteTask(task.id);
+                                                }}
+                                                className="text-gray-400 hover:text-rose-500 transition-colors"
+                                                title="Aufgabe löschen"
+                                              >
+                                                <X className="w-5 h-5" />
+                                              </button>
+                                            </div>
+                                          </div>
+
+                                          {task.date_change_notice && !task.completed && (
+                                            <div className="mt-3 p-3 bg-amber-50 border border-amber-300 rounded flex items-start gap-2">
+                                              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                                              <div className="flex-1">
+                                                <p className="text-sm text-amber-800">{task.date_change_notice}</p>
+                                              </div>
+                                              <button
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  dismissDateChangeNotice(task.id);
+                                                }}
+                                                className="text-amber-600 hover:text-amber-800 transition-colors"
+                                                title="Hinweis verwerfen"
+                                              >
+                                                <X className="w-4 h-4" />
+                                              </button>
+                                            </div>
+                                          )}
+
+                                          <div className="flex items-center gap-3 flex-wrap mt-3">
+                                            <span
+                                              className={`inline-flex items-center px-2 py-1 rounded text-xs text-white font-medium ${getCategoryColor(task.category)}`}
+                                            >
+                                              {taskCategories.find(c => c.id === task.category)?.label || task.category}
+                                            </span>
+
+                                            {task.phase_id && (() => {
+                                              const taskPhase = phases.find(p => p.id === task.phase_id);
+                                              if (taskPhase) {
+                                                return (
+                                                  <span
+                                                    className="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
+                                                    style={{
+                                                      backgroundColor: getPhaseColor(taskPhase, task.completed),
+                                                      color: 'white'
+                                                    }}
+                                                  >
+                                                    {taskPhase.name}
+                                                  </span>
+                                                );
+                                              }
+                                              return null;
+                                            })()}
+
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                updateTask(task.id, { is_system_generated: !task.is_system_generated });
+                                              }}
+                                              className="text-xs text-gray-500 hover:text-gray-700 underline"
+                                              title={task.is_system_generated ? 'Als manuell markieren' : 'Als automatisch markieren'}
+                                            >
+                                              {task.is_system_generated ? '→ Manuell' : '→ Auto'}
+                                            </button>
+
+                                            {task.priority === 'high' && (
+                                              <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-rose-100 text-rose-700 font-medium">
+                                                Hoch
+                                              </span>
+                                            )}
+
+                                            {task.due_date && (
+                                              <span className={`text-xs flex items-center gap-1 ${
+                                                isOverdue ? 'text-rose-600 font-semibold' : 'text-gray-600'
+                                              }`}>
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                {new Date(task.due_date).toLocaleDateString('de-DE')}
+                                                {isOverdue && ' (überfällig)'}
+                                              </span>
+                                            )}
+
+                                            {task.assigned_to && (
+                                              <span className="text-xs text-gray-600">
+                                                Zugewiesen: {task.assigned_to}
+                                              </span>
+                                            )}
+                                          </div>
+
+                                          {isBlocked && !task.completed && (
+                                            <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
+                                              <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                                              <div className="text-sm text-amber-800">
+                                                <span className="font-semibold">Wartet auf:</span> {blockedBy.join(', ')}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
-
-                                  {task.description && (
-                                    <p className="text-sm text-gray-600 mt-2">
-                                      {task.description}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEditTask(task);
-                                    }}
-                                    className="text-gray-400 hover:text-blue-500 transition-colors"
-                                    title="Aufgabe bearbeiten"
-                                  >
-                                    <Edit2 className="w-5 h-5" />
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteTask(task.id);
-                                    }}
-                                    className="text-gray-400 hover:text-rose-500 transition-colors"
-                                    title="Aufgabe löschen"
-                                  >
-                                    <X className="w-5 h-5" />
-                                  </button>
-                                </div>
+                                  );
+                                })}
                               </div>
-
-                              {task.date_change_notice && !task.completed && (
-                                <div className="mt-3 p-3 bg-amber-50 border border-amber-300 rounded flex items-start gap-2">
-                                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                                  <div className="flex-1">
-                                    <p className="text-sm text-amber-800">{task.date_change_notice}</p>
-                                  </div>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      dismissDateChangeNotice(task.id);
-                                    }}
-                                    className="text-amber-600 hover:text-amber-800 transition-colors"
-                                    title="Hinweis verwerfen"
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              )}
-
-                              <div className="flex items-center gap-3 flex-wrap mt-3">
-                                <span
-                                  className={`inline-flex items-center px-2 py-1 rounded text-xs text-white font-medium ${getCategoryColor(task.category)}`}
-                                >
-                                  {taskCategories.find(c => c.id === task.category)?.label || task.category}
-                                </span>
-
-                                {task.phase_id && (() => {
-                                  const phase = phases.find(p => p.id === task.phase_id);
-                                  if (phase) {
-                                    return (
-                                      <span
-                                        className="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
-                                        style={{
-                                          backgroundColor: getPhaseColor(phase, task.completed),
-                                          color: 'white'
-                                        }}
-                                      >
-                                        {phase.name}
-                                      </span>
-                                    );
-                                  }
-                                  return null;
-                                })()}
-
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    updateTask(task.id, { is_system_generated: !task.is_system_generated });
-                                  }}
-                                  className="text-xs text-gray-500 hover:text-gray-700 underline"
-                                  title={task.is_system_generated ? 'Als manuell markieren' : 'Als automatisch markieren'}
-                                >
-                                  {task.is_system_generated ? '→ Manuell' : '→ Auto'}
-                                </button>
-
-                                {task.priority === 'high' && (
-                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-rose-100 text-rose-700 font-medium">
-                                    Hoch
-                                  </span>
-                                )}
-
-                                {task.due_date && (
-                                  <span className={`text-xs flex items-center gap-1 ${
-                                    isOverdue ? 'text-rose-600 font-semibold' : 'text-gray-600'
-                                  }`}>
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    {new Date(task.due_date).toLocaleDateString('de-DE')}
-                                    {isOverdue && ' (überfällig)'}
-                                  </span>
-                                )}
-
-                                {task.assigned_to && (
-                                  <span className="text-xs text-gray-600">
-                                    Zugewiesen: {task.assigned_to}
-                                  </span>
-                                )}
-                              </div>
-
-                              {isBlocked && !task.completed && (
-                                <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
-                                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                                  <div className="text-sm text-amber-800">
-                                    <span className="font-semibold">Wartet auf:</span> {blockedBy.join(', ')}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
