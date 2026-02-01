@@ -26,7 +26,8 @@ type StorageKey =
   | 'support_team_event_assignments'
   | 'guest_table_assignments'
   | 'wedding_data'
-  | 'tasks';
+  | 'tasks'
+  | 'phases';
 
 interface BaseEntity {
   id: string;
@@ -324,10 +325,18 @@ export interface WeddingData extends BaseEntity {
   auto_tasks_initialized?: boolean;
 }
 
+export interface Phase extends BaseEntity {
+  name: string;
+  color: string;
+  order_index: number;
+  is_system_phase: boolean;
+}
+
 export interface Task extends BaseEntity {
   title: string;
   description?: string;
   category: string;
+  phase_id?: string;
   start_date?: string;
   due_date?: string;
   completed: boolean;
@@ -362,6 +371,7 @@ class StorageAdapter {
   guestTableAssignments = new LocalStorageAdapter<GuestTableAssignment>('guest_table_assignments');
   weddingData = new LocalStorageAdapter<WeddingData>('wedding_data');
   tasks = new LocalStorageAdapter<Task>('tasks');
+  phases = new LocalStorageAdapter<Phase>('phases');
 
   constructor() {
     this.initializeVersion();
@@ -427,6 +437,7 @@ class StorageAdapter {
         guest_table_assignments: this.guestTableAssignments.getAll(),
         wedding_data: this.weddingData.getAll(),
         tasks: this.tasks.getAll(),
+        phases: this.phases.getAll(),
       };
     } catch (error) {
       console.error('Error during exportAll, returning empty data:', error);
@@ -497,6 +508,7 @@ class StorageAdapter {
         this.guestTableAssignments.replaceAll(validatedData.guest_table_assignments);
         this.weddingData.replaceAll(validatedData.wedding_data);
         this.tasks.replaceAll(validatedData.tasks);
+        this.phases.replaceAll(validatedData.phases || []);
 
         const importedCount = countEntities(validatedData);
         return {
@@ -522,6 +534,7 @@ class StorageAdapter {
             this.guestTableAssignments.replaceAll(previousData.guest_table_assignments);
             this.weddingData.replaceAll(previousData.wedding_data);
             this.tasks.replaceAll(previousData.tasks);
+            this.phases.replaceAll(previousData.phases || []);
             errors.push('Fehler beim Speichern. Vorherige Daten wurden wiederhergestellt.');
           } catch (restoreError) {
             errors.push('Kritischer Fehler: Daten konnten nicht wiederhergestellt werden.');
@@ -579,6 +592,7 @@ class StorageAdapter {
     this.guestTableAssignments.clear();
     this.weddingData.clear();
     this.tasks.clear();
+    this.phases.clear();
   }
 }
 

@@ -14,8 +14,9 @@ import {
   Clock,
   AlertTriangle,
 } from 'lucide-react';
-import { Task, Event, Vendor, Location, SupportTeam } from '../lib/storage-adapter';
+import { Task, Event, Vendor, Location, SupportTeam, Phase } from '../lib/storage-adapter';
 import { taskCategories } from './taskTemplates';
+import { getPhaseColor } from '../utils/phaseManagement';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -23,6 +24,7 @@ interface GanttChartProps {
   vendors: Vendor[];
   locations: Location[];
   supportTeam: SupportTeam[];
+  phases: Phase[];
   weddingDate: string;
   onToggleTask: (task: Task) => void;
   onEditTask: (task: Task) => void;
@@ -40,6 +42,7 @@ interface GanttItem {
   startDate: Date;
   endDate: Date;
   category?: string;
+  phase_id?: string;
   completed?: boolean;
   priority?: string;
   data: Task | Event | Vendor | Location | SupportTeam;
@@ -61,6 +64,7 @@ export default function GanttChart({
   vendors,
   locations,
   supportTeam,
+  phases,
   weddingDate,
   onToggleTask,
   onUpdateTask,
@@ -103,6 +107,7 @@ export default function GanttChart({
           startDate,
           endDate: new Date(task.due_date),
           category: task.category,
+          phase_id: task.phase_id,
           completed: task.completed,
           priority: task.priority,
           data: task,
@@ -409,6 +414,12 @@ export default function GanttChart({
 
   const getItemColor = (item: GanttItem): string => {
     if (item.type === 'task') {
+      if (item.phase_id) {
+        const phase = phases.find(p => p.id === item.phase_id);
+        if (phase) {
+          return getPhaseColor(phase, item.completed || false);
+        }
+      }
       const cat = taskCategories.find(c => c.id === item.category);
       return cat ? getColorHex(cat.color) : '#6b7280';
     }

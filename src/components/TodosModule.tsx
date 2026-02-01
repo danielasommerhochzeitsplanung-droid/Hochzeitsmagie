@@ -2,14 +2,15 @@ import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
-import { Task } from '../lib/storage-adapter';
+import { Task, Phase } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
 import TimelineView from './TimelineView';
 import GanttChart from './GanttChart';
+import { getPhaseColor } from '../utils/phaseManagement';
 
 export default function TodosModule() {
   const { t } = useTranslation();
-  const { weddingData, tasks, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData } = useWeddingData();
+  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase } = useWeddingData();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showRecalculateDialog, setShowRecalculateDialog] = useState(false);
@@ -21,6 +22,7 @@ export default function TodosModule() {
   const [isMobile, setIsMobile] = useState(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set());
 
   const [newTask, setNewTask] = useState({
     title: '',
@@ -202,6 +204,32 @@ export default function TodosModule() {
     return groups;
   }, [sortedTasks]);
 
+  const groupedByPhase = useMemo(() => {
+    const categoryGroups = new Map<string, Map<string, Task[]>>();
+
+    groupedTasks.forEach((categoryTasks, category) => {
+      const phaseGroups = new Map<string, Task[]>();
+      const sortedPhases = [...phases].sort((a, b) => a.order_index - b.order_index);
+
+      sortedPhases.forEach(phase => {
+        phaseGroups.set(phase.id, []);
+      });
+      phaseGroups.set('no-phase', []);
+
+      categoryTasks.forEach(task => {
+        const phaseId = task.phase_id || 'no-phase';
+        if (!phaseGroups.has(phaseId)) {
+          phaseGroups.set(phaseId, []);
+        }
+        phaseGroups.get(phaseId)!.push(task);
+      });
+
+      categoryGroups.set(category, phaseGroups);
+    });
+
+    return categoryGroups;
+  }, [groupedTasks, phases]);
+
   useEffect(() => {
     const initialExpanded = new Set<string>();
     groupedTasks.forEach((tasks) => {
@@ -232,6 +260,18 @@ export default function TodosModule() {
         newSet.delete(category);
       } else {
         newSet.add(category);
+      }
+      return newSet;
+    });
+  };
+
+  const togglePhaseExpansion = (phaseKey: string) => {
+    setExpandedPhases(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(phaseKey)) {
+        newSet.delete(phaseKey);
+      } else {
+        newSet.add(phaseKey);
       }
       return newSet;
     });
@@ -556,6 +596,7 @@ export default function TodosModule() {
             vendors={vendors}
             locations={locations}
             supportTeam={supportTeam}
+            phases={phases}
             weddingDate={weddingData.wedding_date}
             onToggleTask={toggleTaskCompletion}
             onEditTask={handleEditTask}
@@ -776,6 +817,24 @@ export default function TodosModule() {
                                 >
                                   {taskCategories.find(c => c.id === task.category)?.label || task.category}
                                 </span>
+
+                                {task.phase_id && (() => {
+                                  const phase = phases.find(p => p.id === task.phase_id);
+                                  if (phase) {
+                                    return (
+                                      <span
+                                        className="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
+                                        style={{
+                                          backgroundColor: getPhaseColor(phase, task.completed),
+                                          color: 'white'
+                                        }}
+                                      >
+                                        {phase.name}
+                                      </span>
+                                    );
+                                  }
+                                  return null;
+                                })()}
 
                                 <button
                                   onClick={(e) => {

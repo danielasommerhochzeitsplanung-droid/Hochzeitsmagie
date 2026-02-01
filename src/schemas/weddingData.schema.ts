@@ -183,10 +183,18 @@ const WeddingDataSchema = BaseEntitySchema.extend({
   auto_tasks_initialized: z.boolean().default(false),
 }).strip();
 
+const PhaseSchema = BaseEntitySchema.extend({
+  name: z.string().min(1),
+  color: z.string().default('#14b8a6'),
+  order_index: z.number().int().default(0),
+  is_system_phase: z.boolean().default(false),
+}).strip();
+
 const TaskSchema = BaseEntitySchema.extend({
   title: z.string().min(1),
   description: z.string().optional(),
   category: z.string().default('general'),
+  phase_id: z.string().optional(),
   start_date: z.string().optional(),
   due_date: z.string().optional(),
   completed: z.boolean().default(false),
@@ -224,6 +232,7 @@ export const ExportedDataSchema = z.object({
   guest_table_assignments: z.array(GuestTableAssignmentSchema).default([]),
   wedding_data: z.array(WeddingDataSchema).default([]),
   tasks: z.array(TaskSchema).default([]),
+  phases: z.array(PhaseSchema).default([]),
 }).strip();
 
 export type ValidatedExportedData = z.infer<typeof ExportedDataSchema>;
@@ -247,6 +256,7 @@ export function createEmptyWeddingData(): ValidatedExportedData {
     guest_table_assignments: [],
     wedding_data: [],
     tasks: [],
+    phases: [],
   };
 }
 
@@ -265,6 +275,7 @@ export function countEntities(data: ValidatedExportedData): number {
     data.support_team_event_assignments.length +
     data.guest_table_assignments.length +
     data.wedding_data.length +
-    data.tasks.length
+    data.tasks.length +
+    data.phases.length
   );
 }

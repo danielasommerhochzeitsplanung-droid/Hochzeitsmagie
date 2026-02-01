@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useEffect } from 'react';
-import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, StorageError } from '../lib/storage-adapter';
+import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
 import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutomation';
 import { loadTaskTemplates } from '../lib/taskTemplates';
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
 import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
+import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -19,7 +20,7 @@ interface SaveState {
   errorMessage?: string;
 }
 
-export type { Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task };
+export type { Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase };
 
 interface WeddingDataContextType {
   weddingData: WeddingData;
@@ -32,6 +33,7 @@ interface WeddingDataContextType {
   tables: Table[];
   programItems: ProgramItem[];
   tasks: Task[];
+  phases: Phase[];
   storageChangeCounter: number;
 
   updateWeddingData: (data: Partial<WeddingData>) => Promise<void>;
@@ -74,6 +76,10 @@ interface WeddingDataContextType {
   initializeAutoTasks: () => Promise<void>;
   dismissTaskWarning: (id: string) => void;
 
+  addPhase: (phase: Omit<Phase, 'id' | 'created_at'>) => Phase;
+  updatePhase: (id: string, phase: Partial<Phase>) => void;
+  deletePhase: (id: string) => void;
+
   exportData: () => void;
   importData: (jsonData: string) => void;
   clearAllData: () => void;
@@ -103,6 +109,17 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const [tables, setTables] = useState<Table[]>(() => storage.tables.getAll());
   const [programItems, setProgramItems] = useState<ProgramItem[]>(() => storage.programItems.getAll());
   const [tasks, setTasks] = useState<Task[]>(() => storage.tasks.getAll());
+  const [phases, setPhases] = useState<Phase[]>(() => {
+    const existingPhases = storage.phases.getAll();
+    if (existingPhases.length === 0) {
+      const defaultPhases = createDefaultPhases();
+      defaultPhases.forEach(phase => {
+        storage.phases.create(phase);
+      });
+      return defaultPhases;
+    }
+    return existingPhases;
+  });
 
   const incrementStorageCounter = useCallback(() => {
     setStorageChangeCounter(prev => prev + 1);
@@ -524,9 +541,14 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
   const addTask = (task: Omit<Task, 'id' | 'created_at'>) => {
     try {
+      const autoPhaseId = !task.phase_id && task.due_date
+        ? calculatePhaseForTask(task.due_date, weddingData.wedding_date, weddingData.planning_start_date)
+        : undefined;
+
       const taskWithDefaults = {
         ...task,
-        is_system_generated: task.is_system_generated ?? false
+        is_system_generated: task.is_system_generated ?? false,
+        phase_id: task.phase_id || autoPhaseId
       };
       const newTask = storage.tasks.create(taskWithDefaults);
       setTasks(prev => [...prev, newTask]);
@@ -612,6 +634,43 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     updateTask(id, { warning_dismissed: true });
   };
 
+  const addPhase = (phase: Omit<Phase, 'id' | 'created_at'>) => {
+    try {
+      const newPhase = storage.phases.create(phase);
+      setPhases(prev => [...prev, newPhase]);
+      incrementStorageCounter();
+      showSaveIndicator();
+      return newPhase;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
+  };
+
+  const updatePhase = (id: string, phase: Partial<Phase>) => {
+    try {
+      storage.phases.update(id, phase);
+      setPhases(prev => prev.map(p => p.id === id ? { ...p, ...phase } : p));
+      incrementStorageCounter();
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
+  };
+
+  const deletePhase = (id: string) => {
+    try {
+      storage.phases.delete(id);
+      setPhases(prev => prev.filter(p => p.id !== id));
+      incrementStorageCounter();
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
+  };
+
   const exportData = () => {
     const data = storage.exportAll();
     const dataStr = JSON.stringify(data, null, 2);
@@ -653,6 +712,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
         setTables(storage.tables.getAll());
         setProgramItems(storage.programItems.getAll());
         setTasks(storage.tasks.getAll());
+        setPhases(storage.phases.getAll());
         showSaveIndicator();
       }
     } catch (error) {
@@ -678,6 +738,11 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     setTables([]);
     setProgramItems([]);
     setTasks([]);
+    const defaultPhases = createDefaultPhases();
+    defaultPhases.forEach(phase => {
+      storage.phases.create(phase);
+    });
+    setPhases(defaultPhases);
   };
 
   const manualSave = useCallback(() => {
@@ -695,6 +760,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     tables,
     programItems,
     tasks,
+    phases,
     storageChangeCounter,
     updateWeddingData,
     addGuest,
@@ -726,6 +792,9 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     deleteTask,
     initializeAutoTasks,
     dismissTaskWarning,
+    addPhase,
+    updatePhase,
+    deletePhase,
     exportData,
     importData,
     clearAllData,
