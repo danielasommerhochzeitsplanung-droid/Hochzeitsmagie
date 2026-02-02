@@ -275,18 +275,19 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const handleAutoTaskConfirm = async (generateTasks: boolean) => {
     setLoading(true);
     try {
+      await updateWeddingData({
+        couple_name_1: person1.name,
+        couple_name_2: person2.name,
+        total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
+        wedding_date: weddingDate || undefined,
+        planning_start_date: planningStartDate || undefined,
+        auto_tasks_enabled: autoTasksEnabled,
+      });
+
       if (generateTasks) {
         await initializeAutoTasks();
-      } else {
-        await updateWeddingData({
-          couple_name_1: person1.name,
-          couple_name_2: person2.name,
-          total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
-          wedding_date: weddingDate || undefined,
-          planning_start_date: planningStartDate || undefined,
-          auto_tasks_enabled: autoTasksEnabled,
-        });
       }
+
       setShowAutoTaskDialog(false);
       onClose();
     } catch (error: any) {
