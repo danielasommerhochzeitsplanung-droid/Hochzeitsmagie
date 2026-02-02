@@ -4,6 +4,7 @@ import { Settings, Save, Download, Upload } from 'lucide-react';
 import { useWeddingData } from './contexts/WeddingDataContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import SettingsModal from './components/SettingsModal';
+import FirstSetupDialog from './components/FirstSetupDialog';
 import StorageQuotaBanner from './components/StorageQuotaBanner';
 import ModuleCard from './components/ModuleCard';
 import GuestsModule from './components/GuestsModule';
@@ -27,7 +28,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
@@ -35,6 +36,7 @@ function App() {
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [activeModule, setActiveModule] = useState<ModuleType>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showFirstSetup, setShowFirstSetup] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -44,6 +46,9 @@ function App() {
         groom_name: contextWeddingData.couple_name_2 || '',
         wedding_date: contextWeddingData.wedding_date,
       });
+      setShowFirstSetup(false);
+    } else if (!contextWeddingData.couple_name_1 && !contextWeddingData.couple_name_2) {
+      setShowFirstSetup(true);
     }
   }, [contextWeddingData]);
 
@@ -117,6 +122,39 @@ function App() {
     };
     reader.readAsText(file);
   };
+
+  const handleFirstSetupComplete = async (data: {
+    partner1: string;
+    partner2: string;
+    weddingDate: string;
+    planningStartDate: string;
+  }) => {
+    try {
+      await updateWeddingData({
+        couple_name_1: data.partner1,
+        couple_name_2: data.partner2,
+        wedding_date: data.weddingDate,
+        planning_start_date: data.planningStartDate,
+        auto_tasks_enabled: true,
+      });
+
+      await initializeAutoTasks();
+
+      setShowFirstSetup(false);
+    } catch (error) {
+      console.error('Error during first setup:', error);
+      alert('Fehler beim Speichern. Bitte versuche es erneut.');
+    }
+  };
+
+  if (showFirstSetup) {
+    return (
+      <>
+        <LanguageSwitcher />
+        <FirstSetupDialog isOpen={showFirstSetup} onComplete={handleFirstSetupComplete} />
+      </>
+    );
+  }
 
   if (weddingData) {
     if (activeModule) {
