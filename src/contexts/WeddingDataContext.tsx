@@ -572,9 +572,10 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     );
     console.log('[initializeAutoTasks] Generated tasks:', generatedTasks.length);
 
+    const createdTasks: Task[] = [];
     generatedTasks.forEach((task, index) => {
       console.log(`[initializeAutoTasks] Creating task ${index + 1}:`, task.title);
-      addTask({
+      const newTask = addTask({
         title: task.title,
         description: task.description || '',
         category: task.category,
@@ -587,9 +588,14 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
         offset_weeks: task.offset_weeks,
         offset_type: task.offset_type
       });
+      createdTasks.push(newTask);
     });
 
-    console.log('[initializeAutoTasks] All tasks created, updating wedding data...');
+    console.log('[initializeAutoTasks] All tasks created, count:', createdTasks.length);
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    console.log('[initializeAutoTasks] Updating wedding data...');
     await updateWeddingData({
       auto_tasks_enabled: true,
       auto_tasks_initialized: true,

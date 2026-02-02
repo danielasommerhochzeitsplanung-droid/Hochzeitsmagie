@@ -46,11 +46,10 @@ function App() {
         groom_name: contextWeddingData.couple_name_2 || '',
         wedding_date: contextWeddingData.wedding_date,
       });
-      setShowFirstSetup(false);
-    } else if (!contextWeddingData.couple_name_1 && !contextWeddingData.couple_name_2) {
+    } else if (!contextWeddingData.couple_name_1 && !contextWeddingData.couple_name_2 && !showFirstSetup) {
       setShowFirstSetup(true);
     }
-  }, [contextWeddingData]);
+  }, [contextWeddingData, showFirstSetup]);
 
   useEffect(() => {
     if (weddingData) {
