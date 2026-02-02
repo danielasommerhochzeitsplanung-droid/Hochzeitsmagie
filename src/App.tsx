@@ -5,6 +5,7 @@ import { useWeddingData } from './contexts/WeddingDataContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import SettingsModal from './components/SettingsModal';
 import FirstSetupDialog from './components/FirstSetupDialog';
+import AutoTaskSetupDialog from './components/AutoTaskSetupDialog';
 import StorageQuotaBanner from './components/StorageQuotaBanner';
 import ModuleCard from './components/ModuleCard';
 import GuestsModule from './components/GuestsModule';
@@ -37,6 +38,13 @@ function App() {
   const [activeModule, setActiveModule] = useState<ModuleType>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showFirstSetup, setShowFirstSetup] = useState(false);
+  const [showAutoTaskSetup, setShowAutoTaskSetup] = useState(false);
+  const [pendingSetupData, setPendingSetupData] = useState<{
+    partner1: string;
+    partner2: string;
+    weddingDate: string;
+    planningStartDate: string;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -134,16 +142,39 @@ function App() {
         couple_name_2: data.partner2,
         wedding_date: data.weddingDate,
         planning_start_date: data.planningStartDate,
-        auto_tasks_enabled: true,
+        auto_tasks_enabled: false,
       });
 
-      await initializeAutoTasks(data.weddingDate, data.planningStartDate);
-
+      setPendingSetupData(data);
       setShowFirstSetup(false);
+      setShowAutoTaskSetup(true);
     } catch (error) {
       console.error('Error during first setup:', error);
       alert('Fehler beim Speichern. Bitte versuche es erneut.');
     }
+  };
+
+  const handleAutoTaskEnable = async () => {
+    if (!pendingSetupData) return;
+
+    try {
+      await updateWeddingData({
+        auto_tasks_enabled: true,
+      });
+
+      await initializeAutoTasks(pendingSetupData.weddingDate, pendingSetupData.planningStartDate);
+
+      setShowAutoTaskSetup(false);
+      setPendingSetupData(null);
+    } catch (error) {
+      console.error('Error enabling auto tasks:', error);
+      alert('Fehler beim Erstellen der Aufgaben. Bitte versuche es erneut.');
+    }
+  };
+
+  const handleAutoTaskSkip = () => {
+    setShowAutoTaskSetup(false);
+    setPendingSetupData(null);
   };
 
   if (showFirstSetup) {
@@ -151,6 +182,22 @@ function App() {
       <>
         <LanguageSwitcher />
         <FirstSetupDialog isOpen={showFirstSetup} onComplete={handleFirstSetupComplete} />
+      </>
+    );
+  }
+
+  if (showAutoTaskSetup && pendingSetupData) {
+    return (
+      <>
+        <LanguageSwitcher />
+        <AutoTaskSetupDialog
+          isOpen={showAutoTaskSetup}
+          onClose={handleAutoTaskSkip}
+          onEnable={handleAutoTaskEnable}
+          onSkip={handleAutoTaskSkip}
+          planningStartDate={pendingSetupData.planningStartDate}
+          weddingDate={pendingSetupData.weddingDate}
+        />
       </>
     );
   }
