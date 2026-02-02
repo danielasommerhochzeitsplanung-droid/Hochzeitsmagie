@@ -137,7 +137,7 @@ function App() {
         auto_tasks_enabled: true,
       });
 
-      await initializeAutoTasks();
+      await initializeAutoTasks(data.weddingDate, data.planningStartDate);
 
       setShowFirstSetup(false);
     } catch (error) {

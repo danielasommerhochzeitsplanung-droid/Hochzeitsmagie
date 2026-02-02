@@ -73,7 +73,7 @@ interface WeddingDataContextType {
   addTask: (task: Omit<Task, 'id' | 'created_at'>) => Task;
   updateTask: (id: string, task: Partial<Task>) => void;
   deleteTask: (id: string) => void;
-  initializeAutoTasks: () => Promise<void>;
+  initializeAutoTasks: (weddingDate?: string, planningStartDate?: string) => Promise<void>;
   dismissTaskWarning: (id: string) => void;
 
   addPhase: (phase: Omit<Phase, 'id' | 'created_at'>) => Phase;
@@ -545,16 +545,18 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const initializeAutoTasks = async () => {
+  const initializeAutoTasks = async (providedWeddingDate?: string, providedPlanningStartDate?: string) => {
     console.log('[initializeAutoTasks] Starting...');
-    console.log('[initializeAutoTasks] Wedding date:', weddingData.wedding_date);
 
-    if (!weddingData.wedding_date) {
+    const weddingDateToUse = providedWeddingDate || weddingData.wedding_date;
+    console.log('[initializeAutoTasks] Wedding date:', weddingDateToUse);
+
+    if (!weddingDateToUse) {
       console.error('Wedding date is required to initialize auto tasks');
       return;
     }
 
-    const planningStartDate = weddingData.planning_start_date || new Date().toISOString().split('T')[0];
+    const planningStartDate = providedPlanningStartDate || weddingData.planning_start_date || new Date().toISOString().split('T')[0];
     console.log('[initializeAutoTasks] Planning start date:', planningStartDate);
 
     const templates = await loadTaskTemplates();
@@ -567,7 +569,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
     const generatedTasks = generateTasksFromTemplates(
       planningStartDate,
-      weddingData.wedding_date,
+      weddingDateToUse,
       templates
     );
     console.log('[initializeAutoTasks] Generated tasks:', generatedTasks.length);
@@ -600,7 +602,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       auto_tasks_enabled: true,
       auto_tasks_initialized: true,
       last_planning_start_date: planningStartDate,
-      last_wedding_date: weddingData.wedding_date
+      last_wedding_date: weddingDateToUse
     });
     console.log('[initializeAutoTasks] Done!');
   };
