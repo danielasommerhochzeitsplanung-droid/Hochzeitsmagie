@@ -546,14 +546,19 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   };
 
   const initializeAutoTasks = async () => {
+    console.log('[initializeAutoTasks] Starting...');
+    console.log('[initializeAutoTasks] Wedding date:', weddingData.wedding_date);
+
     if (!weddingData.wedding_date) {
       console.error('Wedding date is required to initialize auto tasks');
       return;
     }
 
     const planningStartDate = weddingData.planning_start_date || new Date().toISOString().split('T')[0];
+    console.log('[initializeAutoTasks] Planning start date:', planningStartDate);
 
     const templates = await loadTaskTemplates();
+    console.log('[initializeAutoTasks] Loaded templates:', templates.length);
 
     if (templates.length === 0) {
       console.error('No task templates found in database');
@@ -565,8 +570,10 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       weddingData.wedding_date,
       templates
     );
+    console.log('[initializeAutoTasks] Generated tasks:', generatedTasks.length);
 
-    generatedTasks.forEach(task => {
+    generatedTasks.forEach((task, index) => {
+      console.log(`[initializeAutoTasks] Creating task ${index + 1}:`, task.title);
       addTask({
         title: task.title,
         description: task.description || '',
@@ -582,12 +589,14 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       });
     });
 
+    console.log('[initializeAutoTasks] All tasks created, updating wedding data...');
     await updateWeddingData({
       auto_tasks_enabled: true,
       auto_tasks_initialized: true,
       last_planning_start_date: planningStartDate,
       last_wedding_date: weddingData.wedding_date
     });
+    console.log('[initializeAutoTasks] Done!');
   };
 
   const dismissTaskWarning = (id: string) => {
