@@ -273,18 +273,28 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   };
 
   const handleAutoTaskConfirm = async (generateTasks: boolean) => {
-    await saveSettings();
-
-    if (generateTasks) {
-      try {
+    setLoading(true);
+    try {
+      if (generateTasks) {
         await initializeAutoTasks();
-      } catch (error) {
-        console.error('Error generating tasks:', error);
-        alert('Fehler beim Generieren der Aufgaben. Bitte versuche es erneut.');
+      } else {
+        await updateWeddingData({
+          couple_name_1: person1.name,
+          couple_name_2: person2.name,
+          total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
+          wedding_date: weddingDate || undefined,
+          planning_start_date: planningStartDate || undefined,
+          auto_tasks_enabled: autoTasksEnabled,
+        });
       }
+      setShowAutoTaskDialog(false);
+      onClose();
+    } catch (error: any) {
+      console.error('Error:', error);
+      alert(`Fehler: ${error.message || 'Unbekannter Fehler'}`);
+    } finally {
+      setLoading(false);
     }
-
-    setShowAutoTaskDialog(false);
   };
 
   const getPersonLabel = (personNum: 1 | 2) => {
