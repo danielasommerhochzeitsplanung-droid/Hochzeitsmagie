@@ -29,13 +29,15 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { t } = useTranslation();
-  const { weddingData, updateWeddingData, exportData, importData, clearAllData, tasks, updateTask } = useWeddingData();
+  const { weddingData, updateWeddingData, exportData, importData, clearAllData, tasks, updateTask, initializeAutoTasks } = useWeddingData();
   const [loading, setLoading] = useState(false);
   const [totalBudget, setTotalBudget] = useState<string>('');
   const [weddingDate, setWeddingDate] = useState<string>('');
   const [planningStartDate, setPlanningStartDate] = useState<string>('');
   const [originalWeddingDate, setOriginalWeddingDate] = useState<string>('');
   const [showDateChangeDialog, setShowDateChangeDialog] = useState(false);
+  const [showAutoTaskDialog, setShowAutoTaskDialog] = useState(false);
+  const [autoTasksEnabled, setAutoTasksEnabled] = useState(false);
 
   const [person1, setPerson1] = useState<Person>({
     name: '',
@@ -85,6 +87,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       setWeddingDate(weddingData.wedding_date || '');
       setPlanningStartDate(weddingData.planning_start_date || '');
       setOriginalWeddingDate(weddingData.wedding_date || '');
+      setAutoTasksEnabled(weddingData.auto_tasks_enabled || false);
       setPerson1({
         name: weddingData.couple_name_1 || '',
         gender: '',
@@ -233,6 +236,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       }
     }
 
+    if (autoTasksEnabled && !weddingData.auto_tasks_initialized && weddingDate) {
+      setShowAutoTaskDialog(true);
+      return;
+    }
+
     await saveSettings();
   };
 
@@ -245,6 +253,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
         wedding_date: weddingDate || undefined,
         planning_start_date: planningStartDate || undefined,
+        auto_tasks_enabled: autoTasksEnabled,
       });
       onClose();
     } catch (error: any) {
@@ -261,6 +270,21 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     }
     await saveSettings();
     setShowDateChangeDialog(false);
+  };
+
+  const handleAutoTaskConfirm = async (generateTasks: boolean) => {
+    await saveSettings();
+
+    if (generateTasks) {
+      try {
+        await initializeAutoTasks();
+      } catch (error) {
+        console.error('Error generating tasks:', error);
+        alert('Fehler beim Generieren der Aufgaben. Bitte versuche es erneut.');
+      }
+    }
+
+    setShowAutoTaskDialog(false);
   };
 
   const getPersonLabel = (personNum: 1 | 2) => {
@@ -581,9 +605,9 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                   <input
                     type="checkbox"
-                    checked={weddingData.auto_tasks_enabled || false}
-                    onChange={async (e) => {
-                      await updateWeddingData({ auto_tasks_enabled: e.target.checked });
+                    checked={autoTasksEnabled}
+                    onChange={(e) => {
+                      setAutoTasksEnabled(e.target.checked);
                     }}
                     className="sr-only peer"
                   />
@@ -703,6 +727,57 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 }}
               >
                 Nein, beibehalten
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAutoTaskDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold mb-4" style={{ color: '#3b3b3d' }}>
+              Automatische Aufgaben generieren
+            </h3>
+            <p className="text-gray-700 mb-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+              Du hast die automatische Aufgabengenerierung aktiviert.
+            </p>
+            <p className="text-gray-700 mb-6" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+              Möchtest du jetzt automatisch <strong>40 Standard-Aufgaben</strong> für deine Hochzeitsplanung generieren?
+            </p>
+            <div className="bg-green-50 border border-green-200 rounded p-3 mb-6">
+              <p className="text-sm text-green-800 mb-2">
+                <span className="font-semibold">Was passiert:</span>
+              </p>
+              <ul className="text-xs text-green-700 space-y-1 ml-4 list-disc">
+                <li>40 Aufgaben werden gleichmäßig zwischen {planningStartDate ? new Date(planningStartDate).toLocaleDateString('de-DE') : 'heute'} und {new Date(weddingDate).toLocaleDateString('de-DE')} verteilt</li>
+                <li>Aufgaben sind nach Kategorien sortiert (Location, Catering, etc.)</li>
+                <li>Jede Aufgabe erhält ein Fälligkeitsdatum</li>
+                <li>Du kannst die Aufgaben jederzeit anpassen oder löschen</li>
+              </ul>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleAutoTaskConfirm(true)}
+                className="flex-1 px-6 py-3 rounded-md transition-all hover:opacity-90 font-semibold"
+                style={{
+                  backgroundColor: '#d6b15b',
+                  color: 'white',
+                  fontFamily: 'Open Sans, sans-serif',
+                }}
+              >
+                Ja, generieren
+              </button>
+              <button
+                onClick={() => handleAutoTaskConfirm(false)}
+                className="flex-1 px-6 py-3 rounded-md border-2 transition-all hover:bg-gray-50 font-semibold"
+                style={{
+                  borderColor: '#d6b15b',
+                  color: '#3b3b3d',
+                  fontFamily: 'Open Sans, sans-serif',
+                }}
+              >
+                Nein, später
               </button>
             </div>
           </div>
