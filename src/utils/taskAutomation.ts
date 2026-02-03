@@ -137,6 +137,10 @@ export function generateTasksFromTemplates(
   const planningWindow = calculatePlanningWindow(planningStartDate, weddingDate);
   const applicableWindows = getApplicableTimingWindows(planningWindow);
 
+  console.log('[generateTasksFromTemplates] Planning window:', planningWindow);
+  console.log('[generateTasksFromTemplates] Applicable windows:', applicableWindows);
+  console.log('[generateTasksFromTemplates] Processing', templates.length, 'templates');
+
   const tasks: Task[] = [];
 
   for (const template of templates) {
@@ -162,32 +166,40 @@ export function generateTasksFromTemplates(
       });
     } else {
       const timingRules = template.timing_rules as TaskTemplate['timing_rules'];
+      let selectedWindow: string | null = null;
 
-      for (const window of applicableWindows) {
+      for (let i = applicableWindows.length - 1; i >= 0; i--) {
+        const window = applicableWindows[i];
         const windowKey = window as keyof typeof timingRules;
-        if (timingRules[windowKey]) {
-          const dueDate = calculateDueDate(weddingDate, window, planningStartDate);
-          const offsetWeeks = getOffsetWeeksFromTimingWindow(window);
-
-          tasks.push({
-            title: template.task_name,
-            description: template.description || '',
-            status: 'pending',
-            priority: template.priority || 'medium',
-            dueDate,
-            category: template.category,
-            is_system_task: true,
-            template_id: template.id,
-            offset_weeks: offsetWeeks,
-            offset_type: 'weeks_before'
-          });
-
+        if (timingRules && timingRules[windowKey]) {
+          selectedWindow = window;
           break;
         }
+      }
+
+      if (selectedWindow) {
+        const dueDate = calculateDueDate(weddingDate, selectedWindow, planningStartDate);
+        const offsetWeeks = getOffsetWeeksFromTimingWindow(selectedWindow);
+
+        tasks.push({
+          title: template.task_name,
+          description: template.description || '',
+          status: 'pending',
+          priority: template.priority || 'medium',
+          dueDate,
+          category: template.category,
+          is_system_task: true,
+          template_id: template.id,
+          offset_weeks: offsetWeeks,
+          offset_type: 'weeks_before'
+        });
+      } else {
+        console.warn('[generateTasksFromTemplates] No matching window for template:', template.task_name, 'timing_rules:', timingRules);
       }
     }
   }
 
+  console.log('[generateTasksFromTemplates] Generated', tasks.length, 'tasks');
   return tasks;
 }
 

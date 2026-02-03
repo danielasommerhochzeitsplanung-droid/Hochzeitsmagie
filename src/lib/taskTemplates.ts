@@ -25,15 +25,23 @@ export async function loadTaskTemplates(): Promise<TaskTemplate[]> {
       return taskTemplateData;
     }
 
-    return data.map(template => ({
+    console.log('[loadTaskTemplates] Loaded', data.length, 'templates from database');
+
+    const mapped = data.map(template => ({
       id: template.id,
       category: template.category,
       task_name: template.task_name,
       description: template.description || '',
       priority: template.priority,
       default_duration: template.default_duration,
-      timing_rules: template.timing_rules || {}
+      timing_rules: template.timing_rules || {},
+      main_category: template.main_category,
+      depends_on: template.depends_on,
+      planning_timeline: template.planning_timeline
     }));
+
+    console.log('[loadTaskTemplates] Sample template:', mapped[0]);
+    return mapped;
   } catch (error) {
     console.error('Failed to load task templates:', error);
     console.warn('Using fallback templates');
