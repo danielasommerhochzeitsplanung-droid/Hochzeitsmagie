@@ -532,6 +532,93 @@
     "confirmClearAll": "WARNUNG: Dies löscht ALLE Hochzeitsdaten unwiderruflich!\n\nMöchten Sie vorher ein Backup herunterladen?",
     "confirmClearAllFinal": "Backup heruntergeladen.\n\nJETZT wirklich ALLE Daten löschen?\n\nDies kann NICHT rückgängig gemacht werden!"
   },
+  "todos": {
+    "banner": {
+      "title": "Automatische Aufgaben erstellen?",
+      "description": "Du hast noch keine Aufgaben. Möchtest du automatische Aufgaben basierend auf deinem Hochzeitsdatum ({{date}}) generieren lassen?",
+      "generateButton": "Ja, Aufgaben generieren",
+      "skipButton": "Nein, manuell erstellen"
+    },
+    "stats": {
+      "tasksCompleted": "Aufgaben erledigt",
+      "completed": "abgeschlossen"
+    },
+    "views": {
+      "list": "Liste",
+      "timeline": "Timeline",
+      "gantt": "Gantt"
+    },
+    "buttons": {
+      "addTask": "Aufgabe hinzufügen",
+      "recalculate": "Neu berechnen"
+    },
+    "warnings": {
+      "desktopRecommended": "Desktop empfohlen",
+      "desktopDescription": "Für die {{view}}-Ansicht nutzen Sie bitte einen Desktop-Browser für die beste Darstellung."
+    },
+    "emptyStates": {
+      "noWeddingDate": "Bitte setzen Sie zuerst ein Hochzeitsdatum in den Einstellungen",
+      "noTasks": "Keine Aufgaben vorhanden"
+    },
+    "taskDetails": {
+      "recommendation": "Empfehlung",
+      "adjusted": "Angepasst",
+      "checkDate": "Datum prüfen",
+      "editTask": "Aufgabe bearbeiten",
+      "deleteTask": "Aufgabe löschen",
+      "priorityHigh": "Hoch",
+      "overdue": "überfällig",
+      "dependency": "Abhängigkeit",
+      "dependencies": "Abhängigkeiten",
+      "waitingFor": "Wartet auf:"
+    },
+    "generateDialog": {
+      "title": "Standard-Aufgaben generieren",
+      "description": "Möchten Sie 40 Standard-Aufgaben automatisch erstellen?",
+      "planningPeriod": "Planungszeitraum:",
+      "from": "Von:",
+      "to": "Bis:",
+      "today": "Heute",
+      "distributionInfo": "Die Aufgaben werden gleichmäßig über diesen Zeitraum verteilt.",
+      "planningStartInfo": "Das Planungsstartdatum kann in den Einstellungen angepasst werden.",
+      "confirmButton": "Ja, erstellen",
+      "cancelButton": "Nein, danke"
+    },
+    "addDialog": {
+      "title": "Neue Aufgabe hinzufügen",
+      "titleLabel": "Titel",
+      "titlePlaceholder": "Aufgabentitel",
+      "descriptionLabel": "Beschreibung",
+      "descriptionPlaceholder": "Optionale Beschreibung",
+      "categoryLabel": "Kategorie",
+      "dueDateLabel": "Fälligkeitsdatum",
+      "priorityLabel": "Priorität",
+      "priorityLow": "Niedrig",
+      "priorityMedium": "Mittel",
+      "priorityHigh": "Hoch",
+      "addButton": "Hinzufügen",
+      "cancelButton": "Abbrechen"
+    },
+    "recalculateDialog": {
+      "title": "Automatische Tasks neu berechnen",
+      "description": "Möchtest du alle automatischen Empfehlungen (🤖) basierend auf deinem aktuellen Hochzeitsdatum {{date}} neu berechnen?",
+      "countsInfo": "{{unchanged}} unveränderte Tasks werden neu erstellt. {{modified}} angepasste Tasks erhalten einen Hinweis.",
+      "userTasksInfo": "Deine eigenen Tasks mit 💍 bleiben unverändert.",
+      "infoBox": "Info: Angepasste Tasks werden nicht überschrieben, sondern bekommen nur einen Hinweis zur Überprüfung.",
+      "confirmButton": "Ja, neu berechnen",
+      "cancelButton": "Abbrechen"
+    },
+    "editDialog": {
+      "title": "Aufgabe bearbeiten",
+      "systemGeneratedInfo": "Hinweis: Diese Aufgabe ist eine automatische Empfehlung. Änderungen markieren sie als 'Angepasst' und sie wird bei Datumsänderungen nicht mehr überschrieben.",
+      "saveButton": "Speichern",
+      "cancelButton": "Abbrechen"
+    },
+    "alerts": {
+      "planningBeforeWedding": "Das Planungsstartdatum muss vor dem Hochzeitsdatum liegen!",
+      "setWeddingDate": "Bitte zuerst ein Hochzeitsdatum in den Einstellungen festlegen!"
+    }
+  },
   "seating": {
     "addTable": "Tisch hinzufügen",
     "editTable": "Tisch bearbeiten",

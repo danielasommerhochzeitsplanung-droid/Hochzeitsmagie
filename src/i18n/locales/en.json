@@ -532,6 +532,93 @@
     "confirmClearAll": "WARNING: This will delete ALL wedding data irreversibly!\n\nWould you like to download a backup first?",
     "confirmClearAllFinal": "Backup downloaded.\n\nReally delete ALL data NOW?\n\nThis action CANNOT be undone!"
   },
+  "todos": {
+    "banner": {
+      "title": "Auto-generate tasks?",
+      "description": "You have no tasks yet. Would you like to automatically generate tasks based on your wedding date ({{date}})?",
+      "generateButton": "Yes, generate tasks",
+      "skipButton": "No, create manually"
+    },
+    "stats": {
+      "tasksCompleted": "Tasks completed",
+      "completed": "completed"
+    },
+    "views": {
+      "list": "List",
+      "timeline": "Timeline",
+      "gantt": "Gantt"
+    },
+    "buttons": {
+      "addTask": "Add task",
+      "recalculate": "Recalculate"
+    },
+    "warnings": {
+      "desktopRecommended": "Desktop recommended",
+      "desktopDescription": "For the {{view}} view, please use a desktop browser for the best display."
+    },
+    "emptyStates": {
+      "noWeddingDate": "Please set a wedding date in settings first",
+      "noTasks": "No tasks available"
+    },
+    "taskDetails": {
+      "recommendation": "Recommendation",
+      "adjusted": "Adjusted",
+      "checkDate": "Check date",
+      "editTask": "Edit task",
+      "deleteTask": "Delete task",
+      "priorityHigh": "High",
+      "overdue": "overdue",
+      "dependency": "dependency",
+      "dependencies": "dependencies",
+      "waitingFor": "Waiting for:"
+    },
+    "generateDialog": {
+      "title": "Generate standard tasks",
+      "description": "Do you want to automatically create 40 standard tasks?",
+      "planningPeriod": "Planning period:",
+      "from": "From:",
+      "to": "To:",
+      "today": "Today",
+      "distributionInfo": "Tasks will be evenly distributed over this period.",
+      "planningStartInfo": "The planning start date can be adjusted in settings.",
+      "confirmButton": "Yes, create",
+      "cancelButton": "No, thanks"
+    },
+    "addDialog": {
+      "title": "Add new task",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Task title",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "categoryLabel": "Category",
+      "dueDateLabel": "Due date",
+      "priorityLabel": "Priority",
+      "priorityLow": "Low",
+      "priorityMedium": "Medium",
+      "priorityHigh": "High",
+      "addButton": "Add",
+      "cancelButton": "Cancel"
+    },
+    "recalculateDialog": {
+      "title": "Recalculate automatic tasks",
+      "description": "Do you want to recalculate all automatic recommendations (🤖) based on your current wedding date {{date}}?",
+      "countsInfo": "{{unchanged}} unchanged tasks will be recreated. {{modified}} adjusted tasks will receive a notice.",
+      "userTasksInfo": "Your own tasks with 💍 remain unchanged.",
+      "infoBox": "Info: Adjusted tasks will not be overwritten, but will only receive a notice to review.",
+      "confirmButton": "Yes, recalculate",
+      "cancelButton": "Cancel"
+    },
+    "editDialog": {
+      "title": "Edit task",
+      "systemGeneratedInfo": "Note: This task is an automatic recommendation. Changes will mark it as 'Adjusted' and it will no longer be overwritten when dates change.",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    },
+    "alerts": {
+      "planningBeforeWedding": "The planning start date must be before the wedding date!",
+      "setWeddingDate": "Please set a wedding date in settings first!"
+    }
+  },
   "seating": {
     "addTable": "Add Table",
     "editTable": "Edit Table",

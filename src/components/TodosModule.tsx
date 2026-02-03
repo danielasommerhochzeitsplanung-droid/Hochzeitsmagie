@@ -118,7 +118,7 @@ export default function TodosModule() {
     const totalDays = Math.ceil((weddingDate.getTime() - planningStart.getTime()) / (1000 * 60 * 60 * 24));
 
     if (totalDays <= 0) {
-      alert('Das Planungsstartdatum muss vor dem Hochzeitsdatum liegen!');
+      alert(t('todos.alerts.planningBeforeWedding'));
       return;
     }
 
@@ -168,7 +168,7 @@ export default function TodosModule() {
 
   const recalculateAutoTaskDates = () => {
     if (!weddingData?.wedding_date) {
-      alert('Bitte zuerst ein Hochzeitsdatum in den Einstellungen festlegen!');
+      alert(t('todos.alerts.setWeddingDate'));
       return;
     }
 
@@ -180,7 +180,7 @@ export default function TodosModule() {
     const totalDays = Math.ceil((weddingDate.getTime() - planningStart.getTime()) / (1000 * 60 * 60 * 24));
 
     if (totalDays <= 0) {
-      alert('Das Planungsstartdatum muss vor dem Hochzeitsdatum liegen!');
+      alert(t('todos.alerts.planningBeforeWedding'));
       return;
     }
 
@@ -466,10 +466,10 @@ export default function TodosModule() {
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-bold text-blue-900 mb-2">
-                Automatische Aufgaben erstellen?
+                {t('todos.banner.title')}
               </h3>
               <p className="text-blue-800 mb-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                Du hast noch keine Aufgaben. Möchtest du automatische Aufgaben basierend auf deinem Hochzeitsdatum ({new Date(weddingData.wedding_date).toLocaleDateString('de-DE')}) generieren lassen?
+                {t('todos.banner.description', { date: new Date(weddingData.wedding_date).toLocaleDateString('de-DE') })}
               </p>
               <div className="flex gap-3">
                 <button
@@ -481,7 +481,7 @@ export default function TodosModule() {
                     fontFamily: 'Open Sans, sans-serif',
                   }}
                 >
-                  Ja, Aufgaben generieren
+                  {t('todos.banner.generateButton')}
                 </button>
                 <button
                   onClick={handleSkipAutoTasks}
@@ -492,7 +492,7 @@ export default function TodosModule() {
                     fontFamily: 'Open Sans, sans-serif',
                   }}
                 >
-                  Nein, manuell erstellen
+                  {t('todos.banner.skipButton')}
                 </button>
               </div>
             </div>
@@ -507,7 +507,7 @@ export default function TodosModule() {
               {completionStats.completed} / {completionStats.total}
             </div>
             <div className="text-sm" style={{ color: '#666' }}>
-              Aufgaben erledigt
+              {t('todos.stats.tasksCompleted')}
             </div>
           </div>
 
@@ -519,7 +519,7 @@ export default function TodosModule() {
               />
             </div>
             <div className="text-xs mt-1" style={{ color: '#666' }}>
-              {completionStats.percentage}% abgeschlossen
+              {completionStats.percentage}% {t('todos.stats.completed')}
             </div>
           </div>
         </div>
@@ -535,7 +535,7 @@ export default function TodosModule() {
               }`}
               style={view === 'list' ? { backgroundColor: '#d6b15b' } : {}}
             >
-              Liste
+              {t('todos.views.list')}
             </button>
             <button
               onClick={() => setView('timeline')}
@@ -546,7 +546,7 @@ export default function TodosModule() {
               }`}
               style={view === 'timeline' ? { backgroundColor: '#d6b15b' } : {}}
             >
-              Timeline
+              {t('todos.views.timeline')}
             </button>
             <button
               onClick={() => setView('gantt')}
@@ -557,7 +557,7 @@ export default function TodosModule() {
               }`}
               style={view === 'gantt' ? { backgroundColor: '#d6b15b' } : {}}
             >
-              Gantt
+              {t('todos.views.gantt')}
             </button>
           </div>
 
@@ -572,7 +572,7 @@ export default function TodosModule() {
             }}
           >
             <Plus className="w-4 h-4" />
-            Aufgabe hinzufügen
+            {t('todos.buttons.addTask')}
           </button>
 
           <button
@@ -584,10 +584,10 @@ export default function TodosModule() {
               fontFamily: 'Open Sans, sans-serif',
               fontWeight: 600
             }}
-            title="Automatische Tasks neu berechnen"
+            title={t('todos.recalculateDialog.title')}
           >
             <RefreshCw className="w-4 h-4" />
-            Neu berechnen
+            {t('todos.buttons.recalculate')}
           </button>
         </div>
       </div>
@@ -646,10 +646,10 @@ export default function TodosModule() {
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
             <div className="font-semibold text-amber-900 mb-1">
-              Desktop empfohlen
+              {t('todos.warnings.desktopRecommended')}
             </div>
             <div className="text-sm text-amber-700">
-              Für die {view === 'gantt' ? 'Gantt' : 'Timeline'}-Ansicht nutzen Sie bitte einen Desktop-Browser für die beste Darstellung.
+              {t('todos.warnings.desktopDescription', { view: view === 'gantt' ? 'Gantt' : 'Timeline' })}
             </div>
           </div>
         </div>
@@ -674,7 +674,7 @@ export default function TodosModule() {
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
             <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
             <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              Bitte setzen Sie zuerst ein Hochzeitsdatum in den Einstellungen
+              {t('todos.emptyStates.noWeddingDate')}
             </p>
           </div>
         )
@@ -697,7 +697,7 @@ export default function TodosModule() {
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
             <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
             <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              Bitte setzen Sie zuerst ein Hochzeitsdatum in den Einstellungen
+              {t('todos.emptyStates.noWeddingDate')}
             </p>
           </div>
         )
@@ -707,7 +707,7 @@ export default function TodosModule() {
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
               <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
               <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                Keine Aufgaben vorhanden
+                {t('todos.emptyStates.noTasks')}
               </p>
             </div>
           ) : (
@@ -791,7 +791,7 @@ export default function TodosModule() {
                                 {task.title}
                                 {isBlocked && !task.completed && (
                                   <span className="ml-2 text-xs text-amber-600">
-                                    ({blockedBy.length} {blockedBy.length === 1 ? 'Abhängigkeit' : 'Abhängigkeiten'})
+                                    ({blockedBy.length} {blockedBy.length === 1 ? t('todos.taskDetails.dependency') : t('todos.taskDetails.dependencies')})
                                   </span>
                                 )}
                               </h4>
@@ -812,11 +812,11 @@ export default function TodosModule() {
                                         <>
                                           <span className="text-lg">🤖</span>
                                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 font-medium">
-                                            Empfehlung
+                                            {t('todos.taskDetails.recommendation')}
                                           </span>
                                           {task.manually_modified && (
                                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700 font-medium">
-                                              Angepasst
+                                              {t('todos.taskDetails.adjusted')}
                                             </span>
                                           )}
                                         </>
@@ -825,7 +825,7 @@ export default function TodosModule() {
                                           <span className="text-lg">💍</span>
                                           {task.needs_adjustment_warning && !task.warning_dismissed && (
                                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700 font-medium">
-                                              ⚠️ Datum prüfen
+                                              ⚠️ {t('todos.taskDetails.checkDate')}
                                             </span>
                                           )}
                                         </>
@@ -846,7 +846,7 @@ export default function TodosModule() {
                                         handleEditTask(task);
                                       }}
                                       className="text-gray-400 hover:text-blue-500 transition-colors"
-                                      title="Aufgabe bearbeiten"
+                                      title={t('todos.taskDetails.editTask')}
                                     >
                                       <Edit2 className="w-5 h-5" />
                                     </button>
@@ -856,7 +856,7 @@ export default function TodosModule() {
                                         deleteTask(task.id);
                                       }}
                                       className="text-gray-400 hover:text-rose-500 transition-colors"
-                                      title="Aufgabe löschen"
+                                      title={t('todos.taskDetails.deleteTask')}
                                     >
                                       <X className="w-5 h-5" />
                                     </button>
@@ -872,7 +872,7 @@ export default function TodosModule() {
 
                                   {task.priority === 'high' && (
                                     <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-rose-100 text-rose-700 font-medium">
-                                      Hoch
+                                      {t('todos.taskDetails.priorityHigh')}
                                     </span>
                                   )}
 
@@ -882,7 +882,7 @@ export default function TodosModule() {
                                     }`}>
                                       <Calendar className="w-3.5 h-3.5" />
                                       {new Date(task.due_date).toLocaleDateString('de-DE')}
-                                      {isOverdue && ' (überfällig)'}
+                                      {isOverdue && ` (${t('todos.taskDetails.overdue')})`}
                                     </span>
                                   )}
                                 </div>
@@ -891,7 +891,7 @@ export default function TodosModule() {
                                   <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
                                     <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                                     <div className="text-sm text-amber-800">
-                                      <span className="font-semibold">Wartet auf:</span> {blockedBy.join(', ')}
+                                      <span className="font-semibold">{t('todos.taskDetails.waitingFor')}</span> {blockedBy.join(', ')}
                                     </div>
                                   </div>
                                 )}
@@ -1239,21 +1239,21 @@ export default function TodosModule() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold mb-4" style={{ color: '#3b3b3d' }}>
-              Standard-Aufgaben generieren
+              {t('todos.generateDialog.title')}
             </h3>
             <p className="text-gray-700 mb-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              Möchten Sie 40 Standard-Aufgaben automatisch erstellen?
+              {t('todos.generateDialog.description')}
             </p>
             <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-4">
               <p className="text-sm text-blue-800">
-                <span className="font-semibold">Planungszeitraum:</span><br />
-                Von: <strong>{weddingData?.planning_start_date ? new Date(weddingData.planning_start_date).toLocaleDateString('de-DE') : 'Heute'}</strong><br />
-                Bis: <strong>{weddingData?.wedding_date ? new Date(weddingData.wedding_date).toLocaleDateString('de-DE') : ''}</strong>
+                <span className="font-semibold">{t('todos.generateDialog.planningPeriod')}</span><br />
+                {t('todos.generateDialog.from')} <strong>{weddingData?.planning_start_date ? new Date(weddingData.planning_start_date).toLocaleDateString('de-DE') : t('todos.generateDialog.today')}</strong><br />
+                {t('todos.generateDialog.to')} <strong>{weddingData?.wedding_date ? new Date(weddingData.wedding_date).toLocaleDateString('de-DE') : ''}</strong>
               </p>
             </div>
             <p className="text-sm text-gray-600 mb-6" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              Die Aufgaben werden gleichmäßig über diesen Zeitraum verteilt.
-              {!weddingData?.planning_start_date && ' Das Planungsstartdatum kann in den Einstellungen angepasst werden.'}
+              {t('todos.generateDialog.distributionInfo')}
+              {!weddingData?.planning_start_date && ` ${t('todos.generateDialog.planningStartInfo')}`}
             </p>
             <div className="flex gap-3">
               <button
@@ -1265,7 +1265,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Ja, erstellen
+                {t('todos.generateDialog.confirmButton')}
               </button>
               <button
                 onClick={() => setShowGenerateDialog(false)}
@@ -1276,7 +1276,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Nein, danke
+                {t('todos.generateDialog.cancelButton')}
               </button>
             </div>
           </div>
@@ -1288,7 +1288,7 @@ export default function TodosModule() {
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold" style={{ color: '#3b3b3d' }}>
-                Neue Aufgabe hinzufügen
+                {t('todos.addDialog.title')}
               </h3>
               <button
                 onClick={() => setShowAddDialog(false)}
@@ -1301,7 +1301,7 @@ export default function TodosModule() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Titel
+                  {t('todos.addDialog.titleLabel')}
                 </label>
                 <input
                   type="text"
@@ -1309,13 +1309,13 @@ export default function TodosModule() {
                   onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
                   className="w-full px-3 py-2 border-2 rounded-md"
                   style={{ borderColor: '#d6b15b' }}
-                  placeholder="Aufgabentitel"
+                  placeholder={t('todos.addDialog.titlePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Beschreibung
+                  {t('todos.addDialog.descriptionLabel')}
                 </label>
                 <textarea
                   value={newTask.description}
@@ -1323,13 +1323,13 @@ export default function TodosModule() {
                   className="w-full px-3 py-2 border-2 rounded-md"
                   style={{ borderColor: '#d6b15b' }}
                   rows={3}
-                  placeholder="Optionale Beschreibung"
+                  placeholder={t('todos.addDialog.descriptionPlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Kategorie
+                  {t('todos.addDialog.categoryLabel')}
                 </label>
                 <select
                   value={newTask.category}
@@ -1345,7 +1345,7 @@ export default function TodosModule() {
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Fälligkeitsdatum
+                  {t('todos.addDialog.dueDateLabel')}
                 </label>
                 <input
                   type="date"
@@ -1358,7 +1358,7 @@ export default function TodosModule() {
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Priorität
+                  {t('todos.addDialog.priorityLabel')}
                 </label>
                 <select
                   value={newTask.priority}
@@ -1366,9 +1366,9 @@ export default function TodosModule() {
                   className="w-full px-3 py-2 border-2 rounded-md"
                   style={{ borderColor: '#d6b15b' }}
                 >
-                  <option value="low">Niedrig</option>
-                  <option value="medium">Mittel</option>
-                  <option value="high">Hoch</option>
+                  <option value="low">{t('todos.addDialog.priorityLow')}</option>
+                  <option value="medium">{t('todos.addDialog.priorityMedium')}</option>
+                  <option value="high">{t('todos.addDialog.priorityHigh')}</option>
                 </select>
               </div>
             </div>
@@ -1383,7 +1383,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Hinzufügen
+                {t('todos.addDialog.addButton')}
               </button>
               <button
                 onClick={() => setShowAddDialog(false)}
@@ -1394,7 +1394,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Abbrechen
+                {t('todos.addDialog.cancelButton')}
               </button>
             </div>
           </div>
@@ -1405,23 +1405,25 @@ export default function TodosModule() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold mb-4" style={{ color: '#3b3b3d' }}>
-              Automatische Tasks neu berechnen
+              {t('todos.recalculateDialog.title')}
             </h3>
             <p className="text-gray-700 mb-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              Möchtest du alle <strong>automatischen Empfehlungen</strong> (🤖) basierend auf deinem aktuellen Hochzeitsdatum{' '}
-              <strong>{weddingData?.wedding_date ? new Date(weddingData.wedding_date).toLocaleDateString('de-DE') : ''}</strong>{' '}
-              neu berechnen?
+              {t('todos.recalculateDialog.description', {
+                date: weddingData?.wedding_date ? new Date(weddingData.wedding_date).toLocaleDateString('de-DE') : ''
+              })}
             </p>
             <p className="text-gray-700 mb-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              {tasks.filter(t => t.is_system_generated && !t.completed && !t.manually_modified).length} unveränderte Tasks werden neu erstellt.{' '}
-              {tasks.filter(t => t.is_system_generated && !t.completed && t.manually_modified).length} angepasste Tasks erhalten einen Hinweis.
+              {t('todos.recalculateDialog.countsInfo', {
+                unchanged: tasks.filter(t => t.is_system_generated && !t.completed && !t.manually_modified).length,
+                modified: tasks.filter(t => t.is_system_generated && !t.completed && t.manually_modified).length
+              })}
             </p>
             <p className="text-gray-700 mb-6" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-              Deine eigenen Tasks mit 💍 bleiben unverändert.
+              {t('todos.recalculateDialog.userTasksInfo')}
             </p>
             <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-6">
               <p className="text-sm text-blue-800">
-                <span className="font-semibold">Info:</span> Angepasste Tasks werden nicht überschrieben, sondern bekommen nur einen Hinweis zur Überprüfung.
+                {t('todos.recalculateDialog.infoBox')}
               </p>
             </div>
             <div className="flex gap-3">
@@ -1434,7 +1436,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Ja, neu berechnen
+                {t('todos.recalculateDialog.confirmButton')}
               </button>
               <button
                 onClick={() => setShowRecalculateDialog(false)}
@@ -1445,7 +1447,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Abbrechen
+                {t('todos.recalculateDialog.cancelButton')}
               </button>
             </div>
           </div>
@@ -1457,7 +1459,7 @@ export default function TodosModule() {
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold" style={{ color: '#3b3b3d' }}>
-                Aufgabe bearbeiten
+                {t('todos.editDialog.title')}
               </h3>
               <button
                 onClick={() => {
@@ -1473,7 +1475,7 @@ export default function TodosModule() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Titel
+                  {t('todos.addDialog.titleLabel')}
                 </label>
                 <input
                   type="text"
@@ -1481,13 +1483,13 @@ export default function TodosModule() {
                   onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
                   className="w-full px-3 py-2 border-2 rounded-md"
                   style={{ borderColor: '#d6b15b' }}
-                  placeholder="Aufgabentitel"
+                  placeholder={t('todos.addDialog.titlePlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Beschreibung
+                  {t('todos.addDialog.descriptionLabel')}
                 </label>
                 <textarea
                   value={editingTask.description || ''}
@@ -1495,13 +1497,13 @@ export default function TodosModule() {
                   className="w-full px-3 py-2 border-2 rounded-md"
                   style={{ borderColor: '#d6b15b' }}
                   rows={3}
-                  placeholder="Optionale Beschreibung"
+                  placeholder={t('todos.addDialog.descriptionPlaceholder')}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Kategorie
+                  {t('todos.addDialog.categoryLabel')}
                 </label>
                 <select
                   value={editingTask.category}
@@ -1517,7 +1519,7 @@ export default function TodosModule() {
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Fälligkeitsdatum
+                  {t('todos.addDialog.dueDateLabel')}
                 </label>
                 <input
                   type="date"
@@ -1530,7 +1532,7 @@ export default function TodosModule() {
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
-                  Priorität
+                  {t('todos.addDialog.priorityLabel')}
                 </label>
                 <select
                   value={editingTask.priority}
@@ -1538,17 +1540,16 @@ export default function TodosModule() {
                   className="w-full px-3 py-2 border-2 rounded-md"
                   style={{ borderColor: '#d6b15b' }}
                 >
-                  <option value="low">Niedrig</option>
-                  <option value="medium">Mittel</option>
-                  <option value="high">Hoch</option>
+                  <option value="low">{t('todos.addDialog.priorityLow')}</option>
+                  <option value="medium">{t('todos.addDialog.priorityMedium')}</option>
+                  <option value="high">{t('todos.addDialog.priorityHigh')}</option>
                 </select>
               </div>
 
               {editingTask.is_system_generated && (
                 <div className="bg-blue-50 border border-blue-200 rounded p-3">
                   <p className="text-sm text-blue-800">
-                    <span className="font-semibold">Hinweis:</span> Diese Aufgabe ist eine automatische Empfehlung.
-                    Änderungen markieren sie als "Angepasst" und sie wird bei Datumsänderungen nicht mehr überschrieben.
+                    {t('todos.editDialog.systemGeneratedInfo')}
                   </p>
                 </div>
               )}
@@ -1564,7 +1565,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Speichern
+                {t('todos.editDialog.saveButton')}
               </button>
               <button
                 onClick={() => {
@@ -1578,7 +1579,7 @@ export default function TodosModule() {
                   fontFamily: 'Open Sans, sans-serif',
                 }}
               >
-                Abbrechen
+                {t('todos.editDialog.cancelButton')}
               </button>
             </div>
           </div>
