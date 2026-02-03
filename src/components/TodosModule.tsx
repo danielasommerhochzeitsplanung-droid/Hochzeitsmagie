@@ -8,6 +8,64 @@ import TimelineView from './TimelineView';
 import GanttChart from './GanttChart';
 import { getPhaseColor } from '../utils/phaseManagement';
 
+const mainCategories = [
+  {
+    id: 'location_venue',
+    label: 'Location & Räumlichkeiten',
+    icon: '🏛️',
+    color: 'bg-emerald-500',
+    subcategories: ['location']
+  },
+  {
+    id: 'ceremony_legal',
+    label: 'Trauung & Standesamt',
+    icon: '💒',
+    color: 'bg-rose-500',
+    subcategories: ['planning']
+  },
+  {
+    id: 'vendors_services',
+    label: 'Dienstleister & Vendors',
+    icon: '🤝',
+    color: 'bg-blue-500',
+    subcategories: ['catering', 'planning']
+  },
+  {
+    id: 'guests_communication',
+    label: 'Gäste & Kommunikation',
+    icon: '👥',
+    color: 'bg-amber-500',
+    subcategories: ['guests']
+  },
+  {
+    id: 'couple_personal',
+    label: 'Brautpaar Persönliches',
+    icon: '👫',
+    color: 'bg-pink-500',
+    subcategories: ['couple']
+  },
+  {
+    id: 'design_decoration',
+    label: 'Design & Dekoration',
+    icon: '🎨',
+    color: 'bg-cyan-500',
+    subcategories: ['decoration']
+  },
+];
+
+const categoryToMainCategory = (category: string): string => {
+  const categoryLower = category.toLowerCase();
+
+  if (categoryLower === 'location') return 'location_venue';
+  if (categoryLower === 'guests') return 'guests_communication';
+  if (categoryLower === 'couple') return 'couple_personal';
+  if (categoryLower === 'catering') return 'vendors_services';
+  if (categoryLower === 'decoration') return 'design_decoration';
+  if (categoryLower === 'planning') return 'ceremony_legal';
+
+  return 'ceremony_legal';
+};
+
 export default function TodosModule() {
   const { t } = useTranslation();
   const { weddingData, tasks, phases, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase } = useWeddingData();
@@ -21,6 +79,7 @@ export default function TodosModule() {
   const [view, setView] = useState<'list' | 'timeline' | 'gantt'>('list');
   const [isMobile, setIsMobile] = useState(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [expandedMainCategories, setExpandedMainCategories] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set());
 
@@ -278,6 +337,36 @@ export default function TodosModule() {
       return newSet;
     });
   };
+
+  const toggleMainCategoryExpansion = (mainCategoryId: string) => {
+    setExpandedMainCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(mainCategoryId)) {
+        newSet.delete(mainCategoryId);
+      } else {
+        newSet.add(mainCategoryId);
+      }
+      return newSet;
+    });
+  };
+
+  const groupedByMainCategory = useMemo(() => {
+    const groups = new Map<string, Task[]>();
+
+    mainCategories.forEach(mainCat => {
+      groups.set(mainCat.id, []);
+    });
+
+    tasks.forEach(task => {
+      const mainCategoryId = categoryToMainCategory(task.category);
+      if (!groups.has(mainCategoryId)) {
+        groups.set(mainCategoryId, []);
+      }
+      groups.get(mainCategoryId)!.push(task);
+    });
+
+    return groups;
+  }, [tasks]);
 
   const completionStats = useMemo(() => {
     const total = tasks.length;
@@ -614,11 +703,6 @@ export default function TodosModule() {
         )
       ) : (
         <div className="space-y-4">
-          {/* DEBUG: Simple unfiltered task list */}
-          <div className="bg-blue-50 border border-blue-500 rounded-lg p-4 mb-4">
-            <p className="text-sm font-bold text-blue-900">DEBUG MODE: Zeige alle {tasks.length} Tasks ungefiltert</p>
-          </div>
-
           {tasks.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
               <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
@@ -627,74 +711,200 @@ export default function TodosModule() {
               </p>
             </div>
           ) : (
-            tasks.map(task => (
-              <div
-                key={task.id}
-                className="bg-white rounded-lg border-2 p-4 hover:shadow-md transition-all"
-                style={{ borderColor: '#d6b15b' }}
-              >
-                <div className="flex items-start gap-3">
-                  <button
-                    onClick={() => toggleTaskCompletion(task)}
-                    className="flex-shrink-0 mt-1"
+            mainCategories.map(mainCategory => {
+              const mainCategoryTasks = groupedByMainCategory.get(mainCategory.id) || [];
+              if (mainCategoryTasks.length === 0) return null;
+
+              const completedCount = mainCategoryTasks.filter(t => t.completed).length;
+              const isExpanded = expandedMainCategories.has(mainCategory.id);
+
+              return (
+                <div
+                  key={mainCategory.id}
+                  className="bg-white rounded-lg border-2 hover:shadow-md transition-all"
+                  style={{ borderColor: '#d6b15b' }}
+                >
+                  <div
+                    className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => toggleMainCategoryExpansion(mainCategory.id)}
                   >
-                    {task.completed ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                    ) : (
-                      <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
-                    )}
-                  </button>
-
-                  <div className="flex-1">
-                    <h4
-                      className={`font-medium ${
-                        task.completed ? 'line-through text-gray-400' : 'text-gray-900'
-                      }`}
-                      style={{ fontFamily: 'Open Sans, sans-serif' }}
-                    >
-                      {task.title}
-                    </h4>
-
-                    {task.description && (
-                      <p className="text-sm text-gray-600 mt-1">
-                        {task.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-3 flex-wrap mt-2">
-                      <span className="text-xs text-gray-500">
-                        ID: {task.id.slice(0, 8)}...
-                      </span>
-
-                      <span className="text-xs text-gray-500">
-                        Kategorie: {task.category}
-                      </span>
-
-                      {task.due_date && (
-                        <span className="text-xs text-gray-600 flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {new Date(task.due_date).toLocaleDateString('de-DE')}
-                        </span>
-                      )}
-
-                      {task.phase_id && (
-                        <span className="text-xs text-gray-500">
-                          Phase: {task.phase_id.slice(0, 8)}...
-                        </span>
-                      )}
+                    <div className="text-3xl flex-shrink-0">
+                      {mainCategory.icon}
                     </div>
+                    <h3 className="text-lg font-bold flex-1" style={{ color: '#3b3b3d' }}>
+                      {mainCategory.label}
+                    </h3>
+                    <span className="text-sm font-medium text-gray-500">
+                      {completedCount}/{mainCategoryTasks.length}
+                    </span>
+                    {isExpanded ? (
+                      <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                    )}
                   </div>
 
-                  <button
-                    onClick={() => handleEditTask(task)}
-                    className="text-gray-400 hover:text-blue-500 transition-colors"
-                    title="Aufgabe bearbeiten"
-                  >
-                    <Edit2 className="w-5 h-5" />
-                  </button>
+                  {isExpanded && (
+                    <div className="border-t-2 divide-y" style={{ borderColor: '#f3f4f6' }}>
+                      {mainCategoryTasks.map(task => {
+                        const isTaskExpanded = expandedTasks.has(task.id);
+                        const blockedBy = getBlockedTasks(task);
+                        const isBlocked = blockedBy.length > 0;
+                        const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
+
+                        return (
+                          <div key={task.id}>
+                            <div
+                              className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${isBlocked && !task.completed ? 'bg-gray-50 opacity-75' : ''}`}
+                              onClick={() => toggleTaskExpansion(task.id)}
+                            >
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (!isBlocked) {
+                                    toggleTaskCompletion(task);
+                                  }
+                                }}
+                                className="flex-shrink-0"
+                                disabled={isBlocked && !task.completed}
+                                title={isBlocked && !task.completed ? `Warte auf: ${blockedBy.join(', ')}` : ''}
+                              >
+                                {task.completed ? (
+                                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                ) : isBlocked ? (
+                                  <Lock className="w-5 h-5 text-amber-500" />
+                                ) : (
+                                  <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                )}
+                              </button>
+
+                              <h4
+                                className={`flex-1 font-medium ${
+                                  task.completed
+                                    ? 'line-through text-gray-400'
+                                    : isBlocked
+                                      ? 'text-gray-500'
+                                      : 'text-gray-900'
+                                }`}
+                                style={{ fontFamily: 'Open Sans, sans-serif' }}
+                              >
+                                {task.title}
+                                {isBlocked && !task.completed && (
+                                  <span className="ml-2 text-xs text-amber-600">
+                                    ({blockedBy.length} {blockedBy.length === 1 ? 'Abhängigkeit' : 'Abhängigkeiten'})
+                                  </span>
+                                )}
+                              </h4>
+
+                              {isTaskExpanded ? (
+                                <ChevronDown className="w-5 h-5 text-gray-400" />
+                              ) : (
+                                <ChevronRight className="w-5 h-5 text-gray-400" />
+                              )}
+                            </div>
+
+                            {isTaskExpanded && (
+                              <div className="px-4 pb-4 bg-gray-50">
+                                <div className="pt-3 flex items-start justify-between gap-4">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      {task.is_system_generated ? (
+                                        <>
+                                          <span className="text-lg">🤖</span>
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 font-medium">
+                                            Empfehlung
+                                          </span>
+                                          {task.manually_modified && (
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700 font-medium">
+                                              Angepasst
+                                            </span>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <span className="text-lg">💍</span>
+                                          {task.needs_adjustment_warning && !task.warning_dismissed && (
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700 font-medium">
+                                              ⚠️ Datum prüfen
+                                            </span>
+                                          )}
+                                        </>
+                                      )}
+                                    </div>
+
+                                    {task.description && (
+                                      <p className="text-sm text-gray-600 mt-2">
+                                        {task.description}
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditTask(task);
+                                      }}
+                                      className="text-gray-400 hover:text-blue-500 transition-colors"
+                                      title="Aufgabe bearbeiten"
+                                    >
+                                      <Edit2 className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteTask(task.id);
+                                      }}
+                                      className="text-gray-400 hover:text-rose-500 transition-colors"
+                                      title="Aufgabe löschen"
+                                    >
+                                      <X className="w-5 h-5" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-3 flex-wrap mt-3">
+                                  <span
+                                    className={`inline-flex items-center px-2 py-1 rounded text-xs text-white font-medium ${getCategoryColor(task.category)}`}
+                                  >
+                                    {taskCategories.find(c => c.id === task.category)?.label || task.category}
+                                  </span>
+
+                                  {task.priority === 'high' && (
+                                    <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-rose-100 text-rose-700 font-medium">
+                                      Hoch
+                                    </span>
+                                  )}
+
+                                  {task.due_date && (
+                                    <span className={`text-xs flex items-center gap-1 ${
+                                      isOverdue ? 'text-rose-600 font-semibold' : 'text-gray-600'
+                                    }`}>
+                                      <Calendar className="w-3.5 h-3.5" />
+                                      {new Date(task.due_date).toLocaleDateString('de-DE')}
+                                      {isOverdue && ' (überfällig)'}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {isBlocked && !task.completed && (
+                                  <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
+                                    <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                                    <div className="text-sm text-amber-800">
+                                      <span className="font-semibold">Wartet auf:</span> {blockedBy.join(', ')}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
 
           {/* OLD GROUPED VIEW - COMMENTED OUT FOR DEBUG
