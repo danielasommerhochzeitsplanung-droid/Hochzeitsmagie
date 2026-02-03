@@ -176,70 +176,72 @@ export default function TodosModule() {
     setShowRecalculateDialog(false);
   };
 
-  const filteredTasks = useMemo(() => {
-    return tasks.filter(task => {
-      if (filterCategory !== 'all' && task.category !== filterCategory) return false;
-      if (filterStatus === 'completed' && !task.completed) return false;
-      if (filterStatus === 'active' && task.completed) return false;
-      return true;
-    });
-  }, [tasks, filterCategory, filterStatus]);
+  // DEBUG: Temporarily disabled for testing
+  // const filteredTasks = useMemo(() => {
+  //   return tasks.filter(task => {
+  //     if (filterCategory !== 'all' && task.category !== filterCategory) return false;
+  //     if (filterStatus === 'completed' && !task.completed) return false;
+  //     if (filterStatus === 'active' && task.completed) return false;
+  //     return true;
+  //   });
+  // }, [tasks, filterCategory, filterStatus]);
 
-  const sortedTasks = useMemo(() => {
-    return [...filteredTasks].sort((a, b) => {
-      if (!a.due_date || !b.due_date) return 0;
-      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-    });
-  }, [filteredTasks]);
+  // const sortedTasks = useMemo(() => {
+  //   return [...filteredTasks].sort((a, b) => {
+  //     if (!a.due_date || !b.due_date) return 0;
+  //     return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+  //   });
+  // }, [filteredTasks]);
 
-  const groupedTasks = useMemo(() => {
-    const groups = new Map<string, Task[]>();
-    sortedTasks.forEach(task => {
-      const category = task.category;
-      if (!groups.has(category)) {
-        groups.set(category, []);
-      }
-      groups.get(category)!.push(task);
-    });
-    return groups;
-  }, [sortedTasks]);
+  // const groupedTasks = useMemo(() => {
+  //   const groups = new Map<string, Task[]>();
+  //   sortedTasks.forEach(task => {
+  //     const category = task.category;
+  //     if (!groups.has(category)) {
+  //       groups.set(category, []);
+  //     }
+  //     groups.get(category)!.push(task);
+  //   });
+  //   return groups;
+  // }, [sortedTasks]);
 
-  const groupedByPhase = useMemo(() => {
-    const categoryGroups = new Map<string, Map<string, Task[]>>();
+  // const groupedByPhase = useMemo(() => {
+  //   const categoryGroups = new Map<string, Map<string, Task[]>>();
 
-    groupedTasks.forEach((categoryTasks, category) => {
-      const phaseGroups = new Map<string, Task[]>();
-      const sortedPhases = [...phases].sort((a, b) => a.order_index - b.order_index);
+  //   groupedTasks.forEach((categoryTasks, category) => {
+  //     const phaseGroups = new Map<string, Task[]>();
+  //     const sortedPhases = [...phases].sort((a, b) => a.order_index - b.order_index);
 
-      sortedPhases.forEach(phase => {
-        phaseGroups.set(phase.id, []);
-      });
-      phaseGroups.set('no-phase', []);
+  //     sortedPhases.forEach(phase => {
+  //       phaseGroups.set(phase.id, []);
+  //     });
+  //     phaseGroups.set('no-phase', []);
 
-      categoryTasks.forEach(task => {
-        const phaseId = task.phase_id || 'no-phase';
-        if (!phaseGroups.has(phaseId)) {
-          phaseGroups.set(phaseId, []);
-        }
-        phaseGroups.get(phaseId)!.push(task);
-      });
+  //     categoryTasks.forEach(task => {
+  //       const phaseId = task.phase_id || 'no-phase';
+  //       if (!phaseGroups.has(phaseId)) {
+  //         phaseGroups.set(phaseId, []);
+  //       }
+  //       phaseGroups.get(phaseId)!.push(task);
+  //     });
 
-      categoryGroups.set(category, phaseGroups);
-    });
+  //     categoryGroups.set(category, phaseGroups);
+  //   });
 
-    return categoryGroups;
-  }, [groupedTasks, phases]);
+  //   return categoryGroups;
+  // }, [groupedTasks, phases]);
 
-  useEffect(() => {
-    const initialExpanded = new Set<string>();
-    groupedTasks.forEach((tasks) => {
-      const firstIncomplete = tasks.find(t => !t.completed);
-      if (firstIncomplete) {
-        initialExpanded.add(firstIncomplete.id);
-      }
-    });
-    setExpandedTasks(initialExpanded);
-  }, [groupedTasks.size]);
+  // DEBUG: Temporarily disabled
+  // useEffect(() => {
+  //   const initialExpanded = new Set<string>();
+  //   groupedTasks.forEach((tasks) => {
+  //     const firstIncomplete = tasks.find(t => !t.completed);
+  //     if (firstIncomplete) {
+  //       initialExpanded.add(firstIncomplete.id);
+  //     }
+  //   });
+  //   setExpandedTasks(initialExpanded);
+  // }, [groupedTasks.size]);
 
   const toggleTaskExpansion = (taskId: string) => {
     setExpandedTasks(prev => {
@@ -501,7 +503,8 @@ export default function TodosModule() {
         </div>
       </div>
 
-      <div className="flex gap-4 items-center flex-wrap">
+      {/* DEBUG: Filter UI temporarily disabled */}
+      {/* <div className="flex gap-4 items-center flex-wrap">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4" style={{ color: '#666' }} />
           <span className="text-sm font-medium" style={{ color: '#666' }}>
@@ -547,7 +550,7 @@ export default function TodosModule() {
             );
           })}
         </div>
-      </div>
+      </div> */}
 
       {(view === 'timeline' || view === 'gantt') && isMobile && (
         <div className="bg-amber-50 border-2 border-amber-500 rounded-lg p-4 flex items-start gap-3">
@@ -566,7 +569,7 @@ export default function TodosModule() {
       {view === 'timeline' ? (
         weddingData?.wedding_date ? (
           <TimelineView
-            tasks={sortedTasks}
+            tasks={tasks}
             events={events}
             vendors={vendors}
             locations={locations}
@@ -589,7 +592,7 @@ export default function TodosModule() {
       ) : view === 'gantt' ? (
         weddingData?.wedding_date ? (
           <GanttChart
-            tasks={sortedTasks}
+            tasks={tasks}
             events={events}
             vendors={vendors}
             locations={locations}
@@ -610,7 +613,91 @@ export default function TodosModule() {
           </div>
         )
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
+          {/* DEBUG: Simple unfiltered task list */}
+          <div className="bg-blue-50 border border-blue-500 rounded-lg p-4 mb-4">
+            <p className="text-sm font-bold text-blue-900">DEBUG MODE: Zeige alle {tasks.length} Tasks ungefiltert</p>
+          </div>
+
+          {tasks.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
+              <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
+              <p className="text-gray-600" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+                Keine Aufgaben vorhanden
+              </p>
+            </div>
+          ) : (
+            tasks.map(task => (
+              <div
+                key={task.id}
+                className="bg-white rounded-lg border-2 p-4 hover:shadow-md transition-all"
+                style={{ borderColor: '#d6b15b' }}
+              >
+                <div className="flex items-start gap-3">
+                  <button
+                    onClick={() => toggleTaskCompletion(task)}
+                    className="flex-shrink-0 mt-1"
+                  >
+                    {task.completed ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                    ) : (
+                      <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
+                    )}
+                  </button>
+
+                  <div className="flex-1">
+                    <h4
+                      className={`font-medium ${
+                        task.completed ? 'line-through text-gray-400' : 'text-gray-900'
+                      }`}
+                      style={{ fontFamily: 'Open Sans, sans-serif' }}
+                    >
+                      {task.title}
+                    </h4>
+
+                    {task.description && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {task.description}
+                      </p>
+                    )}
+
+                    <div className="flex items-center gap-3 flex-wrap mt-2">
+                      <span className="text-xs text-gray-500">
+                        ID: {task.id.slice(0, 8)}...
+                      </span>
+
+                      <span className="text-xs text-gray-500">
+                        Kategorie: {task.category}
+                      </span>
+
+                      {task.due_date && (
+                        <span className="text-xs text-gray-600 flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {new Date(task.due_date).toLocaleDateString('de-DE')}
+                        </span>
+                      )}
+
+                      {task.phase_id && (
+                        <span className="text-xs text-gray-500">
+                          Phase: {task.phase_id.slice(0, 8)}...
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleEditTask(task)}
+                    className="text-gray-400 hover:text-blue-500 transition-colors"
+                    title="Aufgabe bearbeiten"
+                  >
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+
+          {/* OLD GROUPED VIEW - COMMENTED OUT FOR DEBUG
           {sortedTasks.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
               <Calendar className="w-12 h-12 mx-auto mb-3" style={{ color: '#d6b15b' }} />
@@ -933,7 +1020,8 @@ export default function TodosModule() {
                 </div>
               );
             })
-          )}
+          )
+          */}
         </div>
       )}
 
