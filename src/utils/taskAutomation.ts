@@ -1,102 +1,53 @@
-import { storage } from '../lib/storage-adapter';
+import { storage, Task } from '../lib/storage-adapter';
+import { supabase } from '../lib/supabase';
 
 export interface TaskTemplate {
   id: string;
   category: string;
-  task_name: string;
-  description: string;
-  priority: string;
-  default_duration: number;
-  timing_rules: {
-    immediate?: boolean;
-    '3_months'?: boolean;
-    '6_months'?: boolean;
-    '9_months'?: boolean;
-    '12_months'?: boolean;
-    '18_months'?: boolean;
-  };
-  weeks_before_wedding?: number;
-  main_category?: string;
-  depends_on?: string[];
-  planning_timeline?: string[];
+  phase: number;
+  order_in_phase: number;
+  title_de: string;
+  title_en: string;
+  description_de?: string;
+  description_en?: string;
+  planning_duration_months: number;
+  recommended_offset_months: number;
+  latest_completion_months: number;
+  is_critical: boolean;
+  created_at: string;
 }
 
-export interface Task {
-  id?: string;
-  title: string;
-  description: string;
-  status: string;
-  priority: string;
-  dueDate: string;
-  category: string;
-  is_system_task?: boolean;
-  template_id?: string;
-  offset_weeks?: number;
-  offset_type?: string;
-  needs_adjustment_warning?: boolean;
-  warning_dismissed?: boolean;
-  depends_on?: string[];
-}
-
-export function calculatePlanningWindow(planningStartDate: string, weddingDate: string): string {
+export function calculatePlanningDurationMonths(planningStartDate: string, weddingDate: string): number {
   const start = new Date(planningStartDate);
   const wedding = new Date(weddingDate);
 
   const diffTime = wedding.getTime() - start.getTime();
-  const diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30.44);
+  const diffMonths = Math.round(diffTime / (1000 * 60 * 60 * 24 * 30.44));
 
-  if (diffMonths >= 18) return '18_months';
-  if (diffMonths >= 12) return '12_months';
-  if (diffMonths >= 9) return '9_months';
-  if (diffMonths >= 6) return '6_months';
-  if (diffMonths >= 3) return '3_months';
-  return 'immediate';
+  return diffMonths;
 }
 
-export function getApplicableTimingWindows(planningWindow: string): string[] {
-  const windows = ['immediate', '3_months', '6_months', '9_months', '12_months', '18_months'];
-  const currentIndex = windows.indexOf(planningWindow);
+export function findBestMatchingPlanningDuration(actualMonths: number): number {
+  const availableDurations = [6, 9, 12, 15, 18, 24, 30];
 
-  return windows.slice(0, currentIndex + 1);
-}
-
-export function calculateDueDate(
-  weddingDate: string,
-  timingWindow: string,
-  planningStartDate?: string,
-  weeksBeforeWedding?: number
-): string {
-  const wedding = new Date(weddingDate);
-
-  let offsetWeeks = 0;
-
-  if (weeksBeforeWedding !== undefined) {
-    offsetWeeks = weeksBeforeWedding;
-  } else {
-    switch (timingWindow) {
-      case 'immediate':
-        offsetWeeks = 4;
-        break;
-      case '3_months':
-        offsetWeeks = 12;
-        break;
-      case '6_months':
-        offsetWeeks = 24;
-        break;
-      case '9_months':
-        offsetWeeks = 36;
-        break;
-      case '12_months':
-        offsetWeeks = 48;
-        break;
-      case '18_months':
-        offsetWeeks = 72;
-        break;
+  for (const duration of availableDurations) {
+    if (actualMonths <= duration) {
+      return duration;
     }
   }
 
+  return 30;
+}
+
+export function calculateDueDateFromOffset(
+  weddingDate: string,
+  offsetMonths: number,
+  planningStartDate?: string
+): string {
+  const wedding = new Date(weddingDate);
   const dueDate = new Date(wedding);
-  dueDate.setDate(dueDate.getDate() - (offsetWeeks * 7));
+
+  dueDate.setMonth(dueDate.getMonth() + offsetMonths);
 
   if (planningStartDate) {
     const planningStart = new Date(planningStartDate);
@@ -110,96 +61,67 @@ export function calculateDueDate(
   return dueDate.toISOString().split('T')[0];
 }
 
-export function getOffsetWeeksFromTimingWindow(timingWindow: string): number {
-  switch (timingWindow) {
-    case 'immediate':
-      return 4;
-    case '3_months':
-      return 12;
-    case '6_months':
-      return 24;
-    case '9_months':
-      return 36;
-    case '12_months':
-      return 48;
-    case '18_months':
-      return 72;
-    default:
-      return 4;
+export async function fetchTaskTemplatesFromSupabase(
+  planningDurationMonths: number,
+  category: string = 'Location & Ablauf'
+): Promise<TaskTemplate[]> {
+  const { data, error } = await supabase
+    .from('task_templates')
+    .select('*')
+    .eq('category', category)
+    .eq('planning_duration_months', planningDurationMonths)
+    .order('phase', { ascending: true })
+    .order('order_in_phase', { ascending: true });
+
+  if (error) {
+    console.error('[fetchTaskTemplatesFromSupabase] Error fetching templates:', error);
+    return [];
   }
+
+  return data || [];
 }
 
-export function generateTasksFromTemplates(
+export async function generateLocationTasksFromTemplates(
   planningStartDate: string,
   weddingDate: string,
-  templates: TaskTemplate[]
-): Task[] {
-  const planningWindow = calculatePlanningWindow(planningStartDate, weddingDate);
-  const applicableWindows = getApplicableTimingWindows(planningWindow);
+  language: string = 'de'
+): Promise<Omit<Task, 'id' | 'created_at'>[]> {
+  const actualMonths = calculatePlanningDurationMonths(planningStartDate, weddingDate);
+  const planningDuration = findBestMatchingPlanningDuration(actualMonths);
 
-  console.log('[generateTasksFromTemplates] Planning window:', planningWindow);
-  console.log('[generateTasksFromTemplates] Applicable windows:', applicableWindows);
-  console.log('[generateTasksFromTemplates] Processing', templates.length, 'templates');
+  console.log('[generateLocationTasksFromTemplates] Actual planning months:', actualMonths);
+  console.log('[generateLocationTasksFromTemplates] Selected planning duration:', planningDuration);
 
-  const tasks: Task[] = [];
+  const templates = await fetchTaskTemplatesFromSupabase(planningDuration);
+
+  console.log('[generateLocationTasksFromTemplates] Found', templates.length, 'templates');
+
+  const tasks: Omit<Task, 'id' | 'created_at'>[] = [];
 
   for (const template of templates) {
-    if (template.weeks_before_wedding !== undefined && template.weeks_before_wedding !== null) {
-      const dueDate = calculateDueDate(
-        weddingDate,
-        '',
-        planningStartDate,
-        template.weeks_before_wedding
-      );
+    const title = language === 'de' ? template.title_de : template.title_en;
+    const description = language === 'de' ? template.description_de : template.description_en;
 
-      tasks.push({
-        title: template.task_name,
-        description: template.description || '',
-        status: 'pending',
-        priority: template.priority || 'medium',
-        dueDate,
-        category: template.category,
-        is_system_task: true,
-        template_id: template.id,
-        offset_weeks: template.weeks_before_wedding,
-        offset_type: 'weeks_before'
-      });
-    } else {
-      const timingRules = template.timing_rules as TaskTemplate['timing_rules'];
-      let selectedWindow: string | null = null;
+    const dueDate = calculateDueDateFromOffset(
+      weddingDate,
+      template.recommended_offset_months,
+      planningStartDate
+    );
 
-      for (let i = applicableWindows.length - 1; i >= 0; i--) {
-        const window = applicableWindows[i];
-        const windowKey = window as keyof typeof timingRules;
-        if (timingRules && timingRules[windowKey]) {
-          selectedWindow = window;
-          break;
-        }
-      }
+    const priority = template.is_critical ? 'high' : 'medium';
 
-      if (selectedWindow) {
-        const dueDate = calculateDueDate(weddingDate, selectedWindow, planningStartDate);
-        const offsetWeeks = getOffsetWeeksFromTimingWindow(selectedWindow);
-
-        tasks.push({
-          title: template.task_name,
-          description: template.description || '',
-          status: 'pending',
-          priority: template.priority || 'medium',
-          dueDate,
-          category: template.category,
-          is_system_task: true,
-          template_id: template.id,
-          offset_weeks: offsetWeeks,
-          offset_type: 'weeks_before'
-        });
-      } else {
-        console.warn('[generateTasksFromTemplates] No matching window for template:', template.task_name, 'timing_rules:', timingRules);
-      }
-    }
+    tasks.push({
+      title,
+      description: description || '',
+      category: 'location',
+      due_date: dueDate,
+      priority: priority as 'high' | 'medium' | 'low',
+      completed: false,
+      is_system_generated: true
+    });
   }
 
-  console.log('[generateTasksFromTemplates] Generated', tasks.length, 'tasks');
+  console.log('[generateLocationTasksFromTemplates] Generated', tasks.length, 'tasks');
   return tasks;
 }
 
@@ -208,35 +130,24 @@ export function recalculateSystemTasks(
 ): void {
   const allTasks = storage.tasks.getAll();
   const systemTasks = allTasks.filter(
-    task => task.is_system_task && (task.completed === false)
+    task => task.is_system_generated && !task.completed
   );
 
   if (systemTasks.length === 0) return;
 
   for (const task of systemTasks) {
-    if (task.offset_weeks && task.offset_type === 'weeks_before') {
-      const wedding = new Date(weddingDate);
-      const newDueDate = new Date(wedding);
-      newDueDate.setDate(newDueDate.getDate() - (task.offset_weeks * 7));
-
-      storage.tasks.update(task.id, {
-        due_date: newDueDate.toISOString().split('T')[0]
-      });
-    }
+    console.warn('[recalculateSystemTasks] System-generated tasks cannot be automatically recalculated. Manual adjustment needed for:', task.title);
   }
 }
 
 export function flagUserTasksForAdjustment(): void {
   const allTasks = storage.tasks.getAll();
   const userTasks = allTasks.filter(
-    task => !task.is_system_task && task.completed === false
+    task => !task.is_system_generated && !task.completed
   );
 
   for (const task of userTasks) {
-    storage.tasks.update(task.id, {
-      needs_adjustment_warning: true,
-      warning_dismissed: false
-    });
+    console.log('[flagUserTasksForAdjustment] Task may need adjustment:', task.title);
   }
 }
 

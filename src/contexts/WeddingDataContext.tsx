@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useEffect } from 'react';
 import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
-import { handleDateChange, generateTasksFromTemplates } from '../utils/taskAutomation';
-import { loadTaskTemplates } from '../lib/taskTemplates';
+import { handleDateChange, generateLocationTasksFromTemplates } from '../utils/taskAutomation';
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
 import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
 import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
+import { useTranslation } from 'react-i18next';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -559,37 +559,25 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     const planningStartDate = providedPlanningStartDate || weddingData.planning_start_date || new Date().toISOString().split('T')[0];
     console.log('[initializeAutoTasks] Planning start date:', planningStartDate);
 
-    const templates = await loadTaskTemplates();
-    console.log('[initializeAutoTasks] Loaded templates:', templates.length);
+    const currentLanguage = localStorage.getItem('i18nextLng') || 'de';
+    const language = currentLanguage.startsWith('de') ? 'de' : 'en';
 
-    if (templates.length === 0) {
-      console.error('No task templates found in database');
-      return;
-    }
-
-    const generatedTasks = generateTasksFromTemplates(
+    const generatedTasks = await generateLocationTasksFromTemplates(
       planningStartDate,
       weddingDateToUse,
-      templates
+      language
     );
     console.log('[initializeAutoTasks] Generated tasks:', generatedTasks.length);
+
+    if (generatedTasks.length === 0) {
+      console.error('No tasks were generated from templates');
+      return;
+    }
 
     const createdTasks: Task[] = [];
     generatedTasks.forEach((task, index) => {
       console.log(`[initializeAutoTasks] Creating task ${index + 1}:`, task.title);
-      const newTask = addTask({
-        title: task.title,
-        description: task.description || '',
-        category: task.category,
-        due_date: task.dueDate,
-        completed: false,
-        priority: task.priority as 'high' | 'medium' | 'low',
-        is_system_task: true,
-        is_system_generated: true,
-        template_id: task.template_id,
-        offset_weeks: task.offset_weeks,
-        offset_type: task.offset_type
-      });
+      const newTask = addTask(task);
       createdTasks.push(newTask);
     });
 
