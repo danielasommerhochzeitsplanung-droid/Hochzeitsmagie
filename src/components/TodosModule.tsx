@@ -62,6 +62,7 @@ const categoryToMainCategory = (category: string): string => {
   if (categoryLower === 'catering') return 'vendors_services';
   if (categoryLower === 'decoration') return 'design_decoration';
   if (categoryLower === 'planning') return 'ceremony_legal';
+  if (categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
 
   return 'ceremony_legal';
 };
