@@ -83,6 +83,7 @@ export default function TodosModule() {
   const [expandedMainCategories, setExpandedMainCategories] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set());
+  const [showArchived, setShowArchived] = useState(false);
 
   const [newTask, setNewTask] = useState({
     title: '',
@@ -358,7 +359,7 @@ export default function TodosModule() {
       groups.set(mainCat.id, []);
     });
 
-    tasks.forEach(task => {
+    tasks.filter(task => (task.archived || false) === showArchived).forEach(task => {
       const mainCategoryId = categoryToMainCategory(task.category);
       if (!groups.has(mainCategoryId)) {
         groups.set(mainCategoryId, []);
@@ -367,11 +368,12 @@ export default function TodosModule() {
     });
 
     return groups;
-  }, [tasks]);
+  }, [tasks, showArchived]);
 
   const completionStats = useMemo(() => {
-    const total = tasks.length;
-    const completed = tasks.filter(t => t.completed).length;
+    const activeTasks = tasks.filter(t => !t.archived);
+    const total = activeTasks.length;
+    const completed = activeTasks.filter(t => t.completed).length;
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
     return { total, completed, percentage };
   }, [tasks]);
@@ -394,6 +396,7 @@ export default function TodosModule() {
       completed: false,
       priority: newTask.priority,
       is_system_generated: false,
+      archived: false,
     });
 
     setNewTask({
@@ -404,6 +407,20 @@ export default function TodosModule() {
       priority: 'medium',
     });
     setShowAddDialog(false);
+  };
+
+  const handleArchiveTask = (taskId: string) => {
+    updateTask(taskId, { archived: true });
+  };
+
+  const handleRestoreTask = (taskId: string) => {
+    updateTask(taskId, { archived: false });
+  };
+
+  const handleDeletePermanently = (taskId: string) => {
+    if (window.confirm(t('todos.confirmDeletePermanently'))) {
+      deleteTask(taskId);
+    }
   };
 
   const handleEditTask = (task: Task) => {
@@ -522,6 +539,35 @@ export default function TodosModule() {
             <div className="text-xs mt-1" style={{ color: '#666' }}>
               {completionStats.percentage}% {t('todos.stats.completed')}
             </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowArchived(false)}
+              className="px-4 py-1.5 rounded-md transition-all text-sm"
+              style={{
+                backgroundColor: !showArchived ? '#d6b15b' : 'transparent',
+                color: !showArchived ? 'white' : '#666',
+                border: !showArchived ? 'none' : '1px solid #e5e5e5',
+                fontFamily: 'Open Sans, sans-serif',
+                fontWeight: !showArchived ? 600 : 400
+              }}
+            >
+              {t('todos.activeTasks')}
+            </button>
+            <button
+              onClick={() => setShowArchived(true)}
+              className="px-4 py-1.5 rounded-md transition-all text-sm"
+              style={{
+                backgroundColor: showArchived ? '#d6b15b' : 'transparent',
+                color: showArchived ? 'white' : '#666',
+                border: showArchived ? 'none' : '1px solid #e5e5e5',
+                fontFamily: 'Open Sans, sans-serif',
+                fontWeight: showArchived ? 600 : 400
+              }}
+            >
+              {t('todos.archivedTasks')}
+            </button>
           </div>
         </div>
 
@@ -841,26 +887,53 @@ export default function TodosModule() {
                                   </div>
 
                                   <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleEditTask(task);
-                                      }}
-                                      className="text-gray-400 hover:text-blue-500 transition-colors"
-                                      title={t('todos.taskDetails.editTask')}
-                                    >
-                                      <Edit2 className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteTask(task.id);
-                                      }}
-                                      className="text-gray-400 hover:text-rose-500 transition-colors"
-                                      title={t('todos.taskDetails.deleteTask')}
-                                    >
-                                      <X className="w-5 h-5" />
-                                    </button>
+                                    {!showArchived && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleEditTask(task);
+                                        }}
+                                        className="text-gray-400 hover:text-blue-500 transition-colors"
+                                        title={t('todos.taskDetails.editTask')}
+                                      >
+                                        <Edit2 className="w-5 h-5" />
+                                      </button>
+                                    )}
+                                    {showArchived ? (
+                                      <>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRestoreTask(task.id);
+                                          }}
+                                          className="text-gray-400 hover:text-green-500 transition-colors"
+                                          title={t('todos.taskDetails.restoreTask')}
+                                        >
+                                          <RefreshCw className="w-5 h-5" />
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeletePermanently(task.id);
+                                          }}
+                                          className="text-gray-400 hover:text-rose-500 transition-colors"
+                                          title={t('todos.taskDetails.deleteTaskPermanently')}
+                                        >
+                                          <X className="w-5 h-5" />
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleArchiveTask(task.id);
+                                        }}
+                                        className="text-gray-400 hover:text-amber-500 transition-colors"
+                                        title={t('todos.taskDetails.archiveTask')}
+                                      >
+                                        <X className="w-5 h-5" />
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
 

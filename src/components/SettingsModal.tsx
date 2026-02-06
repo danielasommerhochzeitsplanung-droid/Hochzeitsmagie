@@ -196,29 +196,38 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
     if (newWeddingDate.getTime() === oldWeddingDate.getTime()) return;
 
-    const autoTasks = tasks.filter(task => task.is_system_generated && !task.completed);
+    const allTasks = tasks.filter(task => !task.completed && !task.archived);
 
-    autoTasks.forEach(task => {
-      if (!task.due_date) return;
+    allTasks.forEach(task => {
+      const isUntouchedSystemTask = task.is_system_generated && !task.manually_modified;
 
-      const oldDueDate = new Date(task.due_date + 'T12:00:00');
-      const daysBeforeOldWedding = Math.floor((oldWeddingDate.getTime() - oldDueDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (isUntouchedSystemTask) {
+        if (!task.due_date) return;
 
-      const newDueDate = new Date(newWeddingDate);
-      newDueDate.setDate(newDueDate.getDate() - daysBeforeOldWedding);
+        const oldDueDate = new Date(task.due_date + 'T12:00:00');
+        const daysBeforeOldWedding = Math.floor((oldWeddingDate.getTime() - oldDueDate.getTime()) / (1000 * 60 * 60 * 24));
 
-      const newStartDate = task.start_date ? (() => {
-        const oldStartDate = new Date(task.start_date + 'T12:00:00');
-        const daysBeforeOldWeddingStart = Math.floor((oldWeddingDate.getTime() - oldStartDate.getTime()) / (1000 * 60 * 60 * 24));
-        const calculatedStartDate = new Date(newWeddingDate);
-        calculatedStartDate.setDate(calculatedStartDate.getDate() - daysBeforeOldWeddingStart);
-        return calculatedStartDate.toISOString().split('T')[0];
-      })() : undefined;
+        const newDueDate = new Date(newWeddingDate);
+        newDueDate.setDate(newDueDate.getDate() - daysBeforeOldWedding);
 
-      updateTask(task.id, {
-        due_date: newDueDate.toISOString().split('T')[0],
-        start_date: newStartDate,
-      });
+        const newStartDate = task.start_date ? (() => {
+          const oldStartDate = new Date(task.start_date + 'T12:00:00');
+          const daysBeforeOldWeddingStart = Math.floor((oldWeddingDate.getTime() - oldStartDate.getTime()) / (1000 * 60 * 60 * 24));
+          const calculatedStartDate = new Date(newWeddingDate);
+          calculatedStartDate.setDate(calculatedStartDate.getDate() - daysBeforeOldWeddingStart);
+          return calculatedStartDate.toISOString().split('T')[0];
+        })() : undefined;
+
+        updateTask(task.id, {
+          due_date: newDueDate.toISOString().split('T')[0],
+          start_date: newStartDate,
+        });
+      } else {
+        updateTask(task.id, {
+          needs_adjustment_warning: true,
+          date_change_notice: t('todos.dateChangeNotice') || 'Das Hochzeitsdatum hat sich geändert. Bitte überprüfe, ob das Fälligkeitsdatum dieser Aufgabe noch passt.',
+        });
+      }
     });
   };
 

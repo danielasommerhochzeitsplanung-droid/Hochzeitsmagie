@@ -16,6 +16,7 @@ interface Table {
   position_y: number;
   notes: string;
   event_id: string | null;
+  archived?: boolean;
 }
 
 interface Event {
@@ -58,17 +59,19 @@ export default function SeatingModule() {
   const [selectedTableForGuests, setSelectedTableForGuests] = useState<string | null>(null);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [detailViewEventId, setDetailViewEventId] = useState<string | null | undefined>(undefined);
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     loadTables();
     loadAssignments();
     loadGuests();
     loadEvents();
-  }, []);
+  }, [showArchived]);
 
   const loadTables = () => {
     const allTables = storage.tables.getAll();
-    const sorted = allTables.sort((a, b) => a.table_number - b.table_number);
+    const filtered = allTables.filter(t => (t.archived || false) === showArchived);
+    const sorted = filtered.sort((a, b) => a.table_number - b.table_number);
     setTables(sorted);
   };
 
@@ -120,7 +123,22 @@ export default function SeatingModule() {
   };
 
   const handleDeleteTable = (id: string) => {
-    if (window.confirm(t('seating.confirmDeleteTable'))) {
+    storage.tables.update(id, { archived: true });
+    loadTables();
+  };
+
+  const handleArchiveTable = (id: string) => {
+    storage.tables.update(id, { archived: true });
+    loadTables();
+  };
+
+  const handleRestoreTable = (id: string) => {
+    storage.tables.update(id, { archived: false });
+    loadTables();
+  };
+
+  const handleDeletePermanently = (id: string) => {
+    if (window.confirm(t('seating.confirmDeleteTablePermanently'))) {
       storage.tables.delete(id);
       loadTables();
       loadAssignments();
@@ -423,9 +441,39 @@ export default function SeatingModule() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontWeight: 600 }}>
-          {t('modules.seating')}
-        </h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontWeight: 600 }}>
+            {t('modules.seating')}
+          </h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowArchived(false)}
+              className="px-4 py-1.5 rounded-md transition-all text-sm"
+              style={{
+                backgroundColor: !showArchived ? '#d6b15b' : 'transparent',
+                color: !showArchived ? 'white' : '#666',
+                border: !showArchived ? 'none' : '1px solid #e5e5e5',
+                fontFamily: 'Open Sans, sans-serif',
+                fontWeight: !showArchived ? 600 : 400
+              }}
+            >
+              {t('seating.activeTables')}
+            </button>
+            <button
+              onClick={() => setShowArchived(true)}
+              className="px-4 py-1.5 rounded-md transition-all text-sm"
+              style={{
+                backgroundColor: showArchived ? '#d6b15b' : 'transparent',
+                color: showArchived ? 'white' : '#666',
+                border: showArchived ? 'none' : '1px solid #e5e5e5',
+                fontFamily: 'Open Sans, sans-serif',
+                fontWeight: showArchived ? 600 : 400
+              }}
+            >
+              {t('seating.archivedTables')}
+            </button>
+          </div>
+        </div>
         <button
           onClick={handleExportCSV}
           className="px-4 py-2 border rounded-lg transition-all hover:bg-gray-50 flex items-center gap-2"

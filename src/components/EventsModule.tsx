@@ -33,6 +33,7 @@ export interface Event {
   transport_notes: string;
   support_team_members?: Array<{ id: string; name: string; role: string }>;
   created_at?: string;
+  archived?: boolean;
 }
 
 export default function EventsModule() {
@@ -112,8 +113,8 @@ export default function EventsModule() {
       }
     });
 
-    setEvents(sortedEvents.filter(e => e.active));
-    setArchivedEvents(sortedEvents.filter(e => !e.active));
+    setEvents(sortedEvents.filter(e => !e.archived));
+    setArchivedEvents(sortedEvents.filter(e => e.archived));
   };
 
   const handleAddCustomEvent = () => {
@@ -249,12 +250,12 @@ export default function EventsModule() {
   };
 
   const handleArchiveEvent = (id: string) => {
-    storage.events.update(id, { active: false });
+    storage.events.update(id, { archived: true });
     loadEvents();
   };
 
   const handleRestoreEvent = (id: string) => {
-    storage.events.update(id, { active: true });
+    storage.events.update(id, { archived: false });
     loadEvents();
   };
 

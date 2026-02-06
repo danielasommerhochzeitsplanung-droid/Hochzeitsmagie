@@ -19,6 +19,7 @@ export interface BudgetItem {
   is_auto_synced: boolean;
   created_at?: string;
   updated_at?: string;
+  archived?: boolean;
 }
 
 export default function BudgetModule() {
@@ -31,15 +32,17 @@ export default function BudgetModule() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortBy, setSortBy] = useState('category');
+  const [showArchived, setShowArchived] = useState(false);
 
   useEffect(() => {
     loadBudgetItems();
     loadTotalBudget();
-  }, []);
+  }, [showArchived]);
 
   const loadBudgetItems = () => {
     const allItems = storage.budgetItems.getAll();
-    const sorted = allItems.sort((a, b) => a.category.localeCompare(b.category));
+    const filtered = allItems.filter(item => (item.archived || false) === showArchived);
+    const sorted = filtered.sort((a, b) => a.category.localeCompare(b.category));
     setBudgetItems(sorted);
   };
 
@@ -93,7 +96,22 @@ export default function BudgetModule() {
   };
 
   const handleDeleteItem = (id: string) => {
-    if (window.confirm(t('budget.confirmDelete'))) {
+    storage.budgetItems.update(id, { archived: true });
+    loadBudgetItems();
+  };
+
+  const handleArchiveItem = (id: string) => {
+    storage.budgetItems.update(id, { archived: true });
+    loadBudgetItems();
+  };
+
+  const handleRestoreItem = (id: string) => {
+    storage.budgetItems.update(id, { archived: false });
+    loadBudgetItems();
+  };
+
+  const handleDeletePermanently = (id: string) => {
+    if (window.confirm(t('budget.confirmDeletePermanently'))) {
       storage.budgetItems.delete(id);
       loadBudgetItems();
     }
@@ -182,9 +200,39 @@ export default function BudgetModule() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <span className="text-sm" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
-          {filteredItems.length} {t('budget.of')} {budgetItems.length} {t('budget.items')}
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
+            {filteredItems.length} {t('budget.of')} {budgetItems.length} {t('budget.items')}
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowArchived(false)}
+              className="px-4 py-1.5 rounded-md transition-all text-sm"
+              style={{
+                backgroundColor: !showArchived ? '#d6b15b' : 'transparent',
+                color: !showArchived ? 'white' : '#666',
+                border: !showArchived ? 'none' : '1px solid #e5e5e5',
+                fontFamily: 'Open Sans, sans-serif',
+                fontWeight: !showArchived ? 600 : 400
+              }}
+            >
+              {t('budget.activeItems')}
+            </button>
+            <button
+              onClick={() => setShowArchived(true)}
+              className="px-4 py-1.5 rounded-md transition-all text-sm"
+              style={{
+                backgroundColor: showArchived ? '#d6b15b' : 'transparent',
+                color: showArchived ? 'white' : '#666',
+                border: showArchived ? 'none' : '1px solid #e5e5e5',
+                fontFamily: 'Open Sans, sans-serif',
+                fontWeight: showArchived ? 600 : 400
+              }}
+            >
+              {t('budget.archivedItems')}
+            </button>
+          </div>
+        </div>
         <button
           onClick={handleAddItem}
           className="px-6 py-2 rounded-md transition-all hover:opacity-90"
@@ -219,7 +267,9 @@ export default function BudgetModule() {
       <BudgetTable
         items={filteredItems}
         onEdit={handleEditItem}
-        onDelete={handleDeleteItem}
+        onDelete={showArchived ? handleDeletePermanently : handleArchiveItem}
+        onRestore={showArchived ? handleRestoreItem : undefined}
+        showArchived={showArchived}
       />
 
       <BudgetModal

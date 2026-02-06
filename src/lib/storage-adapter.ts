@@ -200,6 +200,7 @@ export interface Event extends BaseEntity {
   transport_needed: boolean;
   transport_time?: string;
   transport_departure_location?: string;
+  archived: boolean;
 }
 
 export interface Vendor extends BaseEntity {
@@ -258,6 +259,7 @@ export interface BudgetItem extends BaseEntity {
   notes?: string;
   vendor_id?: string;
   sync_with_vendor: boolean;
+  archived: boolean;
 }
 
 export interface Table extends BaseEntity {
@@ -266,6 +268,7 @@ export interface Table extends BaseEntity {
   shape?: string;
   table_number?: number;
   event_id?: string;
+  archived: boolean;
 }
 
 export interface ProgramItem extends BaseEntity {
@@ -278,6 +281,7 @@ export interface ProgramItem extends BaseEntity {
   support_team_ids?: string[];
   location?: string;
   notes?: string;
+  archived: boolean;
 }
 
 export interface LocationContact extends BaseEntity {
@@ -354,6 +358,7 @@ export interface Task extends BaseEntity {
   is_system_generated?: boolean;
   manually_modified?: boolean;
   date_change_notice?: string;
+  archived: boolean;
 }
 
 class StorageAdapter {
