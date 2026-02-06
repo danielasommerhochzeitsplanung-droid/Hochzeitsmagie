@@ -63,13 +63,18 @@ export function calculateDueDateFromOffset(
 
 export async function fetchTaskTemplatesFromSupabase(
   planningDurationMonths: number,
-  category: string = 'Location & Ablauf'
+  category?: string
 ): Promise<TaskTemplate[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('task_templates')
     .select('*')
-    .eq('category', category)
-    .eq('planning_duration_months', planningDurationMonths)
+    .eq('planning_duration_months', planningDurationMonths);
+
+  if (category) {
+    query = query.eq('category', category);
+  }
+
+  const { data, error } = await query
     .order('phase', { ascending: true })
     .order('order_in_phase', { ascending: true });
 
@@ -113,7 +118,7 @@ export async function generateLocationTasksFromTemplates(
     tasks.push({
       title,
       description: description || '',
-      category: 'location',
+      category: template.category,
       due_date: dueDate,
       priority: priority as 'high' | 'medium' | 'low',
       completed: false,
