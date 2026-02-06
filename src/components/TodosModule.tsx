@@ -760,7 +760,6 @@ export default function TodosModule() {
           ) : (
             mainCategories.map(mainCategory => {
               const mainCategoryTasks = groupedByMainCategory.get(mainCategory.id) || [];
-              if (mainCategoryTasks.length === 0) return null;
 
               const completedCount = mainCategoryTasks.filter(t => t.completed).length;
               const isExpanded = expandedMainCategories.has(mainCategory.id);
