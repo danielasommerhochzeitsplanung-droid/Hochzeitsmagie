@@ -9,12 +9,12 @@ export interface TaskTemplate {
 }
 
 export const taskCategories = [
-  { id: 'location_venue', label: 'Location & Ablauf', color: 'bg-emerald-500', icon: '🏛️' },
-  { id: 'ceremony_legal', label: 'Trauung & Formalitäten', color: 'bg-blue-500', icon: '💍' },
-  { id: 'vendors_services', label: 'Dienstleister & Leistungen', color: 'bg-purple-500', icon: '🎯' },
-  { id: 'guests_communication', label: 'Gäste & Kommunikation', color: 'bg-amber-500', icon: '👥' },
-  { id: 'styling_atmosphere', label: 'Gestaltung & Atmosphäre', color: 'bg-cyan-500', icon: '🎨' },
-  { id: 'organization_closure', label: 'Organisation & Abschluss', color: 'bg-pink-500', icon: '📋' },
+  { id: 'location_venue', color: 'bg-emerald-500', icon: '🏛️' },
+  { id: 'ceremony_legal', color: 'bg-blue-500', icon: '💍' },
+  { id: 'vendors_services', color: 'bg-purple-500', icon: '🎯' },
+  { id: 'guests_communication', color: 'bg-amber-500', icon: '👥' },
+  { id: 'styling_atmosphere', color: 'bg-cyan-500', icon: '🎨' },
+  { id: 'organization_closure', color: 'bg-pink-500', icon: '📋' },
 ];
 
 export const standardTasks: TaskTemplate[] = [

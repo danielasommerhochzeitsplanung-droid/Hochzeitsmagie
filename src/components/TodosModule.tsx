@@ -11,42 +11,36 @@ import { getPhaseColor } from '../utils/phaseManagement';
 const mainCategories = [
   {
     id: 'location_venue',
-    label: 'Location & Ablauf',
     icon: '🏛️',
     color: 'bg-emerald-500',
     subcategories: ['location']
   },
   {
     id: 'ceremony_legal',
-    label: 'Trauung & Formalitäten',
     icon: '💒',
     color: 'bg-rose-500',
     subcategories: ['planning']
   },
   {
     id: 'vendors_services',
-    label: 'Dienstleister & Leistungen',
     icon: '🤝',
     color: 'bg-blue-500',
     subcategories: ['catering', 'planning']
   },
   {
     id: 'guests_communication',
-    label: 'Gäste & Kommunikation',
     icon: '👥',
     color: 'bg-amber-500',
     subcategories: ['guests']
   },
   {
     id: 'styling_atmosphere',
-    label: 'Gestaltung & Atmosphäre',
     icon: '🎨',
     color: 'bg-cyan-500',
     subcategories: ['decoration']
   },
   {
     id: 'organization_closure',
-    label: 'Organisation & Abschluss',
     icon: '📋',
     color: 'bg-purple-500',
     subcategories: []
@@ -777,7 +771,7 @@ export default function TodosModule() {
                       {mainCategory.icon}
                     </div>
                     <h3 className="text-lg font-bold flex-1" style={{ color: '#3b3b3d' }}>
-                      {mainCategory.label}
+                      {t(`todos.categories.${mainCategory.id}`)}
                     </h3>
                     <span className="text-sm font-medium text-gray-500">
                       {completedCount}/{mainCategoryTasks.length}
@@ -939,7 +933,7 @@ export default function TodosModule() {
                                   <span
                                     className={`inline-flex items-center px-2 py-1 rounded text-xs text-white font-medium ${getCategoryColor(task.category)}`}
                                   >
-                                    {taskCategories.find(c => c.id === task.category)?.label || task.category}
+                                    {t(`todos.categories.${task.category}`)}
                                   </span>
 
                                   {task.priority === 'high' && (
@@ -1410,7 +1404,7 @@ export default function TodosModule() {
                   style={{ borderColor: '#d6b15b' }}
                 >
                   {taskCategories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                    <option key={cat.id} value={cat.id}>{t(`todos.categories.${cat.id}`)}</option>
                   ))}
                 </select>
               </div>
@@ -1584,7 +1578,7 @@ export default function TodosModule() {
                   style={{ borderColor: '#d6b15b' }}
                 >
                   {taskCategories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                    <option key={cat.id} value={cat.id}>{t(`todos.categories.${cat.id}`)}</option>
                   ))}
                 </select>
               </div>

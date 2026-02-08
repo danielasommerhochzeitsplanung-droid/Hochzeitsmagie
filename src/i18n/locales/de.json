@@ -533,6 +533,14 @@
     "confirmClearAllFinal": "Backup heruntergeladen.\n\nJETZT wirklich ALLE Daten löschen?\n\nDies kann NICHT rückgängig gemacht werden!"
   },
   "todos": {
+    "categories": {
+      "location_venue": "Location & Ablauf",
+      "ceremony_legal": "Trauung & Formalitäten",
+      "vendors_services": "Dienstleister & Leistungen",
+      "guests_communication": "Gäste & Kommunikation",
+      "styling_atmosphere": "Gestaltung & Atmosphäre",
+      "organization_closure": "Organisation & Abschluss"
+    },
     "banner": {
       "title": "Automatische Aufgaben erstellen?",
       "description": "Du hast noch keine Aufgaben. Möchtest du automatische Aufgaben basierend auf deinem Hochzeitsdatum ({{date}}) generieren lassen?",

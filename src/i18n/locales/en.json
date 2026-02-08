@@ -533,6 +533,14 @@
     "confirmClearAllFinal": "Backup downloaded.\n\nReally delete ALL data NOW?\n\nThis action CANNOT be undone!"
   },
   "todos": {
+    "categories": {
+      "location_venue": "Location & Schedule",
+      "ceremony_legal": "Ceremony & Formalities",
+      "vendors_services": "Vendors & Services",
+      "guests_communication": "Guests & Communication",
+      "styling_atmosphere": "Styling & Atmosphere",
+      "organization_closure": "Organization & Wrap-up"
+    },
     "banner": {
       "title": "Auto-generate tasks?",
       "description": "You have no tasks yet. Would you like to automatically generate tasks based on your wedding date ({{date}})?",
