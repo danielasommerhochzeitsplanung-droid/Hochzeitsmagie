@@ -50,6 +50,24 @@ export function calculateDueDateFromDuration(
   return dueDate.toISOString().split('T')[0];
 }
 
+function mapDbTemplateToCodeFormat(dbTemplate: any, language: string = 'de'): TaskTemplate {
+  const titleField = language === 'de' ? 'title_de' : 'title_en';
+  const descField = language === 'de' ? 'description_de' : 'description_en';
+
+  return {
+    id: dbTemplate.id,
+    category: dbTemplate.phase || dbTemplate.main_category || dbTemplate.category,
+    task_name: dbTemplate[titleField] || dbTemplate.task_name || dbTemplate.title,
+    description: dbTemplate[descField] || dbTemplate.description || '',
+    priority: dbTemplate.priority || 'medium',
+    default_duration: dbTemplate.default_duration || 7,
+    timing_rules: dbTemplate.timing_rules || {},
+    main_category: dbTemplate.phase || dbTemplate.main_category || dbTemplate.category,
+    depends_on: dbTemplate.depends_on || [],
+    planning_timeline: dbTemplate.planning_timeline
+  };
+}
+
 export async function generateLocationTasksFromTemplates(
   planningStartDate: string,
   weddingDate: string,
@@ -80,7 +98,9 @@ export async function generateLocationTasksFromTemplates(
     return [];
   }
 
-  const filteredTemplates = templates.filter(template => {
+  const mappedTemplates = templates.map(t => mapDbTemplateToCodeFormat(t, language));
+
+  const filteredTemplates = mappedTemplates.filter(template => {
     return template.timing_rules?.[planningDurationKey] === true;
   });
 

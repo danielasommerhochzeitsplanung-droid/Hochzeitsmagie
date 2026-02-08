@@ -88,7 +88,7 @@ export default function TodosModule() {
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
-    category: 'planning',
+    category: 'organization_closure',
     due_date: '',
     priority: 'medium' as 'high' | 'medium' | 'low',
   });
@@ -402,7 +402,7 @@ export default function TodosModule() {
     setNewTask({
       title: '',
       description: '',
-      category: 'planning',
+      category: 'organization_closure',
       due_date: '',
       priority: 'medium',
     });
