@@ -50,22 +50,28 @@ export function calculateDueDateFromDuration(
   return dueDate.toISOString().split('T')[0];
 }
 
-function mapDbTemplateToCodeFormat(dbTemplate: any, language: string = 'de'): TaskTemplate {
-  const titleField = language === 'de' ? 'title_de' : 'title_en';
-  const descField = language === 'de' ? 'description_de' : 'description_en';
-
-  return {
-    id: dbTemplate.id,
-    category: dbTemplate.phase || dbTemplate.main_category || dbTemplate.category,
-    task_name: dbTemplate[titleField] || dbTemplate.task_name || dbTemplate.title,
-    description: dbTemplate[descField] || dbTemplate.description || '',
-    priority: dbTemplate.priority || 'medium',
-    default_duration: dbTemplate.default_duration || 7,
-    timing_rules: dbTemplate.timing_rules || {},
-    main_category: dbTemplate.phase || dbTemplate.main_category || dbTemplate.category,
-    depends_on: dbTemplate.depends_on || [],
-    planning_timeline: dbTemplate.planning_timeline
+function getCategoryFromDbCategory(dbCategory: string): string {
+  const categoryMap: Record<string, string> = {
+    'Location & Ablauf': 'location_venue',
+    'trauung_formalitaeten': 'ceremony_legal',
+    'Trauung & Formalitäten': 'ceremony_legal',
+    'Dienstleister & Leistungen': 'vendors_services',
+    'Gäste & Kommunikation': 'guests_communication',
+    'Gestaltung & Atmosphäre': 'styling_atmosphere',
+    'Organisation & Abschluss': 'organization_closure'
   };
+
+  return categoryMap[dbCategory] || 'organization_closure';
+}
+
+function calculateDueDateFromOffset(
+  weddingDate: string,
+  offsetMonths: number
+): string {
+  const wedding = new Date(weddingDate);
+  const dueDate = new Date(wedding);
+  dueDate.setMonth(dueDate.getMonth() - offsetMonths);
+  return dueDate.toISOString().split('T')[0];
 }
 
 export async function generateLocationTasksFromTemplates(
@@ -74,10 +80,8 @@ export async function generateLocationTasksFromTemplates(
   language: string = 'de'
 ): Promise<Omit<Task, 'id' | 'created_at'>[]> {
   const actualMonths = calculatePlanningDurationMonths(planningStartDate, weddingDate);
-  const planningDurationKey = findBestMatchingPlanningDuration(actualMonths);
 
   console.log('[generateLocationTasksFromTemplates] Actual planning months:', actualMonths);
-  console.log('[generateLocationTasksFromTemplates] Selected planning duration:', planningDurationKey);
 
   if (!supabase) {
     console.error('[generateLocationTasksFromTemplates] Supabase not initialized');
@@ -86,7 +90,10 @@ export async function generateLocationTasksFromTemplates(
 
   const { data: templates, error } = await supabase
     .from('task_templates')
-    .select('*');
+    .select('*')
+    .eq('planning_duration_months', actualMonths >= 6 && actualMonths < 9 ? 6 :
+        actualMonths >= 9 && actualMonths < 12 ? 9 :
+        actualMonths >= 12 && actualMonths < 18 ? 12 : 18);
 
   if (error) {
     console.error('[generateLocationTasksFromTemplates] Error loading templates:', error);
@@ -98,28 +105,24 @@ export async function generateLocationTasksFromTemplates(
     return [];
   }
 
-  const mappedTemplates = templates.map(t => mapDbTemplateToCodeFormat(t, language));
-
-  const filteredTemplates = mappedTemplates.filter(template => {
-    return template.timing_rules?.[planningDurationKey] === true;
-  });
-
-  console.log('[generateLocationTasksFromTemplates] Found', filteredTemplates.length, 'matching templates');
+  console.log('[generateLocationTasksFromTemplates] Found', templates.length, 'matching templates');
 
   const tasks: Omit<Task, 'id' | 'created_at'>[]= [];
+  const titleField = language === 'de' ? 'title_de' : 'title_en';
+  const descField = language === 'de' ? 'description_de' : 'description_en';
 
-  for (const template of filteredTemplates) {
-    const dueDate = calculateDueDateFromDuration(
-      planningStartDate,
-      template.default_duration
+  for (const template of templates) {
+    const dueDate = calculateDueDateFromOffset(
+      weddingDate,
+      parseFloat(template.recommended_offset_months?.toString() || '1')
     );
 
     tasks.push({
-      title: template.task_name,
-      description: template.description || '',
-      category: template.main_category || template.category,
+      title: template[titleField] || template.task_name || '',
+      description: template[descField] || '',
+      category: getCategoryFromDbCategory(template.category),
       due_date: dueDate,
-      priority: template.priority,
+      priority: template.is_critical ? 'high' : 'medium',
       completed: false,
       is_system_generated: true,
       archived: false

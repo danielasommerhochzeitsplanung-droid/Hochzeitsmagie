@@ -150,7 +150,7 @@ export default function LocationTasksSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  const locationTasks = tasks.filter(task => task.category === 'location');
+  const locationTasks = tasks.filter(task => task.category === 'location_venue');
 
   const handleToggleTask = (task: Task) => {
     updateTask(task.id, {
