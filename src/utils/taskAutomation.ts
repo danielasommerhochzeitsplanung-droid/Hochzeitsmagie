@@ -108,8 +108,6 @@ export async function generateLocationTasksFromTemplates(
   console.log('[generateLocationTasksFromTemplates] Found', templates.length, 'matching templates');
 
   const tasks: Omit<Task, 'id' | 'created_at'>[]= [];
-  const titleField = language === 'de' ? 'title_de' : 'title_en';
-  const descField = language === 'de' ? 'description_de' : 'description_en';
 
   for (const template of templates) {
     const dueDate = calculateDueDateFromOffset(
@@ -118,8 +116,7 @@ export async function generateLocationTasksFromTemplates(
     );
 
     tasks.push({
-      title: template[titleField] || template.task_name || '',
-      description: template[descField] || '',
+      template_id: template.id,
       category: getCategoryFromDbCategory(template.category),
       due_date: dueDate,
       priority: template.is_critical ? 'high' : 'medium',

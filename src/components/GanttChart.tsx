@@ -30,6 +30,8 @@ interface GanttChartProps {
   onEditTask: (task: Task) => void;
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onUpdateEvent: (id: string, updates: Partial<Event>) => void;
+  getTaskTitle?: (task: Task) => string;
+  getTaskDescription?: (task: Task) => string;
 }
 
 type ZoomLevel = 'day' | 'week' | 'month';
@@ -69,6 +71,8 @@ export default function GanttChart({
   onToggleTask,
   onUpdateTask,
   onUpdateEvent,
+  getTaskTitle,
+  getTaskDescription,
 }: GanttChartProps) {
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('month');
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
@@ -103,7 +107,7 @@ export default function GanttChart({
         items.push({
           id: task.id,
           type: 'task',
-          title: task.title,
+          title: getTaskTitle ? getTaskTitle(task) : (task.title || ''),
           startDate,
           endDate: new Date(task.due_date),
           category: task.category,

@@ -29,6 +29,8 @@ interface TimelineViewProps {
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onUpdateEvent: (id: string, updates: Partial<Event>) => void;
   getBlockedTasks: (task: Task) => string[];
+  getTaskTitle?: (task: Task) => string;
+  getTaskDescription?: (task: Task) => string;
 }
 
 type TimelineItemType = 'event' | 'task' | 'vendor' | 'location' | 'support';
@@ -66,6 +68,8 @@ export default function TimelineView({
   onUpdateTask,
   onUpdateEvent,
   getBlockedTasks,
+  getTaskTitle,
+  getTaskDescription,
 }: TimelineViewProps) {
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('year');
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -107,7 +111,7 @@ export default function TimelineView({
           items.push({
             id: task.id,
             type: 'task',
-            title: task.title,
+            title: getTaskTitle ? getTaskTitle(task) : (task.title || ''),
             startDate,
             endDate: new Date(task.due_date),
             category: task.category,

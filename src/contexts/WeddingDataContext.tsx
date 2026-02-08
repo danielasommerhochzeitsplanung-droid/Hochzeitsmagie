@@ -576,7 +576,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
     const createdTasks: Task[] = [];
     generatedTasks.forEach((task, index) => {
-      console.log(`[initializeAutoTasks] Creating task ${index + 1}:`, task.title);
+      console.log(`[initializeAutoTasks] Creating task ${index + 1}:`, task.template_id || 'manual task');
       const newTask = addTask(task);
       createdTasks.push(newTask);
     });

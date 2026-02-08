@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CheckCircle2, Circle, Calendar, Plus, Edit2, X } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
+import { useTaskTemplates } from '../hooks/useTaskTemplates';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -147,6 +148,7 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
 
 export default function LocationTasksSection() {
   const { tasks, addTask, updateTask, deleteTask } = useWeddingData();
+  const { getTaskTitle, getTaskDescription } = useTaskTemplates();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
@@ -160,7 +162,11 @@ export default function LocationTasksSection() {
   };
 
   const handleEditTask = (task: Task) => {
-    setEditingTask(task);
+    setEditingTask({
+      ...task,
+      title: getTaskTitle(task),
+      description: getTaskDescription(task),
+    });
     setIsModalOpen(true);
   };
 
@@ -256,7 +262,7 @@ export default function LocationTasksSection() {
                       }`}
                       style={{ fontFamily: 'Open Sans, sans-serif' }}
                     >
-                      {task.title}
+                      {getTaskTitle(task)}
                     </h4>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {task.priority === 'high' && (
@@ -281,9 +287,9 @@ export default function LocationTasksSection() {
                     </div>
                   </div>
 
-                  {task.description && (
+                  {getTaskDescription(task) && (
                     <p className="text-sm text-gray-600 mt-1" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                      {task.description}
+                      {getTaskDescription(task)}
                     </p>
                   )}
 

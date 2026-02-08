@@ -191,8 +191,9 @@ const PhaseSchema = BaseEntitySchema.extend({
 }).strip();
 
 const TaskSchema = BaseEntitySchema.extend({
-  title: z.string().min(1),
+  title: z.string().optional(),
   description: z.string().optional(),
+  template_id: z.string().optional(),
   category: z.string().default('general'),
   phase_id: z.string().optional(),
   start_date: z.string().optional(),
@@ -204,7 +205,6 @@ const TaskSchema = BaseEntitySchema.extend({
   assigned_to: z.string().optional(),
   notes: z.string().optional(),
   is_system_task: z.boolean().default(false),
-  template_id: z.string().optional(),
   offset_weeks: z.number().optional(),
   offset_type: z.string().optional(),
   needs_adjustment_warning: z.boolean().default(false),
@@ -212,6 +212,8 @@ const TaskSchema = BaseEntitySchema.extend({
   is_system_generated: z.boolean().default(false),
   manually_modified: z.boolean().default(false),
   date_change_notice: z.string().optional(),
+  location_id: z.string().optional(),
+  archived: z.boolean().default(false),
 }).strip();
 
 export const ExportedDataSchema = z.object({
