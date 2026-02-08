@@ -1,20 +1,24 @@
 import { storage, Task } from '../lib/storage-adapter';
-import { supabase } from '../lib/supabase';
+import { taskTemplateData } from '../data/taskTemplateData';
 
 export interface TaskTemplate {
   id: string;
   category: string;
-  phase: number;
-  order_in_phase: number;
-  title_de: string;
-  title_en: string;
-  description_de?: string;
-  description_en?: string;
-  planning_duration_months: number;
-  recommended_offset_months: number;
-  latest_completion_months: number;
-  is_critical: boolean;
-  created_at: string;
+  task_name: string;
+  description?: string;
+  priority: 'high' | 'medium' | 'low';
+  default_duration: number;
+  timing_rules: {
+    immediate?: boolean;
+    '3_months'?: boolean;
+    '6_months'?: boolean;
+    '9_months'?: boolean;
+    '12_months'?: boolean;
+    '18_months'?: boolean;
+  };
+  main_category?: string;
+  depends_on?: string[];
+  planning_timeline?: string;
 }
 
 export function calculatePlanningDurationMonths(planningStartDate: string, weddingDate: string): number {
@@ -27,63 +31,23 @@ export function calculatePlanningDurationMonths(planningStartDate: string, weddi
   return diffMonths;
 }
 
-export function findBestMatchingPlanningDuration(actualMonths: number): number {
-  const availableDurations = [6, 9, 12, 15, 18, 24, 30];
-
-  for (const duration of availableDurations) {
-    if (actualMonths <= duration) {
-      return duration;
-    }
-  }
-
-  return 30;
+export function findBestMatchingPlanningDuration(actualMonths: number): string {
+  if (actualMonths < 3) return 'immediate';
+  if (actualMonths <= 3) return '3_months';
+  if (actualMonths <= 6) return '6_months';
+  if (actualMonths <= 9) return '9_months';
+  if (actualMonths <= 12) return '12_months';
+  return '18_months';
 }
 
-export function calculateDueDateFromOffset(
-  weddingDate: string,
-  offsetMonths: number,
-  planningStartDate?: string
+export function calculateDueDateFromDuration(
+  planningStartDate: string,
+  durationDays: number
 ): string {
-  const wedding = new Date(weddingDate);
-  const dueDate = new Date(wedding);
-
-  dueDate.setMonth(dueDate.getMonth() + offsetMonths);
-
-  if (planningStartDate) {
-    const planningStart = new Date(planningStartDate);
-    if (dueDate < planningStart) {
-      const adjustedDate = new Date(planningStart);
-      adjustedDate.setDate(adjustedDate.getDate() + 7);
-      return adjustedDate.toISOString().split('T')[0];
-    }
-  }
-
+  const start = new Date(planningStartDate);
+  const dueDate = new Date(start);
+  dueDate.setDate(dueDate.getDate() + durationDays);
   return dueDate.toISOString().split('T')[0];
-}
-
-export async function fetchTaskTemplatesFromSupabase(
-  planningDurationMonths: number,
-  category?: string
-): Promise<TaskTemplate[]> {
-  let query = supabase
-    .from('task_templates')
-    .select('*')
-    .eq('planning_duration_months', planningDurationMonths);
-
-  if (category) {
-    query = query.eq('category', category);
-  }
-
-  const { data, error } = await query
-    .order('phase', { ascending: true })
-    .order('order_in_phase', { ascending: true });
-
-  if (error) {
-    console.error('[fetchTaskTemplatesFromSupabase] Error fetching templates:', error);
-    return [];
-  }
-
-  return data || [];
 }
 
 export async function generateLocationTasksFromTemplates(
@@ -92,35 +56,31 @@ export async function generateLocationTasksFromTemplates(
   language: string = 'de'
 ): Promise<Omit<Task, 'id' | 'created_at'>[]> {
   const actualMonths = calculatePlanningDurationMonths(planningStartDate, weddingDate);
-  const planningDuration = findBestMatchingPlanningDuration(actualMonths);
+  const planningDurationKey = findBestMatchingPlanningDuration(actualMonths);
 
   console.log('[generateLocationTasksFromTemplates] Actual planning months:', actualMonths);
-  console.log('[generateLocationTasksFromTemplates] Selected planning duration:', planningDuration);
+  console.log('[generateLocationTasksFromTemplates] Selected planning duration:', planningDurationKey);
 
-  const templates = await fetchTaskTemplatesFromSupabase(planningDuration);
+  const filteredTemplates = taskTemplateData.filter(template => {
+    return template.timing_rules[planningDurationKey as keyof typeof template.timing_rules] === true;
+  });
 
-  console.log('[generateLocationTasksFromTemplates] Found', templates.length, 'templates');
+  console.log('[generateLocationTasksFromTemplates] Found', filteredTemplates.length, 'matching templates');
 
-  const tasks: Omit<Task, 'id' | 'created_at'>[] = [];
+  const tasks: Omit<Task, 'id' | 'created_at'>[]= [];
 
-  for (const template of templates) {
-    const title = language === 'de' ? template.title_de : template.title_en;
-    const description = language === 'de' ? template.description_de : template.description_en;
-
-    const dueDate = calculateDueDateFromOffset(
-      weddingDate,
-      template.recommended_offset_months,
-      planningStartDate
+  for (const template of filteredTemplates) {
+    const dueDate = calculateDueDateFromDuration(
+      planningStartDate,
+      template.default_duration
     );
 
-    const priority = template.is_critical ? 'high' : 'medium';
-
     tasks.push({
-      title,
-      description: description || '',
-      category: template.category,
+      title: template.task_name,
+      description: template.description || '',
+      category: template.main_category || template.category,
       due_date: dueDate,
-      priority: priority as 'high' | 'medium' | 'low',
+      priority: template.priority,
       completed: false,
       is_system_generated: true
     });
