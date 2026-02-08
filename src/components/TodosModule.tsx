@@ -11,21 +11,21 @@ import { getPhaseColor } from '../utils/phaseManagement';
 const mainCategories = [
   {
     id: 'location_venue',
-    label: 'Location & Räumlichkeiten',
+    label: 'Location & Ablauf',
     icon: '🏛️',
     color: 'bg-emerald-500',
     subcategories: ['location']
   },
   {
     id: 'ceremony_legal',
-    label: 'Trauung & Standesamt',
+    label: 'Trauung & Formalitäten',
     icon: '💒',
     color: 'bg-rose-500',
     subcategories: ['planning']
   },
   {
     id: 'vendors_services',
-    label: 'Dienstleister & Vendors',
+    label: 'Dienstleister & Leistungen',
     icon: '🤝',
     color: 'bg-blue-500',
     subcategories: ['catering', 'planning']
@@ -38,33 +38,32 @@ const mainCategories = [
     subcategories: ['guests']
   },
   {
-    id: 'couple_personal',
-    label: 'Brautpaar Persönliches',
-    icon: '👫',
-    color: 'bg-pink-500',
-    subcategories: ['couple']
-  },
-  {
-    id: 'design_decoration',
-    label: 'Design & Dekoration',
+    id: 'styling_atmosphere',
+    label: 'Gestaltung & Atmosphäre',
     icon: '🎨',
     color: 'bg-cyan-500',
     subcategories: ['decoration']
+  },
+  {
+    id: 'organization_closure',
+    label: 'Organisation & Abschluss',
+    icon: '📋',
+    color: 'bg-purple-500',
+    subcategories: []
   },
 ];
 
 const categoryToMainCategory = (category: string): string => {
   const categoryLower = category.toLowerCase();
 
-  if (categoryLower === 'location') return 'location_venue';
-  if (categoryLower === 'guests') return 'guests_communication';
-  if (categoryLower === 'couple') return 'couple_personal';
-  if (categoryLower === 'catering') return 'vendors_services';
-  if (categoryLower === 'decoration') return 'design_decoration';
-  if (categoryLower === 'planning') return 'ceremony_legal';
-  if (categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
+  if (categoryLower === 'location' || categoryLower === 'location_venue') return 'location_venue';
+  if (categoryLower === 'guests' || categoryLower === 'guests_communication') return 'guests_communication';
+  if (categoryLower === 'catering' || categoryLower === 'vendors_services') return 'vendors_services';
+  if (categoryLower === 'decoration' || categoryLower === 'styling_atmosphere') return 'styling_atmosphere';
+  if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
+  if (categoryLower === 'organization_closure') return 'organization_closure';
 
-  return 'ceremony_legal';
+  return 'organization_closure';
 };
 
 export default function TodosModule() {
