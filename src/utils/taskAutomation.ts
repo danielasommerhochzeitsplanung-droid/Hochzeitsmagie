@@ -1,5 +1,5 @@
 import { storage, Task } from '../lib/storage-adapter';
-import { taskTemplateData } from '../data/taskTemplateData';
+import { supabase } from '../lib/supabase';
 
 export interface TaskTemplate {
   id: string;
@@ -61,8 +61,27 @@ export async function generateLocationTasksFromTemplates(
   console.log('[generateLocationTasksFromTemplates] Actual planning months:', actualMonths);
   console.log('[generateLocationTasksFromTemplates] Selected planning duration:', planningDurationKey);
 
-  const filteredTemplates = taskTemplateData.filter(template => {
-    return template.timing_rules[planningDurationKey as keyof typeof template.timing_rules] === true;
+  if (!supabase) {
+    console.error('[generateLocationTasksFromTemplates] Supabase not initialized');
+    return [];
+  }
+
+  const { data: templates, error } = await supabase
+    .from('task_templates')
+    .select('*');
+
+  if (error) {
+    console.error('[generateLocationTasksFromTemplates] Error loading templates:', error);
+    return [];
+  }
+
+  if (!templates || templates.length === 0) {
+    console.log('[generateLocationTasksFromTemplates] No templates found in database');
+    return [];
+  }
+
+  const filteredTemplates = templates.filter(template => {
+    return template.timing_rules?.[planningDurationKey] === true;
   });
 
   console.log('[generateLocationTasksFromTemplates] Found', filteredTemplates.length, 'matching templates');
@@ -82,7 +101,8 @@ export async function generateLocationTasksFromTemplates(
       due_date: dueDate,
       priority: template.priority,
       completed: false,
-      is_system_generated: true
+      is_system_generated: true,
+      archived: false
     });
   }
 
