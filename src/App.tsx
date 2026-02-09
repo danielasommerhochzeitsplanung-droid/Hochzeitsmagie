@@ -142,12 +142,12 @@ function App() {
         couple_name_2: data.partner2,
         wedding_date: data.weddingDate,
         planning_start_date: data.planningStartDate,
-        auto_tasks_enabled: false,
+        auto_tasks_enabled: true,
       });
 
-      setPendingSetupData(data);
+      await initializeAutoTasks(data.weddingDate, data.planningStartDate);
+
       setShowFirstSetup(false);
-      setShowAutoTaskSetup(true);
     } catch (error) {
       console.error('Error during first setup:', error);
       alert('Fehler beim Speichern. Bitte versuche es erneut.');
