@@ -91,9 +91,13 @@ export async function generateLocationTasksFromTemplates(
   const { data: templates, error } = await supabase
     .from('task_templates')
     .select('*')
-    .eq('planning_duration_months', actualMonths >= 6 && actualMonths < 9 ? 6 :
+    .eq('planning_duration_months',
+        actualMonths >= 6 && actualMonths < 9 ? 6 :
         actualMonths >= 9 && actualMonths < 12 ? 9 :
-        actualMonths >= 12 && actualMonths < 18 ? 12 : 18);
+        actualMonths >= 12 && actualMonths < 15 ? 12 :
+        actualMonths >= 15 && actualMonths < 18 ? 15 :
+        actualMonths >= 18 && actualMonths < 24 ? 18 :
+        actualMonths >= 24 && actualMonths < 30 ? 24 : 30);
 
   if (error) {
     console.error('[generateLocationTasksFromTemplates] Error loading templates:', error);
