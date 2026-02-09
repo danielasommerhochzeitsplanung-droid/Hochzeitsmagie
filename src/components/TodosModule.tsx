@@ -6,7 +6,7 @@ import { Task, Phase } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
 import TimelineView from './TimelineView';
 import GanttChart from './GanttChart';
-import { getPhaseColor } from '../utils/phaseManagement';
+import { getPhaseColor, PHASE_COLORS, createCustomPhase } from '../utils/phaseManagement';
 import { useTaskTemplates } from '../hooks/useTaskTemplates';
 
 const mainCategories = [
@@ -86,7 +86,11 @@ export default function TodosModule() {
     category: 'organization_closure',
     due_date: '',
     priority: 'medium' as 'high' | 'medium' | 'low',
+    phase_id: '',
   });
+  const [showNewPhaseDialog, setShowNewPhaseDialog] = useState(false);
+  const [newPhaseName, setNewPhaseName] = useState('');
+  const [newPhaseColor, setNewPhaseColor] = useState('#14b8a6');
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -381,6 +385,7 @@ export default function TodosModule() {
       title: newTask.title,
       description: newTask.description,
       category: newTask.category,
+      phase_id: newTask.phase_id || undefined,
       due_date: newTask.due_date || undefined,
       completed: false,
       priority: newTask.priority,
@@ -394,8 +399,20 @@ export default function TodosModule() {
       category: 'organization_closure',
       due_date: '',
       priority: 'medium',
+      phase_id: '',
     });
     setShowAddDialog(false);
+  };
+
+  const handleCreateNewPhase = () => {
+    if (!newPhaseName.trim()) return;
+
+    const newPhase = createCustomPhase(newPhaseName, newPhaseColor, phases);
+    addPhase(newPhase);
+    setNewTask({ ...newTask, phase_id: newPhase.id });
+    setNewPhaseName('');
+    setNewPhaseColor('#14b8a6');
+    setShowNewPhaseDialog(false);
   };
 
   const handleArchiveTask = (taskId: string) => {
@@ -436,6 +453,7 @@ export default function TodosModule() {
       title: editingTask.title,
       description: editingTask.description,
       category: editingTask.category,
+      phase_id: editingTask.phase_id || undefined,
       due_date: editingTask.due_date,
       priority: editingTask.priority,
       manually_modified: isModified || editingTask.manually_modified,
@@ -465,6 +483,10 @@ export default function TodosModule() {
   };
 
   const showAutoTaskBanner = tasks.length === 0 && weddingData?.wedding_date && !weddingData?.auto_tasks_initialized;
+
+  const sortedPhases = useMemo(() => {
+    return [...phases].sort((a, b) => a.order_index - b.order_index);
+  }, [phases]);
 
   return (
     <div className="space-y-6">
@@ -1384,6 +1406,42 @@ export default function TodosModule() {
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
+                  {t('todos.addDialog.phaseLabel', { defaultValue: 'Phase' })}
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    value={newTask.phase_id}
+                    onChange={(e) => setNewTask({ ...newTask, phase_id: e.target.value })}
+                    className="flex-1 px-3 py-2 border-2 rounded-md"
+                    style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                  >
+                    <option value="">{t('todos.addDialog.noPhase', { defaultValue: 'Keine Phase' })}</option>
+                    {sortedPhases.map(phase => (
+                      <option key={phase.id} value={phase.id}>
+                        {phase.is_system_phase ? '🔷 ' : '📌 '}
+                        {phase.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => setShowNewPhaseDialog(true)}
+                    className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-1 whitespace-nowrap"
+                    style={{
+                      borderColor: '#d6b15b',
+                      color: '#3b3b3d',
+                      fontFamily: 'Open Sans, sans-serif',
+                      fontWeight: 600
+                    }}
+                    title={t('todos.addDialog.addPhase', { defaultValue: 'Neue Phase erstellen' })}
+                  >
+                    <Plus className="w-4 h-4" />
+                    {t('todos.addDialog.phase', { defaultValue: 'Phase' })}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
                   {t('todos.addDialog.descriptionLabel')}
                 </label>
                 <textarea
@@ -1558,6 +1616,42 @@ export default function TodosModule() {
 
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
+                  {t('todos.addDialog.phaseLabel', { defaultValue: 'Phase' })}
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    value={editingTask.phase_id || ''}
+                    onChange={(e) => setEditingTask({ ...editingTask, phase_id: e.target.value })}
+                    className="flex-1 px-3 py-2 border-2 rounded-md"
+                    style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                  >
+                    <option value="">{t('todos.addDialog.noPhase', { defaultValue: 'Keine Phase' })}</option>
+                    {sortedPhases.map(phase => (
+                      <option key={phase.id} value={phase.id}>
+                        {phase.is_system_phase ? '🔷 ' : '📌 '}
+                        {phase.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => setShowNewPhaseDialog(true)}
+                    className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-1 whitespace-nowrap"
+                    style={{
+                      borderColor: '#d6b15b',
+                      color: '#3b3b3d',
+                      fontFamily: 'Open Sans, sans-serif',
+                      fontWeight: 600
+                    }}
+                    title={t('todos.addDialog.addPhase', { defaultValue: 'Neue Phase erstellen' })}
+                  >
+                    <Plus className="w-4 h-4" />
+                    {t('todos.addDialog.phase', { defaultValue: 'Phase' })}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
                   {t('todos.addDialog.descriptionLabel')}
                 </label>
                 <textarea
@@ -1649,6 +1743,113 @@ export default function TodosModule() {
                 }}
               >
                 {t('todos.editDialog.cancelButton')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showNewPhaseDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold" style={{ color: '#3b3b3d' }}>
+                {t('todos.newPhaseDialog.title', { defaultValue: 'Neue Phase erstellen' })}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowNewPhaseDialog(false);
+                  setNewPhaseName('');
+                  setNewPhaseColor('#14b8a6');
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
+                  {t('todos.newPhaseDialog.nameLabel', { defaultValue: 'Phasenname' })}
+                </label>
+                <input
+                  type="text"
+                  value={newPhaseName}
+                  onChange={(e) => setNewPhaseName(e.target.value)}
+                  className="w-full px-3 py-2 border-2 rounded-md"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+                  placeholder={t('todos.newPhaseDialog.namePlaceholder', { defaultValue: 'z.B. Vorbereitung, Finale Schritte...' })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: '#3b3b3d' }}>
+                  {t('todos.newPhaseDialog.colorLabel', { defaultValue: 'Farbe' })}
+                </label>
+                <div className="grid grid-cols-4 gap-3">
+                  {Object.entries(PHASE_COLORS).map(([name, color]) => (
+                    <button
+                      key={name}
+                      onClick={() => setNewPhaseColor(color)}
+                      className={`h-12 rounded-lg border-2 transition-all ${
+                        newPhaseColor === color
+                          ? 'ring-2 ring-offset-2'
+                          : 'hover:scale-105'
+                      }`}
+                      style={{
+                        backgroundColor: color,
+                        borderColor: newPhaseColor === color ? '#3b3b3d' : 'transparent',
+                        ringColor: color
+                      }}
+                      title={name}
+                    />
+                  ))}
+                  <input
+                    type="color"
+                    value={newPhaseColor}
+                    onChange={(e) => setNewPhaseColor(e.target.value)}
+                    className="h-12 w-full rounded-lg border-2 cursor-pointer"
+                    style={{ borderColor: '#d6b15b' }}
+                    title={t('todos.newPhaseDialog.customColor', { defaultValue: 'Eigene Farbe' })}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                <p className="text-sm text-blue-800">
+                  {t('todos.newPhaseDialog.info', { defaultValue: 'Eigene Phasen helfen dir, deine Aufgaben noch besser zu strukturieren.' })}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleCreateNewPhase}
+                disabled={!newPhaseName.trim()}
+                className="flex-1 px-6 py-3 rounded-md transition-all hover:opacity-90 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: '#d6b15b',
+                  color: 'white',
+                  fontFamily: 'Open Sans, sans-serif',
+                }}
+              >
+                {t('todos.newPhaseDialog.createButton', { defaultValue: 'Phase erstellen' })}
+              </button>
+              <button
+                onClick={() => {
+                  setShowNewPhaseDialog(false);
+                  setNewPhaseName('');
+                  setNewPhaseColor('#14b8a6');
+                }}
+                className="px-6 py-3 rounded-md border-2 transition-all hover:bg-gray-50 font-semibold"
+                style={{
+                  borderColor: '#d6b15b',
+                  color: '#3b3b3d',
+                  fontFamily: 'Open Sans, sans-serif',
+                }}
+              >
+                {t('todos.newPhaseDialog.cancelButton', { defaultValue: 'Abbrechen' })}
               </button>
             </div>
           </div>
