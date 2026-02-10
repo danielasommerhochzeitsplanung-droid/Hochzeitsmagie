@@ -947,7 +947,7 @@ export default function TodosModule() {
                                         className="text-gray-400 hover:text-amber-500 transition-colors"
                                         title={t('todos.taskDetails.archiveTask')}
                                       >
-                                        <X className="w-5 h-5" />
+                                        <Archive className="w-5 h-5" />
                                       </button>
                                     )}
                                   </div>
