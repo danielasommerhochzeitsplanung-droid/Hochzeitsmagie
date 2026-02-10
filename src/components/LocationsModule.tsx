@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Archive } from 'lucide-react';
 import { storage } from '../lib/storage-adapter';
 import LocationModal, { Location } from './LocationModal';
 import LocationTable from './LocationTable';
@@ -211,44 +212,61 @@ export default function LocationsModule() {
         ]}
       />
 
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-            Filter:
-          </label>
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-all"
-            style={{
-              fontFamily: 'Open Sans, sans-serif',
-              borderColor: '#d6b15b',
-              color: '#3b3b3d'
-            }}
-          >
-            <option value="all">Alle Typen</option>
-            {types.map(type => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={() => setShowArchived(!showArchived)}
-            className="px-4 py-2 border rounded-md transition-all hover:bg-gray-50"
-            style={{
-              borderColor: showArchived ? '#d6b15b' : '#e5e5e5',
-              backgroundColor: showArchived ? '#f8f4ed' : 'white',
-              color: showArchived ? '#d6b15b' : '#666',
-              fontFamily: 'Open Sans, sans-serif'
-            }}
-          >
-            {showArchived ? 'Archiv' : 'Aktive'}
-          </button>
-          <span className="text-sm" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
-            {filteredLocations.length} Locations
-          </span>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-6">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowArchived(false)}
+              className={`px-6 py-3 transition-all ${
+                !showArchived
+                  ? 'border-b-2'
+                  : 'hover:opacity-70'
+              }`}
+              style={!showArchived ? { borderColor: '#d6b15b', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' } : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}
+            >
+              📍 Aktive Locations
+            </button>
+            <button
+              onClick={() => setShowArchived(true)}
+              className={`px-6 py-3 transition-all flex items-center gap-2 ${
+                showArchived
+                  ? 'border-b-2'
+                  : 'hover:opacity-70'
+              }`}
+              style={showArchived ? { borderColor: '#d6b15b', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' } : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}
+            >
+              <Archive className="w-4 h-4" />
+              Archivierte Locations
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+              Filter:
+            </label>
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-all"
+              style={{
+                fontFamily: 'Open Sans, sans-serif',
+                borderColor: '#d6b15b',
+                color: '#3b3b3d'
+              }}
+            >
+              <option value="all">Alle Typen</option>
+              {types.map(type => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
+              {filteredLocations.length} Locations
+            </span>
+          </div>
         </div>
+
         <button
           onClick={handleAddLocation}
           className="px-6 py-2 rounded-md transition-all hover:opacity-90"
@@ -262,6 +280,8 @@ export default function LocationsModule() {
           Location hinzufügen
         </button>
       </div>
+
+      <div className="border-b border-gray-200 mb-4"></div>
 
       <LocationTable
         locations={filteredLocations}

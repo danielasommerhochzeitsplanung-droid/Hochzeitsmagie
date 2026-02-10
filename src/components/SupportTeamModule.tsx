@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Archive } from 'lucide-react';
 import { storage } from '../lib/storage-adapter';
 import SupportTeamModal, { SupportTeamMember } from './SupportTeamModal';
 import SupportTeamTable from './SupportTeamTable';
@@ -66,40 +67,39 @@ export default function SupportTeamModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <span className="text-sm" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
-            {members.length} {members.length === 1 ? t('supportTeam.member') : t('supportTeam.members')}
-          </span>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-6">
           <div className="flex gap-2">
             <button
               onClick={() => setShowArchived(false)}
-              className="px-4 py-1.5 rounded-md transition-all text-sm"
-              style={{
-                backgroundColor: !showArchived ? '#d6b15b' : 'transparent',
-                color: !showArchived ? 'white' : '#666',
-                border: !showArchived ? 'none' : '1px solid #e5e5e5',
-                fontFamily: 'Open Sans, sans-serif',
-                fontWeight: !showArchived ? 600 : 400
-              }}
+              className={`px-6 py-3 transition-all ${
+                !showArchived
+                  ? 'border-b-2'
+                  : 'hover:opacity-70'
+              }`}
+              style={!showArchived ? { borderColor: '#d6b15b', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' } : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}
             >
-              {t('supportTeam.activeMembers')}
+              👔 {t('supportTeam.activeMembers')}
             </button>
             <button
               onClick={() => setShowArchived(true)}
-              className="px-4 py-1.5 rounded-md transition-all text-sm"
-              style={{
-                backgroundColor: showArchived ? '#d6b15b' : 'transparent',
-                color: showArchived ? 'white' : '#666',
-                border: showArchived ? 'none' : '1px solid #e5e5e5',
-                fontFamily: 'Open Sans, sans-serif',
-                fontWeight: showArchived ? 600 : 400
-              }}
+              className={`px-6 py-3 transition-all flex items-center gap-2 ${
+                showArchived
+                  ? 'border-b-2'
+                  : 'hover:opacity-70'
+              }`}
+              style={showArchived ? { borderColor: '#d6b15b', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' } : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}
             >
+              <Archive className="w-4 h-4" />
               {t('supportTeam.archivedMembers')}
             </button>
           </div>
+
+          <span className="text-sm" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
+            {members.length} {members.length === 1 ? t('supportTeam.member') : t('supportTeam.members')}
+          </span>
         </div>
+
         <button
           onClick={handleAddMember}
           className="px-6 py-2 rounded-md transition-all hover:opacity-90"
@@ -113,6 +113,8 @@ export default function SupportTeamModule() {
           {t('supportTeam.addMember')}
         </button>
       </div>
+
+      <div className="border-b border-gray-200 mb-4"></div>
 
       <SupportTeamTable
         members={members}
