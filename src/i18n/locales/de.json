@@ -562,6 +562,15 @@
       "addTask": "Aufgabe hinzufügen",
       "recalculate": "Neu berechnen"
     },
+    "filters": {
+      "label": "Filter:",
+      "searchPlaceholder": "Aufgaben durchsuchen...",
+      "allCategories": "Alle Kategorien",
+      "allStatus": "Alle Status",
+      "active": "Aktiv",
+      "completed": "Erledigt",
+      "clearFilters": "Filter zurücksetzen"
+    },
     "warnings": {
       "desktopRecommended": "Desktop empfohlen",
       "desktopDescription": "Für die {{view}}-Ansicht nutzen Sie bitte einen Desktop-Browser für die beste Darstellung."

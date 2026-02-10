@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock, Archive } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock, Archive, Search } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task, Phase } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
@@ -72,6 +72,7 @@ export default function TodosModule() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [view, setView] = useState<'list' | 'timeline' | 'gantt'>('list');
   const [isMobile, setIsMobile] = useState(false);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
@@ -352,16 +353,39 @@ export default function TodosModule() {
       groups.set(mainCat.id, []);
     });
 
-    tasks.filter(task => (task.archived || false) === showArchived).forEach(task => {
-      const mainCategoryId = categoryToMainCategory(task.category);
-      if (!groups.has(mainCategoryId)) {
-        groups.set(mainCategoryId, []);
-      }
-      groups.get(mainCategoryId)!.push(task);
-    });
+    tasks
+      .filter(task => (task.archived || false) === showArchived)
+      .filter(task => {
+        if (filterStatus === 'completed' && !task.completed) return false;
+        if (filterStatus === 'active' && task.completed) return false;
+        return true;
+      })
+      .filter(task => {
+        if (filterCategory !== 'all') {
+          const mainCategoryId = categoryToMainCategory(task.category);
+          return mainCategoryId === filterCategory;
+        }
+        return true;
+      })
+      .filter(task => {
+        if (searchQuery.trim()) {
+          const query = searchQuery.toLowerCase();
+          const title = getTaskTitle(task).toLowerCase();
+          const description = getTaskDescription(task).toLowerCase();
+          return title.includes(query) || description.includes(query);
+        }
+        return true;
+      })
+      .forEach(task => {
+        const mainCategoryId = categoryToMainCategory(task.category);
+        if (!groups.has(mainCategoryId)) {
+          groups.set(mainCategoryId, []);
+        }
+        groups.get(mainCategoryId)!.push(task);
+      });
 
     return groups;
-  }, [tasks, showArchived]);
+  }, [tasks, showArchived, filterStatus, filterCategory, searchQuery, getTaskTitle, getTaskDescription]);
 
   const completionStats = useMemo(() => {
     const activeTasks = tasks.filter(t => !t.archived);
@@ -652,54 +676,69 @@ export default function TodosModule() {
 
       <div className="border-b border-gray-200 mb-4"></div>
 
-      {/* DEBUG: Filter UI temporarily disabled */}
-      {/* <div className="flex gap-4 items-center flex-wrap">
+      <div className="flex gap-4 items-center flex-wrap mb-6">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4" style={{ color: '#666' }} />
           <span className="text-sm font-medium" style={{ color: '#666' }}>
-            Filter:
+            {t('todos.filters.label')}
           </span>
+        </div>
+
+        <div className="flex-1 max-w-md relative">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('todos.filters.searchPlaceholder')}
+            className="w-full pl-10 pr-4 py-2 rounded-md border-2 text-sm"
+            style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+          />
         </div>
 
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-3 py-1.5 rounded-md border-2 text-sm"
+          className="px-3 py-2 rounded-md border-2 text-sm"
           style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
         >
-          <option value="all">Alle Kategorien</option>
-          {taskCategories.map(cat => (
-            <option key={cat.id} value={cat.id}>{cat.label}</option>
+          <option value="all">{t('todos.filters.allCategories')}</option>
+          {mainCategories.map(cat => (
+            <option key={cat.id} value={cat.id}>{t(`todos.categories.${cat.id}`)}</option>
           ))}
         </select>
 
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-1.5 rounded-md border-2 text-sm"
+          className="px-3 py-2 rounded-md border-2 text-sm"
           style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
         >
-          <option value="all">Alle Status</option>
-          <option value="active">Aktiv</option>
-          <option value="completed">Erledigt</option>
+          <option value="all">{t('todos.filters.allStatus')}</option>
+          <option value="active">{t('todos.filters.active')}</option>
+          <option value="completed">{t('todos.filters.completed')}</option>
         </select>
 
-        <div className="flex gap-2 flex-wrap">
-          {taskCategories.map(cat => {
-            const count = tasks.filter(t => t.category === cat.id).length;
-            return (
-              <div
-                key={cat.id}
-                className="flex items-center gap-1 px-2 py-1 rounded text-xs text-white"
-                style={{ backgroundColor: cat.color.replace('bg-', '#') }}
-              >
-                <span className={`w-3 h-3 rounded ${cat.color}`} />
-                <span>{cat.label} ({count})</span>
-              </div>
-            );
-          })}
-        </div>
-      </div> */}
+        {(filterCategory !== 'all' || filterStatus !== 'all' || searchQuery.trim()) && (
+          <button
+            onClick={() => {
+              setFilterCategory('all');
+              setFilterStatus('all');
+              setSearchQuery('');
+            }}
+            className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2 text-sm"
+            style={{
+              borderColor: '#d6b15b',
+              color: '#3b3b3d',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 600
+            }}
+          >
+            <X className="w-4 h-4" />
+            {t('todos.filters.clearFilters')}
+          </button>
+        )}
+      </div>
 
       {(view === 'timeline' || view === 'gantt') && isMobile && (
         <div className="bg-amber-50 border-2 border-amber-500 rounded-lg p-4 flex items-start gap-3">

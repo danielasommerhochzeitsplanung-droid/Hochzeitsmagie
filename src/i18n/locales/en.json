@@ -562,6 +562,15 @@
       "addTask": "Add task",
       "recalculate": "Recalculate"
     },
+    "filters": {
+      "label": "Filter:",
+      "searchPlaceholder": "Search tasks...",
+      "allCategories": "All categories",
+      "allStatus": "All status",
+      "active": "Active",
+      "completed": "Completed",
+      "clearFilters": "Clear filters"
+    },
     "warnings": {
       "desktopRecommended": "Desktop recommended",
       "desktopDescription": "For the {{view}} view, please use a desktop browser for the best display."
