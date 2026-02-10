@@ -29,7 +29,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks, taskModalTrigger } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
@@ -68,6 +68,12 @@ function App() {
       return () => clearInterval(interval);
     }
   }, [weddingData]);
+
+  useEffect(() => {
+    if (taskModalTrigger && activeModule !== 'todos') {
+      setActiveModule('todos');
+    }
+  }, [taskModalTrigger, activeModule]);
 
   const calculateDaysRemaining = (date: string) => {
     const today = new Date();
