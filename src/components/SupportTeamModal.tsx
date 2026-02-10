@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Users } from 'lucide-react';
-import { storage } from '../lib/storage-adapter';
+import { X, Users, Plus, CheckCircle2, Circle } from 'lucide-react';
+import { storage, Task } from '../lib/storage-adapter';
 import { ROLE_TEMPLATES } from './roleTemplates';
+import { getPhaseColor } from '../utils/phaseManagement';
 
 export interface SupportTeamMember {
   id?: string;
@@ -30,6 +31,7 @@ interface SupportTeamModalProps {
     email: string;
     phone: string;
   };
+  onAddTask?: (memberId: string) => void;
 }
 
 
@@ -42,7 +44,7 @@ interface GuestOption {
   isPartner?: boolean;
 }
 
-export default function SupportTeamModal({ isOpen, onClose, onSave, member, prefilledData }: SupportTeamModalProps) {
+export default function SupportTeamModal({ isOpen, onClose, onSave, member, prefilledData, onAddTask }: SupportTeamModalProps) {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const [formData, setFormData] = useState<Omit<SupportTeamMember, 'id' | 'created_at'>>({
@@ -62,13 +64,25 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
   const [selectedGuestId, setSelectedGuestId] = useState('');
   const [selectedTeamMemberId, setSelectedTeamMemberId] = useState('');
   const [customRole, setCustomRole] = useState('');
+  const [assignedTasks, setAssignedTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     if (isOpen) {
       loadGuests();
       loadExistingTeamMembers();
+      if (member?.id) {
+        loadAssignedTasks(member.id);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, member?.id]);
+
+  const loadAssignedTasks = (memberId: string) => {
+    const allTasks = storage.tasks.getAll();
+    const memberTasks = allTasks.filter(task =>
+      task.assigned_to === memberId && !task.archived
+    );
+    setAssignedTasks(memberTasks);
+  };
 
   const loadGuests = () => {
     const data = storage.guests.getAll()
@@ -578,6 +592,99 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
               placeholder={t('supportTeam.notesPlaceholder')}
             />
           </div>
+
+          {member?.id && (
+            <div className="border-t pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Zugewiesene Aufgaben ({assignedTasks.length})
+                </h3>
+                {onAddTask && (
+                  <button
+                    type="button"
+                    onClick={() => onAddTask(member.id!)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-md transition-all hover:opacity-90 text-sm font-medium"
+                    style={{
+                      backgroundColor: '#d6b15b',
+                      color: 'white',
+                      fontFamily: 'Open Sans, sans-serif'
+                    }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    Aufgabe hinzufügen
+                  </button>
+                )}
+              </div>
+
+              {assignedTasks.length === 0 ? (
+                <div className="text-center py-6 text-gray-500">
+                  <p className="text-sm" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+                    Keine Aufgaben zugewiesen
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {assignedTasks.map(task => {
+                    const phase = task.phase_id ? storage.phases.get(task.phase_id) : null;
+                    return (
+                      <div
+                        key={task.id}
+                        className="flex items-start gap-3 p-3 rounded-lg border"
+                        style={{
+                          borderColor: '#e5e7eb',
+                          backgroundColor: '#ffffff'
+                        }}
+                      >
+                        <div className="mt-0.5">
+                          {task.completed ? (
+                            <CheckCircle2 className="w-5 h-5" style={{ color: '#10b981' }} />
+                          ) : (
+                            <Circle className="w-5 h-5" style={{ color: '#d1d5db' }} />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className="font-medium text-sm"
+                            style={{
+                              color: task.completed ? '#9ca3af' : '#3b3b3d',
+                              fontFamily: 'Open Sans, sans-serif',
+                              textDecoration: task.completed ? 'line-through' : 'none'
+                            }}
+                          >
+                            {task.title}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {phase && (
+                              <span
+                                className="text-xs px-2 py-0.5 rounded-full"
+                                style={{
+                                  backgroundColor: `${phase.color}20`,
+                                  color: phase.color,
+                                  fontFamily: 'Open Sans, sans-serif'
+                                }}
+                              >
+                                {phase.name}
+                              </span>
+                            )}
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: task.completed ? '#d1fae5' : task.priority === 'high' ? '#fee2e2' : task.priority === 'medium' ? '#fef3c7' : '#f3f4f6',
+                                color: task.completed ? '#065f46' : task.priority === 'high' ? '#991b1b' : task.priority === 'medium' ? '#92400e' : '#6b7280',
+                                fontFamily: 'Open Sans, sans-serif'
+                              }}
+                            >
+                              {task.completed ? 'Erledigt' : task.priority === 'high' ? 'Hoch' : task.priority === 'medium' ? 'Mittel' : 'Niedrig'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-end gap-3 pt-4">
             <button

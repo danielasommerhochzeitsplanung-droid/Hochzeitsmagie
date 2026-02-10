@@ -87,6 +87,8 @@ export default function SupportTeamModule() {
   };
 
   const handleSaveTask = (taskData: Omit<Task, 'id' | 'created_at'>) => {
+    const memberId = taskModalData?.memberId;
+
     if (taskModalData?.task?.id) {
       const updatedTasks = weddingData.tasks.map(t =>
         t.id === taskModalData.task!.id ? { ...t, ...taskData } : t
@@ -102,6 +104,14 @@ export default function SupportTeamModule() {
     }
     setIsTaskModalOpen(false);
     setTaskModalData(null);
+
+    if (memberId) {
+      const member = members.find(m => m.id === memberId);
+      if (member) {
+        setEditingMember(member);
+        setIsModalOpen(true);
+      }
+    }
   };
 
   const handleToggleTaskComplete = (taskId: string) => {
@@ -185,6 +195,10 @@ export default function SupportTeamModule() {
         }}
         onSave={handleSaveMember}
         member={editingMember}
+        onAddTask={(memberId) => {
+          setIsModalOpen(false);
+          handleCreateTask(memberId);
+        }}
       />
 
       {isTaskModalOpen && taskModalData && (
