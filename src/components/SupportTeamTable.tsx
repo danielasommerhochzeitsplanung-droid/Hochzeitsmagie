@@ -31,6 +31,7 @@ export default function SupportTeamTable({ members, tasks, onEdit, onArchive, on
   };
 
   const getMemberTasks = (memberId: string) => {
+    if (!tasks || !Array.isArray(tasks)) return [];
     return tasks.filter(task => task.assigned_to === memberId && !task.archived);
   };
 
