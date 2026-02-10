@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock, Archive } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task, Phase } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
@@ -532,8 +532,34 @@ export default function TodosModule() {
         </div>
       )}
 
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
         <div className="flex items-center gap-6">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowArchived(false)}
+              className={`px-6 py-3 transition-all ${
+                !showArchived
+                  ? 'border-b-2'
+                  : 'hover:opacity-70'
+              }`}
+              style={!showArchived ? { borderColor: '#d6b15b', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' } : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}
+            >
+              ✅ {t('todos.activeTasks')}
+            </button>
+            <button
+              onClick={() => setShowArchived(true)}
+              className={`px-6 py-3 transition-all flex items-center gap-2 ${
+                showArchived
+                  ? 'border-b-2'
+                  : 'hover:opacity-70'
+              }`}
+              style={showArchived ? { borderColor: '#d6b15b', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' } : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}
+            >
+              <Archive className="w-4 h-4" />
+              {t('todos.archivedTasks')}
+            </button>
+          </div>
+
           <div>
             <div className="text-2xl font-bold" style={{ color: '#3b3b3d' }}>
               {completionStats.completed} / {completionStats.total}
@@ -553,35 +579,6 @@ export default function TodosModule() {
             <div className="text-xs mt-1" style={{ color: '#666' }}>
               {completionStats.percentage}% {t('todos.stats.completed')}
             </div>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowArchived(false)}
-              className="px-4 py-1.5 rounded-md transition-all text-sm"
-              style={{
-                backgroundColor: !showArchived ? '#d6b15b' : 'transparent',
-                color: !showArchived ? 'white' : '#666',
-                border: !showArchived ? 'none' : '1px solid #e5e5e5',
-                fontFamily: 'Open Sans, sans-serif',
-                fontWeight: !showArchived ? 600 : 400
-              }}
-            >
-              {t('todos.activeTasks')}
-            </button>
-            <button
-              onClick={() => setShowArchived(true)}
-              className="px-4 py-1.5 rounded-md transition-all text-sm"
-              style={{
-                backgroundColor: showArchived ? '#d6b15b' : 'transparent',
-                color: showArchived ? 'white' : '#666',
-                border: showArchived ? 'none' : '1px solid #e5e5e5',
-                fontFamily: 'Open Sans, sans-serif',
-                fontWeight: showArchived ? 600 : 400
-              }}
-            >
-              {t('todos.archivedTasks')}
-            </button>
           </div>
         </div>
 
@@ -652,6 +649,8 @@ export default function TodosModule() {
           </button>
         </div>
       </div>
+
+      <div className="border-b border-gray-200 mb-4"></div>
 
       {/* DEBUG: Filter UI temporarily disabled */}
       {/* <div className="flex gap-4 items-center flex-wrap">
