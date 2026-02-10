@@ -440,7 +440,14 @@
     "selectGuest": "Gast auswählen",
     "chooseGuest": "Bitte wählen...",
     "selectExistingMember": "Bestehendes Mitglied wählen",
-    "chooseMember": "Mitglied auswählen..."
+    "chooseMember": "Mitglied auswählen...",
+    "tasks": "Aufgaben",
+    "completed": "abgeschlossen",
+    "pending": "offen",
+    "noTasks": "Keine Aufgaben zugewiesen",
+    "createTask": "Aufgabe erstellen",
+    "createFirstTask": "Erste Aufgabe erstellen",
+    "editTask": "Aufgabe bearbeiten"
   },
   "name": "Name",
   "phone": "Telefon",

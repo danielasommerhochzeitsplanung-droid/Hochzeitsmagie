@@ -440,7 +440,14 @@
     "selectGuest": "Select guest",
     "chooseGuest": "Please choose...",
     "selectExistingMember": "Select existing member",
-    "chooseMember": "Select member..."
+    "chooseMember": "Select member...",
+    "tasks": "Tasks",
+    "completed": "completed",
+    "pending": "pending",
+    "noTasks": "No tasks assigned",
+    "createTask": "Create Task",
+    "createFirstTask": "Create First Task",
+    "editTask": "Edit Task"
   },
   "name": "Name",
   "phone": "Phone",
