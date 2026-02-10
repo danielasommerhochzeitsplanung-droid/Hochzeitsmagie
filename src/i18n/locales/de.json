@@ -551,6 +551,8 @@
       "tasksCompleted": "Aufgaben erledigt",
       "completed": "abgeschlossen"
     },
+    "activeTasks": "Aktive Aufgaben",
+    "archivedTasks": "Archivierte Aufgaben",
     "views": {
       "list": "Liste",
       "timeline": "Timeline",
@@ -574,12 +576,16 @@
       "checkDate": "Datum prüfen",
       "editTask": "Aufgabe bearbeiten",
       "deleteTask": "Aufgabe löschen",
+      "archiveTask": "Aufgabe archivieren",
+      "restoreTask": "Aufgabe wiederherstellen",
+      "deleteTaskPermanently": "Aufgabe endgültig löschen",
       "priorityHigh": "Hoch",
       "overdue": "überfällig",
       "dependency": "Abhängigkeit",
       "dependencies": "Abhängigkeiten",
       "waitingFor": "Wartet auf:"
     },
+    "confirmDeletePermanently": "Möchten Sie diese Aufgabe wirklich endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "generateDialog": {
       "title": "Standard-Aufgaben generieren",
       "description": "Möchten Sie 40 Standard-Aufgaben automatisch erstellen?",

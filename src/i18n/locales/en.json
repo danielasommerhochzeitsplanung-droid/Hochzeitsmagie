@@ -551,6 +551,8 @@
       "tasksCompleted": "Tasks completed",
       "completed": "completed"
     },
+    "activeTasks": "Active Tasks",
+    "archivedTasks": "Archived Tasks",
     "views": {
       "list": "List",
       "timeline": "Timeline",
@@ -574,12 +576,16 @@
       "checkDate": "Check date",
       "editTask": "Edit task",
       "deleteTask": "Delete task",
+      "archiveTask": "Archive task",
+      "restoreTask": "Restore task",
+      "deleteTaskPermanently": "Delete task permanently",
       "priorityHigh": "High",
       "overdue": "overdue",
       "dependency": "dependency",
       "dependencies": "dependencies",
       "waitingFor": "Waiting for:"
     },
+    "confirmDeletePermanently": "Do you really want to permanently delete this task? This action cannot be undone.",
     "generateDialog": {
       "title": "Generate standard tasks",
       "description": "Do you want to automatically create 40 standard tasks?",
