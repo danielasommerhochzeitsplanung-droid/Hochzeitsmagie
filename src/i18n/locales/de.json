@@ -567,6 +567,8 @@
       "searchPlaceholder": "Aufgaben durchsuchen...",
       "allCategories": "Alle Kategorien",
       "allStatus": "Alle Status",
+      "allAssignees": "Alle Zuweisungen",
+      "unassigned": "Nicht zugewiesen",
       "active": "Aktiv",
       "completed": "Erledigt",
       "clearFilters": "Filter zurücksetzen"
@@ -619,6 +621,8 @@
       "priorityLow": "Niedrig",
       "priorityMedium": "Mittel",
       "priorityHigh": "Hoch",
+      "assignedToLabel": "Zugewiesen an",
+      "unassigned": "Nicht zugewiesen",
       "addButton": "Hinzufügen",
       "cancelButton": "Abbrechen"
     },

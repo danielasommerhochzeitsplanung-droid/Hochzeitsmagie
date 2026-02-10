@@ -72,6 +72,7 @@ export default function TodosModule() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterAssignee, setFilterAssignee] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [view, setView] = useState<'list' | 'timeline' | 'gantt'>('list');
   const [isMobile, setIsMobile] = useState(false);
@@ -88,6 +89,7 @@ export default function TodosModule() {
     due_date: '',
     priority: 'medium' as 'high' | 'medium' | 'low',
     phase_id: '',
+    assigned_to: '',
   });
   const [showNewPhaseDialog, setShowNewPhaseDialog] = useState(false);
   const [newPhaseName, setNewPhaseName] = useState('');
@@ -368,6 +370,15 @@ export default function TodosModule() {
         return true;
       })
       .filter(task => {
+        if (filterAssignee !== 'all') {
+          if (filterAssignee === 'unassigned') {
+            return !task.assigned_to;
+          }
+          return task.assigned_to === filterAssignee;
+        }
+        return true;
+      })
+      .filter(task => {
         if (searchQuery.trim()) {
           const query = searchQuery.toLowerCase();
           const title = getTaskTitle(task).toLowerCase();
@@ -385,7 +396,7 @@ export default function TodosModule() {
       });
 
     return groups;
-  }, [tasks, showArchived, filterStatus, filterCategory, searchQuery, getTaskTitle, getTaskDescription]);
+  }, [tasks, showArchived, filterStatus, filterCategory, filterAssignee, searchQuery, getTaskTitle, getTaskDescription]);
 
   const completionStats = useMemo(() => {
     const activeTasks = tasks.filter(t => !t.archived);
@@ -413,6 +424,7 @@ export default function TodosModule() {
       due_date: newTask.due_date || undefined,
       completed: false,
       priority: newTask.priority,
+      assigned_to: newTask.assigned_to || undefined,
       is_system_generated: false,
       archived: false,
     });
@@ -424,6 +436,7 @@ export default function TodosModule() {
       due_date: '',
       priority: 'medium',
       phase_id: '',
+      assigned_to: '',
     });
     setShowAddDialog(false);
   };
@@ -719,11 +732,27 @@ export default function TodosModule() {
           <option value="completed">{t('todos.filters.completed')}</option>
         </select>
 
-        {(filterCategory !== 'all' || filterStatus !== 'all' || searchQuery.trim()) && (
+        <select
+          value={filterAssignee}
+          onChange={(e) => setFilterAssignee(e.target.value)}
+          className="px-3 py-2 rounded-md border-2 text-sm"
+          style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
+        >
+          <option value="all">{t('todos.filters.allAssignees')}</option>
+          <option value="unassigned">{t('todos.filters.unassigned')}</option>
+          {supportTeam.filter(member => !member.archived).map(member => (
+            <option key={member.id} value={member.id}>
+              {member.name} {member.role && `(${member.role})`}
+            </option>
+          ))}
+        </select>
+
+        {(filterCategory !== 'all' || filterStatus !== 'all' || filterAssignee !== 'all' || searchQuery.trim()) && (
           <button
             onClick={() => {
               setFilterCategory('all');
               setFilterStatus('all');
+              setFilterAssignee('all');
               setSearchQuery('');
             }}
             className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2 text-sm"
@@ -1014,6 +1043,18 @@ export default function TodosModule() {
                                       {isOverdue && ` (${t('todos.taskDetails.overdue')})`}
                                     </span>
                                   )}
+
+                                  {task.assigned_to && (() => {
+                                    const assignedMember = supportTeam.find(m => m.id === task.assigned_to);
+                                    if (assignedMember) {
+                                      return (
+                                        <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-700 font-medium">
+                                          👤 {assignedMember.name}
+                                        </span>
+                                      );
+                                    }
+                                    return null;
+                                  })()}
                                 </div>
 
                                 {isBlocked && !task.completed && (
@@ -1329,11 +1370,17 @@ export default function TodosModule() {
                                               </span>
                                             )}
 
-                                            {task.assigned_to && (
-                                              <span className="text-xs text-gray-600">
-                                                Zugewiesen: {task.assigned_to}
-                                              </span>
-                                            )}
+                                            {task.assigned_to && (() => {
+                                              const assignedMember = supportTeam.find(m => m.id === task.assigned_to);
+                                              if (assignedMember) {
+                                                return (
+                                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-700 font-medium">
+                                                    👤 {assignedMember.name}
+                                                  </span>
+                                                );
+                                              }
+                                              return null;
+                                            })()}
                                           </div>
 
                                           {isBlocked && !task.completed && (
@@ -1534,6 +1581,25 @@ export default function TodosModule() {
                   <option value="low">{t('todos.addDialog.priorityLow')}</option>
                   <option value="medium">{t('todos.addDialog.priorityMedium')}</option>
                   <option value="high">{t('todos.addDialog.priorityHigh')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
+                  {t('todos.addDialog.assignedToLabel')}
+                </label>
+                <select
+                  value={newTask.assigned_to}
+                  onChange={(e) => setNewTask({ ...newTask, assigned_to: e.target.value })}
+                  className="w-full px-3 py-2 border-2 rounded-md"
+                  style={{ borderColor: '#d6b15b' }}
+                >
+                  <option value="">{t('todos.addDialog.unassigned')}</option>
+                  {supportTeam.filter(member => !member.archived).map(member => (
+                    <option key={member.id} value={member.id}>
+                      {member.name} {member.role && `(${member.role})`}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -1744,6 +1810,25 @@ export default function TodosModule() {
                   <option value="low">{t('todos.addDialog.priorityLow')}</option>
                   <option value="medium">{t('todos.addDialog.priorityMedium')}</option>
                   <option value="high">{t('todos.addDialog.priorityHigh')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
+                  {t('todos.addDialog.assignedToLabel')}
+                </label>
+                <select
+                  value={editingTask.assigned_to || ''}
+                  onChange={(e) => setEditingTask({ ...editingTask, assigned_to: e.target.value })}
+                  className="w-full px-3 py-2 border-2 rounded-md"
+                  style={{ borderColor: '#d6b15b' }}
+                >
+                  <option value="">{t('todos.addDialog.unassigned')}</option>
+                  {supportTeam.filter(member => !member.archived).map(member => (
+                    <option key={member.id} value={member.id}>
+                      {member.name} {member.role && `(${member.role})`}
+                    </option>
+                  ))}
                 </select>
               </div>
 

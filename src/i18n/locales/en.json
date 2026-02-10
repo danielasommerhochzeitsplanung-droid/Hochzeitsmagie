@@ -567,6 +567,8 @@
       "searchPlaceholder": "Search tasks...",
       "allCategories": "All categories",
       "allStatus": "All status",
+      "allAssignees": "All assignees",
+      "unassigned": "Unassigned",
       "active": "Active",
       "completed": "Completed",
       "clearFilters": "Clear filters"
@@ -619,6 +621,8 @@
       "priorityLow": "Low",
       "priorityMedium": "Medium",
       "priorityHigh": "High",
+      "assignedToLabel": "Assigned to",
+      "unassigned": "Unassigned",
       "addButton": "Add",
       "cancelButton": "Cancel"
     },
