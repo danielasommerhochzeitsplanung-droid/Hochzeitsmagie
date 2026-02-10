@@ -17,6 +17,7 @@ export interface SupportTeamMember {
   notes: string;
   created_at?: string;
   guest_id?: string | null;
+  archived?: boolean;
 }
 
 interface SupportTeamModalProps {
@@ -208,7 +209,14 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+
+    const dataToSave = {
+      ...formData,
+      archived: member?.archived ?? false,
+      guest_id: selectedGuestId || member?.guest_id || null
+    };
+
+    onSave(dataToSave);
   };
 
   if (!isOpen) return null;
