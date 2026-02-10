@@ -63,7 +63,7 @@ const categoryToMainCategory = (category: string): string => {
 
 export default function TodosModule() {
   const { t } = useTranslation();
-  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase } = useWeddingData();
+  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, taskModalTrigger } = useWeddingData();
   const { getTaskTitle, getTaskDescription } = useTaskTemplates();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -101,6 +101,21 @@ export default function TodosModule() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (taskModalTrigger) {
+      setNewTask({
+        title: '',
+        description: '',
+        category: 'organization_closure',
+        due_date: '',
+        priority: 'medium',
+        phase_id: '',
+        assigned_to: taskModalTrigger.assigneeId,
+      });
+      setShowAddDialog(true);
+    }
+  }, [taskModalTrigger]);
 
   const handleEnableAutoTasks = async () => {
     await initializeAutoTasks();

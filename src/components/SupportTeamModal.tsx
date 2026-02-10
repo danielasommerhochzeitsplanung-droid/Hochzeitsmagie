@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Users, Plus, CheckCircle2, Circle } from 'lucide-react';
 import { storage, Task } from '../lib/storage-adapter';
 import { ROLE_TEMPLATES } from './roleTemplates';
+import { useWeddingData } from '../contexts/WeddingDataContext';
 
 export interface SupportTeamMember {
   id?: string;
@@ -30,7 +31,6 @@ interface SupportTeamModalProps {
     email: string;
     phone: string;
   };
-  onAddTask?: (memberId: string) => void;
 }
 
 
@@ -43,8 +43,9 @@ interface GuestOption {
   isPartner?: boolean;
 }
 
-export default function SupportTeamModal({ isOpen, onClose, onSave, member, prefilledData, onAddTask }: SupportTeamModalProps) {
+export default function SupportTeamModal({ isOpen, onClose, onSave, member, prefilledData }: SupportTeamModalProps) {
   const { t, i18n } = useTranslation();
+  const { openTaskModalForAssignee } = useWeddingData();
   const currentLang = i18n.language;
   const [formData, setFormData] = useState<Omit<SupportTeamMember, 'id' | 'created_at'>>({
     name: '',
@@ -598,21 +599,22 @@ export default function SupportTeamModal({ isOpen, onClose, onSave, member, pref
                 <h3 className="text-sm font-semibold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
                   Zugewiesene Aufgaben ({assignedTasks.length})
                 </h3>
-                {onAddTask && (
-                  <button
-                    type="button"
-                    onClick={() => onAddTask(member.id!)}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-md transition-all hover:opacity-90 text-sm font-medium"
-                    style={{
-                      backgroundColor: '#d6b15b',
-                      color: 'white',
-                      fontFamily: 'Open Sans, sans-serif'
-                    }}
-                  >
-                    <Plus className="w-4 h-4" />
-                    Aufgabe hinzufügen
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    openTaskModalForAssignee(member.id!);
+                    onClose();
+                  }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-md transition-all hover:opacity-90 text-sm font-medium"
+                  style={{
+                    backgroundColor: '#d6b15b',
+                    color: 'white',
+                    fontFamily: 'Open Sans, sans-serif'
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                  Aufgabe hinzufügen
+                </button>
               </div>
 
               {assignedTasks.length === 0 ? (

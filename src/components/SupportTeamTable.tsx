@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Edit2, Trash2, Phone, Mail, Archive, RotateCcw, Users, ChevronDown, ChevronRight, Plus, CheckCircle2, Circle, Calendar } from 'lucide-react';
 import { SupportTeamMember } from './SupportTeamModal';
 import { Task } from '../lib/storage-adapter';
+import { useWeddingData } from '../contexts/WeddingDataContext';
 
 interface SupportTeamTableProps {
   members: SupportTeamMember[];
@@ -11,13 +12,13 @@ interface SupportTeamTableProps {
   onArchive: (id: string) => void;
   onRestore: (id: string) => void;
   onDelete: (id: string) => void;
-  onCreateTask: (memberId: string) => void;
   onEditTask: (task: Task) => void;
   showArchived: boolean;
 }
 
-export default function SupportTeamTable({ members, tasks, onEdit, onArchive, onRestore, onDelete, onCreateTask, onEditTask, showArchived }: SupportTeamTableProps) {
+export default function SupportTeamTable({ members, tasks, onEdit, onArchive, onRestore, onDelete, onEditTask, showArchived }: SupportTeamTableProps) {
   const { t } = useTranslation();
+  const { openTaskModalForAssignee } = useWeddingData();
   const [expandedMembers, setExpandedMembers] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (memberId: string) => {
@@ -105,7 +106,7 @@ export default function SupportTeamTable({ members, tasks, onEdit, onArchive, on
                   {!showArchived && (
                     <>
                       <button
-                        onClick={() => member.id && onCreateTask(member.id)}
+                        onClick={() => member.id && openTaskModalForAssignee(member.id)}
                         className="p-2 hover:bg-green-50 rounded-lg transition-all"
                         title={t('supportTeam.createTask')}
                       >
@@ -226,7 +227,7 @@ export default function SupportTeamTable({ members, tasks, onEdit, onArchive, on
                       {t('supportTeam.noTasks')}
                     </p>
                     <button
-                      onClick={() => member.id && onCreateTask(member.id)}
+                      onClick={() => member.id && openTaskModalForAssignee(member.id)}
                       className="mt-3 px-4 py-2 rounded-md transition-all hover:opacity-90 text-sm"
                       style={{
                         backgroundColor: '#d6b15b',

@@ -84,6 +84,9 @@ interface WeddingDataContextType {
   importData: (jsonData: string) => void;
   clearAllData: () => void;
   manualSave: () => void;
+
+  taskModalTrigger: { assigneeId: string; timestamp: number } | null;
+  openTaskModalForAssignee: (assigneeId: string) => void;
 }
 
 const WeddingDataContext = createContext<WeddingDataContextType | undefined>(undefined);
@@ -91,6 +94,7 @@ const WeddingDataContext = createContext<WeddingDataContextType | undefined>(und
 export function WeddingDataProvider({ children }: { children: ReactNode }) {
   const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
   const [storageChangeCounter, setStorageChangeCounter] = useState(0);
+  const [taskModalTrigger, setTaskModalTrigger] = useState<{ assigneeId: string; timestamp: number } | null>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const idleTimeoutRef = useRef<NodeJS.Timeout>();
   const { showFeedback, FeedbackComponent } = useImportFeedback();
@@ -714,6 +718,10 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     showSaveIndicator();
   }, [showSaveIndicator]);
 
+  const openTaskModalForAssignee = useCallback((assigneeId: string) => {
+    setTaskModalTrigger({ assigneeId, timestamp: Date.now() });
+  }, []);
+
   const value: WeddingDataContextType = {
     weddingData,
     guests,
@@ -764,6 +772,8 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     importData,
     clearAllData,
     manualSave,
+    taskModalTrigger,
+    openTaskModalForAssignee,
   };
 
   return (
