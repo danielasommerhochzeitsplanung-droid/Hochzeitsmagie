@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { X, Users, Plus, CheckCircle2, Circle } from 'lucide-react';
 import { storage, Task } from '../lib/storage-adapter';
 import { ROLE_TEMPLATES } from './roleTemplates';
-import { getPhaseColor } from '../utils/phaseManagement';
 
 export interface SupportTeamMember {
   id?: string;
