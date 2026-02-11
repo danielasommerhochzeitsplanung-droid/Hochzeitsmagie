@@ -94,6 +94,27 @@ export default function TodosModule() {
   const [showNewPhaseDialog, setShowNewPhaseDialog] = useState(false);
   const [newPhaseName, setNewPhaseName] = useState('');
   const [newPhaseColor, setNewPhaseColor] = useState('#14b8a6');
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [customCategories, setCustomCategories] = useState<Array<{ id: string; color: string; icon: string }>>([]);
+
+  const allCategories = [...taskCategories, ...customCategories];
+
+  const handleAddCustomCategory = () => {
+    if (!newCategoryName.trim()) return;
+
+    const categoryId = newCategoryName.toLowerCase().replace(/\s+/g, '_');
+    const newCategory = {
+      id: categoryId,
+      color: 'bg-gray-500',
+      icon: '📌'
+    };
+
+    setCustomCategories([...customCategories, newCategory]);
+    setNewTask({ ...newTask, category: categoryId });
+    setShowNewCategoryInput(false);
+    setNewCategoryName('');
+  };
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -1558,16 +1579,63 @@ export default function TodosModule() {
                 <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
                   {t('todos.addDialog.categoryLabel')}
                 </label>
-                <select
-                  value={newTask.category}
-                  onChange={(e) => setNewTask({ ...newTask, category: e.target.value })}
-                  className="w-full px-3 py-2 border-2 rounded-md"
-                  style={{ borderColor: '#d6b15b' }}
-                >
-                  {taskCategories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{t(`todos.categories.${cat.id}`)}</option>
-                  ))}
-                </select>
+                {!showNewCategoryInput ? (
+                  <select
+                    value={newTask.category}
+                    onChange={(e) => {
+                      if (e.target.value === '_new_category_') {
+                        setShowNewCategoryInput(true);
+                      } else {
+                        setNewTask({ ...newTask, category: e.target.value });
+                      }
+                    }}
+                    className="w-full px-3 py-2 border-2 rounded-md"
+                    style={{ borderColor: '#d6b15b' }}
+                  >
+                    {allCategories.map(cat => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.icon} {t(`todos.categories.${cat.id}`, { defaultValue: cat.id.replace(/_/g, ' ') })}
+                      </option>
+                    ))}
+                    <option value="_new_category_">+ {t('todos.addDialog.newCategory', { defaultValue: 'Neue Kategorie' })}</option>
+                  </select>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleAddCustomCategory();
+                        if (e.key === 'Escape') {
+                          setShowNewCategoryInput(false);
+                          setNewCategoryName('');
+                        }
+                      }}
+                      className="flex-1 px-3 py-2 border-2 rounded-md"
+                      style={{ borderColor: '#d6b15b' }}
+                      placeholder={t('todos.addDialog.categoryPlaceholder', { defaultValue: 'Kategoriename...' })}
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleAddCustomCategory}
+                      className="px-4 py-2 rounded-md text-white transition-all hover:opacity-90"
+                      style={{ backgroundColor: '#d6b15b' }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowNewCategoryInput(false);
+                        setNewCategoryName('');
+                      }}
+                      className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50"
+                      style={{ borderColor: '#d6b15b', color: '#3b3b3d' }}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div>
