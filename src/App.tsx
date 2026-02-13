@@ -29,7 +29,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks, taskModalTrigger } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks, taskModalTrigger, addGuest } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
@@ -149,6 +149,32 @@ function App() {
         wedding_date: data.weddingDate,
         planning_start_date: data.planningStartDate,
         auto_tasks_enabled: true,
+      });
+
+      addGuest({
+        name: data.partner1,
+        number_of_adults: 1,
+        rsvp_status: 'accepted',
+        attendance_status: 'confirmed',
+        peanut_allergy: false,
+        tree_nut_allergy: false,
+        gluten_intolerance: false,
+        lactose_intolerance: false,
+        halal: false,
+        gift_received: false,
+      });
+
+      addGuest({
+        name: data.partner2,
+        number_of_adults: 1,
+        rsvp_status: 'accepted',
+        attendance_status: 'confirmed',
+        peanut_allergy: false,
+        tree_nut_allergy: false,
+        gluten_intolerance: false,
+        lactose_intolerance: false,
+        halal: false,
+        gift_received: false,
       });
 
       await initializeAutoTasks(data.weddingDate, data.planningStartDate);
