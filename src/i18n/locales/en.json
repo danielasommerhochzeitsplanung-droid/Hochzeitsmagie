@@ -153,6 +153,8 @@
     "allergySoy": "Soy",
     "allergySesame": "Sesame",
     "allergyOther": "Other Allergies",
+    "allergyDetails": "Allergy Details",
+    "enterAllergyDetails": "Please enter allergies (e.g. nuts, peanuts, eggs, fish...)",
     "halal": "Halal",
     "addPerson": "Add Person",
     "personName": "Name or note (optional)",

@@ -1213,107 +1213,17 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
                         </div>
 
                         {restriction.has_allergies && (
-                          <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e9ecef' }}>
-                            <div className="grid grid-cols-2 gap-2 mb-3">
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_nuts}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_nuts', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergyNuts')}
-                                </span>
-                              </label>
-
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_peanuts}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_peanuts', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergyPeanuts')}
-                                </span>
-                              </label>
-
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_eggs}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_eggs', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergyEggs')}
-                                </span>
-                              </label>
-
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_fish}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_fish', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergyFish')}
-                                </span>
-                              </label>
-
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_shellfish}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_shellfish', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergyShellfish')}
-                                </span>
-                              </label>
-
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_soy}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_soy', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergySoy')}
-                                </span>
-                              </label>
-
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={restriction.allergy_sesame}
-                                  onChange={(e) => updateDietaryRestriction(personName, 'allergy_sesame', e.target.checked)}
-                                  className="w-4 h-4 border-gray-300 rounded"
-                                  style={{ accentColor: '#4ECDC4' }}
-                                />
-                                <span className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                                  {t('guests.allergySesame')}
-                                </span>
-                              </label>
-                            </div>
-
-                            <input
-                              type="text"
+                          <div className="mt-3">
+                            <label className="block text-xs mb-2" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>
+                              {t('guests.allergyDetails')}
+                            </label>
+                            <textarea
                               value={restriction.allergies}
                               onChange={(e) => updateDietaryRestriction(personName, 'allergies', e.target.value)}
-                              placeholder={t('guests.allergyOther')}
-                              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
-                              style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
+                              placeholder={t('guests.enterAllergyDetails')}
+                              rows={3}
+                              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:outline-none resize-none transition-all"
+                              style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', backgroundColor: '#ffffff' }}
                             />
                           </div>
                         )}
