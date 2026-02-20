@@ -724,6 +724,15 @@
         "pan": "Hold Alt and drag to pan the view",
         "overCapacity": "Tables with red border are over capacity"
       }
-    }
+    },
+    "categories": {
+      "standard": "Standard",
+      "child": "Child",
+      "head_table": "Head Table",
+      "vip": "VIP",
+      "special_needs": "Special Needs",
+      "conflict": "Conflict/Sensitive"
+    },
+    "categoryLegend": "Guest Categories"
   }
 }

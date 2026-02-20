@@ -724,6 +724,15 @@
         "pan": "Halten Sie Alt gedrückt und ziehen Sie, um die Ansicht zu verschieben",
         "overCapacity": "Tische mit rotem Rand sind überfüllt"
       }
-    }
+    },
+    "categories": {
+      "standard": "Standard",
+      "child": "Kind",
+      "head_table": "Brauttisch",
+      "vip": "VIP",
+      "special_needs": "Besondere Bedürfnisse",
+      "conflict": "Konflikt/Sensibel"
+    },
+    "categoryLegend": "Gast-Kategorien"
   }
 }

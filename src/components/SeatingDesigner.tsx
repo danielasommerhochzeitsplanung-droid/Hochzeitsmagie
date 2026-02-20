@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ZoomIn, ZoomOut, Move } from 'lucide-react';
+import { ZoomIn, ZoomOut, Move, Baby, Star, Award, AlertTriangle, AlertCircle } from 'lucide-react';
 
 interface Table {
   id: string;
@@ -31,6 +31,7 @@ interface Guest {
   seating_preference: string;
   custom_table_id: string | null;
   age: number | null;
+  seating_category?: 'standard' | 'child' | 'head_table' | 'vip' | 'special_needs' | 'conflict';
 }
 
 interface Props {
@@ -86,6 +87,40 @@ export default function SeatingDesigner({ tables, assignments, guests, onUpdateP
 
   const getTableAssignmentCount = (tableId: string) => {
     return assignments.filter(a => a.table_id === tableId).length;
+  };
+
+  const getGuestCategoryIcon = (category?: string) => {
+    switch (category) {
+      case 'child':
+        return <Baby className="w-3 h-3" />;
+      case 'head_table':
+        return <Star className="w-3 h-3" />;
+      case 'vip':
+        return <Award className="w-3 h-3" />;
+      case 'special_needs':
+        return <AlertTriangle className="w-3 h-3" />;
+      case 'conflict':
+        return <AlertCircle className="w-3 h-3" />;
+      default:
+        return null;
+    }
+  };
+
+  const getGuestCategoryColor = (category?: string) => {
+    switch (category) {
+      case 'child':
+        return '#374151';
+      case 'head_table':
+        return '#000000';
+      case 'vip':
+        return '#9CA3AF';
+      case 'special_needs':
+        return '#4B5563';
+      case 'conflict':
+        return '#DC2626';
+      default:
+        return '#6B7280';
+    }
   };
 
   const handleMouseDown = (e: React.MouseEvent, tableId: string) => {
@@ -303,23 +338,43 @@ export default function SeatingDesigner({ tables, assignments, guests, onUpdateP
         </ul>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {['round', 'rectangular', 'head_table', 'couple_table'].map(type => (
-          <div key={type} className="flex items-center gap-2">
-            <div
-              style={{
-                width: '20px',
-                height: '20px',
-                backgroundColor: getTableColor(type),
-                borderRadius: type === 'round' ? '50%' : '4px',
-                border: '1px solid rgba(0, 0, 0, 0.2)'
-              }}
-            />
-            <span className="text-sm" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
-              {t(`seating.tableType_${type}`)}
-            </span>
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {['round', 'rectangular', 'head_table', 'couple_table'].map(type => (
+            <div key={type} className="flex items-center gap-2">
+              <div
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: getTableColor(type),
+                  borderRadius: type === 'round' ? '50%' : '4px',
+                  border: '1px solid rgba(0, 0, 0, 0.2)'
+                }}
+              />
+              <span className="text-sm" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                {t(`seating.tableType_${type}`)}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white border rounded-lg p-4" style={{ borderColor: '#e5e5e5' }}>
+          <h4 className="text-sm font-semibold mb-3" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+            {t('seating.categoryLegend')}
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {['standard', 'child', 'head_table', 'vip', 'special_needs', 'conflict'].map(category => (
+              <div key={category} className="flex items-center gap-2">
+                <div style={{ color: getGuestCategoryColor(category) }}>
+                  {getGuestCategoryIcon(category) || <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: getGuestCategoryColor(category) }} />}
+                </div>
+                <span className="text-sm" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                  {t(`seating.categories.${category}`)}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
