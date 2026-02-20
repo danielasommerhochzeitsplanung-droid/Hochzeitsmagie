@@ -228,19 +228,56 @@ export default function GuestsModule() {
   };
 
   const handleSaveGuest = (guestData: Omit<Guest, 'id' | 'archived'>) => {
-    if (editingGuest) {
-      const existingGuest = storage.guests.get(editingGuest.id);
+    const storageData = {
+      name: guestData.name,
+      partner_name: guestData.partner_name || '',
+      email: guestData.email || '',
+      phone: guestData.phone || '',
+      number_of_adults: guestData.number_of_adults || 1,
+      rsvp_status: guestData.save_the_date_status || 'pending',
+      attendance_status: guestData.invitation_status || 'pending',
+      notes: guestData.notes || '',
+      dietary_restrictions: guestData.dietary_restrictions || [],
+      peanut_allergy: false,
+      tree_nut_allergy: false,
+      gluten_intolerance: guestData.gluten_intolerant_count > 0,
+      lactose_intolerance: guestData.lactose_intolerant_count > 0,
+      halal: guestData.halal_count > 0,
+      street_address: guestData.street_address || '',
+      postal_code: guestData.postal_code || '',
+      city: guestData.city || '',
+      relationship_category: guestData.relationship_category || '',
+      side: guestData.side || '',
+      specific_relationship: guestData.specific_relationship || '',
+      custom_relationship: guestData.custom_relationship || '',
+      support_team_role: guestData.support_team_id || undefined,
+      gift_received: guestData.gift_received || '',
+      gift_description: '',
+      thank_you_sent: guestData.thank_you_sent || false,
+      thank_you_sent_date: guestData.thank_you_sent_date || '',
+      family_name: '',
+      is_child: guestData.is_child,
+      parent_guest_id: guestData.parent_guest_id || undefined,
+      age: guestData.age || undefined,
+      date_of_birth: guestData.date_of_birth || '',
+      seated_with_parents: false,
+      custom_table_id: guestData.custom_table_id || undefined,
+      seating_preference: guestData.seating_preference || 'parent_table',
+      archived: false,
+      save_the_date_status: guestData.save_the_date_status,
+      invitation_status: guestData.invitation_status,
+      save_the_date_sent_date: guestData.save_the_date_sent_date,
+      invitation_sent_date: guestData.invitation_sent_date,
+      events: guestData.events || [],
+      accommodation_type: guestData.accommodation_type || '',
+      accommodation_rooms: guestData.accommodation_rooms || undefined,
+      support_team_id: guestData.support_team_id || undefined,
+    };
 
-      storage.guests.update(editingGuest.id, {
-        ...existingGuest,
-        ...guestData,
-        archived: false,
-      });
+    if (editingGuest) {
+      storage.guests.update(editingGuest.id, storageData);
     } else {
-      storage.guests.create({
-        ...guestData,
-        archived: false,
-      });
+      storage.guests.create(storageData);
     }
 
     if (guestData.is_child && guestData.parent_guest_id) {
