@@ -778,12 +778,12 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
                   style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
                 >
-                  <option value="">{t('guests.seatingPreferencesNone')}</option>
-                  <option value="vip">{t('guests.seatingPreferencesVIP')}</option>
-                  <option value="family">{t('guests.seatingPreferencesFamily')}</option>
-                  <option value="friend">{t('guests.seatingPreferencesFriend')}</option>
-                  <option value="colleague">{t('guests.seatingPreferencesColleague')}</option>
-                  <option value="child">{t('guests.seatingPreferencesChild')}</option>
+                  <option value="">• Standard</option>
+                  <option value="child">👶 Kind</option>
+                  <option value="star">⭐ Brauttisch</option>
+                  <option value="vip">🏆 VIP</option>
+                  <option value="special_needs">⚠ Besondere Bedürfnisse</option>
+                  <option value="conflict">⚠️ Konflikt/Sensibel</option>
                 </select>
               </div>
 
