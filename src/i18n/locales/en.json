@@ -226,7 +226,14 @@
     "confirmNames": "Confirm Names",
     "guestSavedAddChild": "Guest has been saved. Open the guest modal again to add children.",
     "saveFirstToAddChildren": "Save the guest first to add children",
-    "assignToSupportTeam": "Assign to Support Team"
+    "assignToSupportTeam": "Assign to Support Team",
+    "seatingPreferences": "Seating Preferences",
+    "seatingPreferencesNone": "No seating preference",
+    "seatingPreferencesVIP": "VIP",
+    "seatingPreferencesFamily": "Family",
+    "seatingPreferencesFriend": "Friend",
+    "seatingPreferencesColleague": "Colleague",
+    "seatingPreferencesChild": "Child"
   },
   "vendors": {
     "addVendor": "Add Vendor",

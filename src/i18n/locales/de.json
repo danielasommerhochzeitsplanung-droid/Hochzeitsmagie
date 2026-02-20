@@ -226,7 +226,14 @@
     "confirmNames": "Namen bestätigen",
     "guestSavedAddChild": "Gast wurde gespeichert. Öffnen Sie das Gast-Modal erneut, um Kinder hinzuzufügen.",
     "saveFirstToAddChildren": "Speichern Sie den Gast zuerst, um Kinder hinzuzufügen",
-    "assignToSupportTeam": "Support Team zuweisen"
+    "assignToSupportTeam": "Support Team zuweisen",
+    "seatingPreferences": "Sitzpräferenzen",
+    "seatingPreferencesNone": "Keine Sitzpräferenz",
+    "seatingPreferencesVIP": "VIP",
+    "seatingPreferencesFamily": "Familie",
+    "seatingPreferencesFriend": "Freund/in",
+    "seatingPreferencesColleague": "Kollege/in",
+    "seatingPreferencesChild": "Kind"
   },
   "vendors": {
     "addVendor": "Dienstleister hinzufügen",
