@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Download, Plus, Users, Circle, Square, Minus } from 'lucide-react';
+import { Download, Plus, Users, Circle, Square, Minus, Star, Heart, Baby, AlertCircle } from 'lucide-react';
 import { storage } from '../lib/storage-adapter';
 import TableModal from './TableModal';
 import GuestAssignmentModal from './GuestAssignmentModal';
@@ -45,6 +45,8 @@ interface Guest {
   custom_table_id: string | null;
   age: number | null;
   events_attending: string[];
+  relationship_category?: string;
+  dietary_restrictions?: any[];
 }
 
 export default function SeatingModule() {
@@ -272,6 +274,22 @@ export default function SeatingModule() {
     link.click();
   };
 
+  const getGuestStatistics = () => {
+    const totalGuests = guests.length;
+    const totalChildren = guests.filter(g => g.is_child).length;
+    const brideTableGuests = guests.filter(g => g.relationship_category === 'bride_table').length;
+    const weddingCoupleGuests = guests.filter(g => g.relationship_category === 'wedding_couple').length;
+    const guestsWithDietary = guests.filter(g => g.dietary_restrictions && g.dietary_restrictions.length > 0).length;
+
+    return {
+      total: totalGuests,
+      children: totalChildren,
+      brideTable: brideTableGuests,
+      weddingCouple: weddingCoupleGuests,
+      dietary: guestsWithDietary
+    };
+  };
+
   const renderEventCard = (event: Event | null) => {
     const eventId = event?.id || null;
     const eventTables = tables.filter(t => t.event_id === eventId);
@@ -438,6 +456,8 @@ export default function SeatingModule() {
     );
   };
 
+  const stats = getGuestStatistics();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -482,6 +502,69 @@ export default function SeatingModule() {
           <Download className="w-4 h-4" />
           {t('seating.exportCSV')}
         </button>
+      </div>
+
+      <div className="bg-white rounded-lg border p-5 shadow-sm" style={{ borderColor: '#e5e5e5' }}>
+        <h3 className="text-sm font-semibold mb-4" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+          {t('guests.summary')}
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
+            <Users className="w-5 h-5" style={{ color: '#4ECDC4' }} />
+            <div>
+              <div className="text-lg font-semibold" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                {stats.total}
+              </div>
+              <div className="text-xs" style={{ fontFamily: 'Open Sans, sans-serif', color: '#6b7280' }}>
+                {t('guests.totalGuestEntries')}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
+            <Baby className="w-5 h-5" style={{ color: '#4ECDC4' }} />
+            <div>
+              <div className="text-lg font-semibold" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                {stats.children}
+              </div>
+              <div className="text-xs" style={{ fontFamily: 'Open Sans, sans-serif', color: '#6b7280' }}>
+                {t('guests.totalChildren')}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: '#fef9e6' }}>
+            <Star className="w-5 h-5" style={{ color: '#d6b15b' }} />
+            <div>
+              <div className="text-lg font-semibold" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                {stats.brideTable}
+              </div>
+              <div className="text-xs" style={{ fontFamily: 'Open Sans, sans-serif', color: '#6b7280' }}>
+                {t('guests.relationshipBrideTable')}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: '#ffe4e6' }}>
+            <Heart className="w-5 h-5" style={{ color: '#e11d48' }} />
+            <div>
+              <div className="text-lg font-semibold" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                {stats.weddingCouple}
+              </div>
+              <div className="text-xs" style={{ fontFamily: 'Open Sans, sans-serif', color: '#6b7280' }}>
+                {t('guests.relationshipWeddingCouple')}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
+            <AlertCircle className="w-5 h-5" style={{ color: '#6b7280' }} />
+            <div>
+              <div className="text-lg font-semibold" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}>
+                {stats.dietary}
+              </div>
+              <div className="text-xs" style={{ fontFamily: 'Open Sans, sans-serif', color: '#6b7280' }}>
+                {t('guests.dietaryRestrictions')}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

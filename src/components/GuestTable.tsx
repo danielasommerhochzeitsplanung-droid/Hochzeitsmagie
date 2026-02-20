@@ -1,4 +1,4 @@
-import { Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby } from 'lucide-react';
+import { Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface DietaryRestriction {
@@ -101,6 +101,27 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
       .map(id => events.find(e => e.id === id))
       .filter(Boolean)
       .map(event => event!.emoji);
+  };
+
+  const getCategoryBadge = (category?: string) => {
+    if (!category) return null;
+
+    const categoryStyles: { [key: string]: { icon: JSX.Element; bg: string; color: string } } = {
+      bride_table: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b' },
+      wedding_couple: { icon: <Heart className="w-3 h-3" />, bg: '#ffe4e6', color: '#e11d48' }
+    };
+
+    const style = categoryStyles[category];
+    if (!style) return null;
+
+    return (
+      <span
+        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
+        style={{ backgroundColor: style.bg, color: style.color, fontFamily: 'Open Sans, sans-serif' }}
+      >
+        {style.icon}
+      </span>
+    );
   };
 
   const getStatusBadge = (status: string) => {
@@ -221,7 +242,11 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                         <Edit className="w-4 h-4" />
                       </button>
                       <div>
-                        <div style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{guest.name}</div>
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{guest.name}</span>
+                          {getCategoryBadge(guest.relationship_category)}
+                          {guest.is_child && <Baby className="w-3 h-3" style={{ color: '#4ECDC4' }} />}
+                        </div>
                         {guest.partner_name && (
                           <div className="text-sm" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>{guest.partner_name}</div>
                         )}
