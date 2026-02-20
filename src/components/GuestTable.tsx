@@ -1,4 +1,4 @@
-import { Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart } from 'lucide-react';
+import { Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart, Award, UserCheck, Briefcase } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface DietaryRestriction {
@@ -38,6 +38,7 @@ interface Guest {
   parent_guest_id?: string | null;
   date_of_birth: string;
   age: number | null;
+  badge_type?: string;
 }
 
 interface Event {
@@ -103,15 +104,18 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
       .map(event => event!.emoji);
   };
 
-  const getCategoryBadge = (category?: string) => {
-    if (!category) return null;
+  const getBadge = (badgeType?: string) => {
+    if (!badgeType) return null;
 
-    const categoryStyles: { [key: string]: { icon: JSX.Element; bg: string; color: string } } = {
-      bride_table: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b' },
-      wedding_couple: { icon: <Heart className="w-3 h-3" />, bg: '#ffe4e6', color: '#e11d48' }
+    const badgeStyles: { [key: string]: { icon: JSX.Element; bg: string; color: string; label: string } } = {
+      vip: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b', label: 'VIP' },
+      family: { icon: <Heart className="w-3 h-3" />, bg: '#ffe4e6', color: '#e11d48', label: 'Familie' },
+      friend: { icon: <UserCheck className="w-3 h-3" />, bg: '#e0f7f6', color: '#4ECDC4', label: 'Freund/in' },
+      colleague: { icon: <Briefcase className="w-3 h-3" />, bg: '#f3f4f6', color: '#6b7280', label: 'Kollege/in' },
+      child: { icon: <Baby className="w-3 h-3" />, bg: '#dbeafe', color: '#3b82f6', label: 'Kind' }
     };
 
-    const style = categoryStyles[category];
+    const style = badgeStyles[badgeType];
     if (!style) return null;
 
     return (
@@ -120,6 +124,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
         style={{ backgroundColor: style.bg, color: style.color, fontFamily: 'Open Sans, sans-serif' }}
       >
         {style.icon}
+        {style.label}
       </span>
     );
   };
@@ -244,8 +249,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                       <div>
                         <div className="flex items-center gap-2">
                           <span style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{guest.name}</span>
-                          {getCategoryBadge(guest.relationship_category)}
-                          {guest.is_child && <Baby className="w-3 h-3" style={{ color: '#4ECDC4' }} />}
+                          {getBadge(guest.badge_type)}
                         </div>
                         {guest.partner_name && (
                           <div className="text-sm" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>{guest.partner_name}</div>

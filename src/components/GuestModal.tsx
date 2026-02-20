@@ -66,6 +66,7 @@ interface Guest {
   age: number | null;
   seating_preference: string;
   custom_table_id?: string | null;
+  badge_type?: string;
 }
 
 interface Event {
@@ -146,7 +147,8 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
     date_of_birth: '',
     age: null,
     seating_preference: 'parent_table',
-    custom_table_id: null
+    custom_table_id: null,
+    badge_type: ''
   });
 
   useEffect(() => {
@@ -173,7 +175,8 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
         date_of_birth: guest.date_of_birth || '',
         age: guest.age || null,
         seating_preference: guest.seating_preference || 'parent_table',
-        custom_table_id: guest.custom_table_id || null
+        custom_table_id: guest.custom_table_id || null,
+        badge_type: guest.badge_type || ''
       });
     } else {
       setFormData({
@@ -216,7 +219,8 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
         date_of_birth: '',
         age: null,
         seating_preference: 'parent_table',
-        custom_table_id: null
+        custom_table_id: null,
+        badge_type: ''
       });
     }
   }, [guest, isOpen, parentGuest, allGuests]);
@@ -649,7 +653,14 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
                   type="number"
                   min="0"
                   value={formData.age || ''}
-                  onChange={(e) => setFormData({ ...formData, age: e.target.value ? parseInt(e.target.value) : null })}
+                  onChange={(e) => {
+                    const newAge = e.target.value ? parseInt(e.target.value) : null;
+                    setFormData({
+                      ...formData,
+                      age: newAge,
+                      badge_type: 'child'
+                    });
+                  }}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
                   style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
                   placeholder={t('guests.enterAge')}
@@ -756,26 +767,47 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
           )}
 
           {!formData.is_child && (
-            <div>
-              <label className="block text-sm mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                {t('guests.relationshipCategory')}
-              </label>
-              <select
-                value={formData.relationship_category}
-                onChange={(e) => setFormData({ ...formData, relationship_category: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
-                style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
-              >
-                <option value=""></option>
-                <option value="immediate_family">{t('guests.relationshipImmediateFamily')}</option>
-                <option value="family">{t('guests.relationshipFamily')}</option>
-                <option value="close_friends">{t('guests.relationshipCloseFriends')}</option>
-                <option value="friends">{t('guests.relationshipFriends')}</option>
-                <option value="colleagues">{t('guests.relationshipColleagues')}</option>
-                <option value="acquaintances">{t('guests.relationshipAcquaintances')}</option>
-                <option value="neighbors">{t('guests.relationshipNeighbors')}</option>
-              </select>
-            </div>
+            <>
+              <div>
+                <label className="block text-sm mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  Badge
+                </label>
+                <select
+                  value={formData.badge_type || ''}
+                  onChange={(e) => setFormData({ ...formData, badge_type: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
+                >
+                  <option value="">Kein Badge</option>
+                  <option value="vip">VIP</option>
+                  <option value="family">Familie</option>
+                  <option value="friend">Freund/in</option>
+                  <option value="colleague">Kollege/in</option>
+                  <option value="child">Kind</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  {t('guests.relationshipCategory')}
+                </label>
+                <select
+                  value={formData.relationship_category}
+                  onChange={(e) => setFormData({ ...formData, relationship_category: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
+                  style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
+                >
+                  <option value=""></option>
+                  <option value="immediate_family">{t('guests.relationshipImmediateFamily')}</option>
+                  <option value="family">{t('guests.relationshipFamily')}</option>
+                  <option value="close_friends">{t('guests.relationshipCloseFriends')}</option>
+                  <option value="friends">{t('guests.relationshipFriends')}</option>
+                  <option value="colleagues">{t('guests.relationshipColleagues')}</option>
+                  <option value="acquaintances">{t('guests.relationshipAcquaintances')}</option>
+                  <option value="neighbors">{t('guests.relationshipNeighbors')}</option>
+                </select>
+              </div>
+            </>
           )}
 
           {!formData.is_child && (

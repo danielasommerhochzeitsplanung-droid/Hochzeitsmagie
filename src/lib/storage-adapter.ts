@@ -192,6 +192,7 @@ export interface Guest extends BaseEntity {
   seated_with_parents: boolean;
   custom_table_id?: string;
   seating_preference?: string;
+  badge_type?: string;
   archived: boolean;
   save_the_date_status?: string;
   invitation_status?: string;
