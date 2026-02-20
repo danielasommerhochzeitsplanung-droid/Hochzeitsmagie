@@ -228,15 +228,19 @@ export default function GuestsModule() {
   };
 
   const handleSaveGuest = (guestData: Omit<Guest, 'id' | 'archived'>) => {
-    const dataToSave = {
-      ...guestData,
-      archived: false,
-    };
-
     if (editingGuest) {
-      storage.guests.update(editingGuest.id, dataToSave);
+      const existingGuest = storage.guests.get(editingGuest.id);
+
+      storage.guests.update(editingGuest.id, {
+        ...existingGuest,
+        ...guestData,
+        archived: false,
+      });
     } else {
-      storage.guests.create(dataToSave);
+      storage.guests.create({
+        ...guestData,
+        archived: false,
+      });
     }
 
     if (guestData.is_child && guestData.parent_guest_id) {
