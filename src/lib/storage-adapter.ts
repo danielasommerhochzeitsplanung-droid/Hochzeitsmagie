@@ -172,21 +172,42 @@ export interface Guest extends BaseEntity {
   gluten_intolerance: boolean;
   lactose_intolerance: boolean;
   halal: boolean;
-  contact_address?: string;
+  street_address?: string;
+  postal_code?: string;
+  city?: string;
   relationship_category?: string;
-  relationship_side?: string;
-  relationship_detail?: string;
+  side?: string;
+  specific_relationship?: string;
+  custom_relationship?: string;
   support_team_role?: string;
-  gift_received: boolean;
+  gift_received?: string;
   gift_description?: string;
   thank_you_sent: boolean;
+  thank_you_sent_date?: string;
   family_name?: string;
   is_child: boolean;
   parent_guest_id?: string;
-  child_age?: number;
+  age?: number;
+  date_of_birth?: string;
   seated_with_parents: boolean;
-  table_id?: string;
+  custom_table_id?: string;
+  seating_preference?: string;
   archived: boolean;
+  save_the_date_status?: string;
+  invitation_status?: string;
+  save_the_date_sent_date?: string;
+  invitation_sent_date?: string;
+  events?: string[];
+  accommodation_type?: string;
+  accommodation_rooms?: number;
+  support_team_id?: string;
+  dietary_vegetarian_count?: number;
+  dietary_vegan_count?: number;
+  dietary_lactose_count?: number;
+  dietary_gluten_count?: number;
+  dietary_halal_count?: number;
+  dietary_peanut_count?: number;
+  dietary_treenut_count?: number;
 }
 
 export interface Event extends BaseEntity {
