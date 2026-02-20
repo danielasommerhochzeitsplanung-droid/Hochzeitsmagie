@@ -228,37 +228,15 @@ export default function GuestsModule() {
   };
 
   const handleSaveGuest = (guestData: Omit<Guest, 'id' | 'archived'>) => {
-    const simpleGuestData = {
-      name: guestData.name,
-      partner_name: guestData.partner_name || '',
-      email: '',
-      phone: '',
-      number_of_adults: guestData.number_of_adults || 1,
-      rsvp_status: guestData.save_the_date_status || 'pending',
-      attendance_status: guestData.invitation_status || 'pending',
-      notes: guestData.notes || '',
-      dietary_restrictions: guestData.dietary_restrictions || [],
-      peanut_allergy: false,
-      tree_nut_allergy: false,
-      gluten_intolerance: guestData.gluten_intolerant_count > 0,
-      lactose_intolerance: guestData.lactose_intolerant_count > 0,
-      halal: guestData.halal_count > 0,
-      contact_address: '',
-      gift_received: false,
-      gift_description: '',
-      thank_you_sent: false,
-      family_name: '',
-      is_child: guestData.is_child,
-      parent_guest_id: guestData.parent_guest_id || undefined,
-      child_age: guestData.age || undefined,
-      seated_with_parents: false,
+    const dataToSave = {
+      ...guestData,
       archived: false,
     };
 
     if (editingGuest) {
-      storage.guests.update(editingGuest.id, simpleGuestData);
+      storage.guests.update(editingGuest.id, dataToSave);
     } else {
-      storage.guests.create(simpleGuestData);
+      storage.guests.create(dataToSave);
     }
 
     if (guestData.is_child && guestData.parent_guest_id) {
