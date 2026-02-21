@@ -154,6 +154,10 @@ function App() {
       addGuest({
         name: data.partner1,
         number_of_adults: 1,
+        specific_relationship: 'bride',
+        relationship_category: 'wedding_couple',
+        save_the_date_status: 'confirmed',
+        invitation_status: 'confirmed',
         rsvp_status: 'accepted',
         attendance_status: 'confirmed',
         peanut_allergy: false,
@@ -167,6 +171,10 @@ function App() {
       addGuest({
         name: data.partner2,
         number_of_adults: 1,
+        specific_relationship: 'groom',
+        relationship_category: 'wedding_couple',
+        save_the_date_status: 'confirmed',
+        invitation_status: 'confirmed',
         rsvp_status: 'accepted',
         attendance_status: 'confirmed',
         peanut_allergy: false,
