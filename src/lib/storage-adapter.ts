@@ -341,6 +341,8 @@ export interface GuestTableAssignment extends BaseEntity {
 export interface WeddingData extends BaseEntity {
   couple_name_1?: string;
   couple_name_2?: string;
+  couple_gender_1?: 'male' | 'female' | '';
+  couple_gender_2?: 'male' | 'female' | '';
   wedding_date?: string;
   planning_start_date?: string;
   venue?: string;

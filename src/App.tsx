@@ -139,6 +139,8 @@ function App() {
   const handleFirstSetupComplete = async (data: {
     partner1: string;
     partner2: string;
+    gender1: 'male' | 'female' | '';
+    gender2: 'male' | 'female' | '';
     weddingDate: string;
     planningStartDate: string;
   }) => {
@@ -146,16 +148,30 @@ function App() {
       await updateWeddingData({
         couple_name_1: data.partner1,
         couple_name_2: data.partner2,
+        couple_gender_1: data.gender1,
+        couple_gender_2: data.gender2,
         wedding_date: data.weddingDate,
         planning_start_date: data.planningStartDate,
         auto_tasks_enabled: true,
       });
 
+      const determineSide = (gender: 'male' | 'female' | '') => {
+        if (gender === 'female') return 'Braut';
+        if (gender === 'male') return 'Bräutigam';
+        return 'Beide';
+      };
+
+      const determineRelationship = (gender: 'male' | 'female' | '') => {
+        if (gender === 'female') return 'bride';
+        if (gender === 'male') return 'groom';
+        return 'other';
+      };
+
       addGuest({
         name: data.partner1,
         number_of_adults: 1,
-        side: 'Braut',
-        specific_relationship: 'bride',
+        side: determineSide(data.gender1),
+        specific_relationship: determineRelationship(data.gender1),
         relationship_category: 'wedding_couple',
         save_the_date_status: '★',
         invitation_status: '★',
@@ -176,8 +192,8 @@ function App() {
       addGuest({
         name: data.partner2,
         number_of_adults: 1,
-        side: 'Bräutigam',
-        specific_relationship: 'groom',
+        side: determineSide(data.gender2),
+        specific_relationship: determineRelationship(data.gender2),
         relationship_category: 'wedding_couple',
         save_the_date_status: '★',
         invitation_status: '★',

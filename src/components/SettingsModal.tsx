@@ -90,7 +90,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       setAutoTasksEnabled(weddingData.auto_tasks_enabled || false);
       setPerson1({
         name: weddingData.couple_name_1 || '',
-        gender: '',
+        gender: weddingData.couple_gender_1 || '',
         vegetarian: false,
         vegan: false,
         lactose_intolerant: false,
@@ -107,7 +107,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       });
       setPerson2({
         name: weddingData.couple_name_2 || '',
-        gender: '',
+        gender: weddingData.couple_gender_2 || '',
         vegetarian: false,
         vegan: false,
         lactose_intolerant: false,
@@ -259,6 +259,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       await updateWeddingData({
         couple_name_1: person1.name,
         couple_name_2: person2.name,
+        couple_gender_1: person1.gender,
+        couple_gender_2: person2.gender,
         total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
         wedding_date: weddingDate || undefined,
         planning_start_date: planningStartDate || undefined,
@@ -287,6 +289,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       await updateWeddingData({
         couple_name_1: person1.name,
         couple_name_2: person2.name,
+        couple_gender_1: person1.gender,
+        couple_gender_2: person2.gender,
         total_budget: totalBudget ? parseFloat(totalBudget) : undefined,
         wedding_date: weddingDate || undefined,
         planning_start_date: planningStartDate || undefined,
@@ -352,25 +356,27 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() => setPerson1({ ...person1, gender: 'male' })}
-                      className={`text-2xl p-2 rounded transition-all ${
-                        person1.gender === 'male'
-                          ? 'bg-blue-100 ring-2 ring-blue-500'
-                          : 'hover:bg-gray-200'
-                      }`}
-                    >
-                      👨
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => setPerson1({ ...person1, gender: 'female' })}
                       className={`text-2xl p-2 rounded transition-all ${
                         person1.gender === 'female'
                           ? 'bg-pink-100 ring-2 ring-pink-500'
                           : 'hover:bg-gray-200'
                       }`}
+                      title="Braut"
                     >
-                      👩
+                      👰
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPerson1({ ...person1, gender: 'male' })}
+                      className={`text-2xl p-2 rounded transition-all ${
+                        person1.gender === 'male'
+                          ? 'bg-blue-100 ring-2 ring-blue-500'
+                          : 'hover:bg-gray-200'
+                      }`}
+                      title="Bräutigam"
+                    >
+                      🤵
                     </button>
                   </div>
                 </div>
@@ -452,25 +458,27 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() => setPerson2({ ...person2, gender: 'male' })}
-                      className={`text-2xl p-2 rounded transition-all ${
-                        person2.gender === 'male'
-                          ? 'bg-blue-100 ring-2 ring-blue-500'
-                          : 'hover:bg-gray-200'
-                      }`}
-                    >
-                      👨
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => setPerson2({ ...person2, gender: 'female' })}
                       className={`text-2xl p-2 rounded transition-all ${
                         person2.gender === 'female'
                           ? 'bg-pink-100 ring-2 ring-pink-500'
                           : 'hover:bg-gray-200'
                       }`}
+                      title="Braut"
                     >
-                      👩
+                      👰
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPerson2({ ...person2, gender: 'male' })}
+                      className={`text-2xl p-2 rounded transition-all ${
+                        person2.gender === 'male'
+                          ? 'bg-blue-100 ring-2 ring-blue-500'
+                          : 'hover:bg-gray-200'
+                      }`}
+                      title="Bräutigam"
+                    >
+                      🤵
                     </button>
                   </div>
                 </div>

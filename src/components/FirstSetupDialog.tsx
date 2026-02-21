@@ -6,6 +6,8 @@ interface FirstSetupDialogProps {
   onComplete: (data: {
     partner1: string;
     partner2: string;
+    gender1: 'male' | 'female' | '';
+    gender2: 'male' | 'female' | '';
     weddingDate: string;
     planningStartDate: string;
   }) => void;
@@ -14,6 +16,8 @@ interface FirstSetupDialogProps {
 export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialogProps) {
   const [partner1, setPartner1] = useState('');
   const [partner2, setPartner2] = useState('');
+  const [gender1, setGender1] = useState<'male' | 'female' | ''>('');
+  const [gender2, setGender2] = useState<'male' | 'female' | ''>('');
   const [weddingDate, setWeddingDate] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState('');
 
@@ -30,6 +34,8 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
     onComplete({
       partner1: partner1.trim(),
       partner2: partner2.trim(),
+      gender1,
+      gender2,
       weddingDate,
       planningStartDate,
     });
@@ -58,12 +64,40 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              className="block mb-2 font-medium"
-              style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.9rem' }}
-            >
-              Partner 1 Name *
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label
+                className="block font-medium"
+                style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.9rem' }}
+              >
+                Partner 1 Name *
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setGender1('female')}
+                  className={`text-2xl p-2 rounded transition-all ${
+                    gender1 === 'female'
+                      ? 'bg-pink-100 ring-2 ring-pink-500'
+                      : 'hover:bg-gray-200'
+                  }`}
+                  title="Braut"
+                >
+                  👰
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGender1('male')}
+                  className={`text-2xl p-2 rounded transition-all ${
+                    gender1 === 'male'
+                      ? 'bg-blue-100 ring-2 ring-blue-500'
+                      : 'hover:bg-gray-200'
+                  }`}
+                  title="Bräutigam"
+                >
+                  🤵
+                </button>
+              </div>
+            </div>
             <input
               type="text"
               value={partner1}
@@ -81,12 +115,40 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
           </div>
 
           <div>
-            <label
-              className="block mb-2 font-medium"
-              style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.9rem' }}
-            >
-              Partner 2 Name *
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label
+                className="block font-medium"
+                style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.9rem' }}
+              >
+                Partner 2 Name *
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setGender2('female')}
+                  className={`text-2xl p-2 rounded transition-all ${
+                    gender2 === 'female'
+                      ? 'bg-pink-100 ring-2 ring-pink-500'
+                      : 'hover:bg-gray-200'
+                  }`}
+                  title="Braut"
+                >
+                  👰
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGender2('male')}
+                  className={`text-2xl p-2 rounded transition-all ${
+                    gender2 === 'male'
+                      ? 'bg-blue-100 ring-2 ring-blue-500'
+                      : 'hover:bg-gray-200'
+                  }`}
+                  title="Bräutigam"
+                >
+                  🤵
+                </button>
+              </div>
+            </div>
             <input
               type="text"
               value={partner2}
