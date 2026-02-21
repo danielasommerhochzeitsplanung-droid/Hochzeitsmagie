@@ -218,6 +218,8 @@
     "relationshipColleague": "Arbeitskollege/in",
     "relationshipStudyFriend": "Studienfreund/in",
     "relationshipOther": "Sonstiges",
+    "relationshipBride": "Braut",
+    "relationshipGroom": "Bräutigam",
     "giftsAndThankYou": "Geschenke & Danksagungen",
     "giftReceived": "Erhaltenes Geschenk",
     "enterGiftReceived": "Geschenk beschreiben...",

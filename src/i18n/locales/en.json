@@ -218,6 +218,8 @@
     "relationshipColleague": "Colleague",
     "relationshipStudyFriend": "Study Friend",
     "relationshipOther": "Other",
+    "relationshipBride": "Bride",
+    "relationshipGroom": "Groom",
     "giftsAndThankYou": "Gifts & Thank You Notes",
     "giftReceived": "Gift Received",
     "enterGiftReceived": "Describe gift...",
