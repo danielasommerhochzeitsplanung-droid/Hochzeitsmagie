@@ -92,6 +92,16 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
   const getSpecificRelationshipDisplay = (guest: Guest) => {
     if (!guest.specific_relationship && !guest.side) return null;
 
+    if (guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom') {
+      const label = guest.specific_relationship === 'bride' ? 'Braut' : 'Bräutigam';
+      return (
+        <div className="flex items-center gap-2">
+          <span>{label}</span>
+          <span className="text-xl">💍</span>
+        </div>
+      );
+    }
+
     let relationshipText = '';
     if (guest.specific_relationship === 'other' && guest.custom_relationship) {
       relationshipText = guest.custom_relationship;
