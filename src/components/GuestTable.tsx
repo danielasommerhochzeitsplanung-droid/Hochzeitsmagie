@@ -69,7 +69,20 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
     children: childGuests.filter(child => child.parent_guest_id === parent.id)
   }));
 
-  const sortedGuests = [...guestsWithChildren].sort((a, b) => a.name.localeCompare(b.name));
+  const sortedGuests = [...guestsWithChildren].sort((a, b) => {
+    const aIsBrideGroom = a.specific_relationship === 'bride' || a.specific_relationship === 'groom';
+    const bIsBrideGroom = b.specific_relationship === 'bride' || b.specific_relationship === 'groom';
+
+    if (aIsBrideGroom && !bIsBrideGroom) return -1;
+    if (!aIsBrideGroom && bIsBrideGroom) return 1;
+
+    if (aIsBrideGroom && bIsBrideGroom) {
+      if (a.specific_relationship === 'bride') return -1;
+      if (b.specific_relationship === 'bride') return 1;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
 
   const getRelationshipLabel = (category?: string) => {
     if (!category) return '—';
@@ -108,6 +121,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
     if (!badgeType) return null;
 
     const badgeStyles: { [key: string]: { icon: JSX.Element; bg: string; color: string; label: string } } = {
+      star: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b', label: '⭐ Brauttisch' },
       vip: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b', label: 'VIP' },
       family: { icon: <Heart className="w-3 h-3" />, bg: '#ffe4e6', color: '#e11d48', label: 'Familie' },
       friend: { icon: <UserCheck className="w-3 h-3" />, bg: '#e0f7f6', color: '#4ECDC4', label: 'Freund/in' },

@@ -869,7 +869,16 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
                   </label>
                   <select
                     value={formData.specific_relationship}
-                    onChange={(e) => setFormData({ ...formData, specific_relationship: e.target.value, custom_relationship: e.target.value === 'other' ? formData.custom_relationship : '' })}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      const newBadgeType = (newValue === 'bride' || newValue === 'groom') ? 'star' : formData.badge_type;
+                      setFormData({
+                        ...formData,
+                        specific_relationship: newValue,
+                        custom_relationship: newValue === 'other' ? formData.custom_relationship : '',
+                        badge_type: newBadgeType
+                      });
+                    }}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
                     style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
                   >
