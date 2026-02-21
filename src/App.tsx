@@ -154,10 +154,11 @@ function App() {
       addGuest({
         name: data.partner1,
         number_of_adults: 1,
+        side: 'Braut',
         specific_relationship: 'bride',
         relationship_category: 'wedding_couple',
-        save_the_date_status: 'confirmed',
-        invitation_status: 'confirmed',
+        save_the_date_status: '★',
+        invitation_status: '★',
         rsvp_status: 'accepted',
         attendance_status: 'confirmed',
         peanut_allergy: false,
@@ -165,16 +166,21 @@ function App() {
         gluten_intolerance: false,
         lactose_intolerance: false,
         halal: false,
-        gift_received: false,
+        gift_received: 'no',
+        thank_you_sent: false,
+        is_child: false,
+        seated_with_parents: false,
+        archived: false,
       });
 
       addGuest({
         name: data.partner2,
         number_of_adults: 1,
+        side: 'Bräutigam',
         specific_relationship: 'groom',
         relationship_category: 'wedding_couple',
-        save_the_date_status: 'confirmed',
-        invitation_status: 'confirmed',
+        save_the_date_status: '★',
+        invitation_status: '★',
         rsvp_status: 'accepted',
         attendance_status: 'confirmed',
         peanut_allergy: false,
@@ -182,7 +188,11 @@ function App() {
         gluten_intolerance: false,
         lactose_intolerance: false,
         halal: false,
-        gift_received: false,
+        gift_received: 'no',
+        thank_you_sent: false,
+        is_child: false,
+        seated_with_parents: false,
+        archived: false,
       });
 
       await initializeAutoTasks(data.weddingDate, data.planningStartDate);
