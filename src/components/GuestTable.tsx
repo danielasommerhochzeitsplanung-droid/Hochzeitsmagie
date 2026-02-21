@@ -288,10 +288,16 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                     {guest.children?.length || 0}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {getStatusBadge(guest.save_the_date_status)}
+                    {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
+                      ? <span className="text-xl">⭐</span>
+                      : getStatusBadge(guest.save_the_date_status)
+                    }
                   </td>
                   <td className="px-6 py-4 text-center">
-                    {getStatusBadge(guest.invitation_status)}
+                    {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
+                      ? <span className="text-xl">⭐</span>
+                      : getStatusBadge(guest.invitation_status)
+                    }
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex justify-center gap-1 text-xl">
