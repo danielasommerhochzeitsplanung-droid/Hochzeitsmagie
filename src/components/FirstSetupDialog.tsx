@@ -42,9 +42,9 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-8">
-        <div className="text-center mb-8">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4 sm:py-8">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 sm:p-8 my-auto">
+        <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-100 rounded-full mb-4">
             <Heart className="w-8 h-8 text-pink-600" />
           </div>
@@ -62,7 +62,7 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
             <div className="flex items-center justify-between mb-2">
               <label
