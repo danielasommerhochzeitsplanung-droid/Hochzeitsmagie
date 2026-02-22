@@ -78,9 +78,9 @@ INSERT INTO task_templates (
   6, -3.5, -2.5, false),
 
 (gen_random_uuid(), 'trauung_formalitaeten', 2, 4,
-  'Dokumente beim Standesamt einreichen', 'Submit Documents to Registry Office',
-  'Alle erforderlichen Unterlagen beim Standesamt abgeben', 'Submit all required documents to the registry office',
-  6, -3, -2.5, true),
+  '⚠️ Dokumente beim Standesamt einreichen', '⚠️ Submit Documents to Registry Office',
+  '⚠️ WICHTIG: Eheanmeldung maximal 6 Monate vor Trauung möglich! Alle erforderlichen Unterlagen beim Standesamt abgeben', '⚠️ IMPORTANT: Marriage registration possible maximum 6 months before wedding! Submit all required documents to the registry office',
+  6, -5, -2.5, true),
 
 -- Phase 3: Finalisierung
 (gen_random_uuid(), 'trauung_formalitaeten', 3, 1,
@@ -139,9 +139,9 @@ INSERT INTO task_templates (
   9, -5, -3, false),
 
 (gen_random_uuid(), 'trauung_formalitaeten', 2, 4,
-  'Dokumente beim Standesamt einreichen', 'Submit Documents to Registry Office',
-  'Alle erforderlichen Unterlagen beim Standesamt abgeben', 'Submit all required documents to the registry office',
-  9, -4, -3, true),
+  '⚠️ Dokumente beim Standesamt einreichen', '⚠️ Submit Documents to Registry Office',
+  '⚠️ WICHTIG: Eheanmeldung maximal 6 Monate vor Trauung möglich! Alle erforderlichen Unterlagen beim Standesamt abgeben', '⚠️ IMPORTANT: Marriage registration possible maximum 6 months before wedding! Submit all required documents to the registry office',
+  9, -6, -3, true),
 
 -- Phase 3
 (gen_random_uuid(), 'trauung_formalitaeten', 3, 1,
@@ -200,9 +200,9 @@ INSERT INTO task_templates (
   12, -6, -3, false),
 
 (gen_random_uuid(), 'trauung_formalitaeten', 2, 4,
-  'Dokumente beim Standesamt einreichen', 'Submit Documents to Registry Office',
-  'Alle erforderlichen Unterlagen beim Standesamt abgeben', 'Submit all required documents to the registry office',
-  12, -5, -3, true),
+  '⚠️ Dokumente beim Standesamt einreichen', '⚠️ Submit Documents to Registry Office',
+  '⚠️ WICHTIG: Eheanmeldung maximal 6 Monate vor Trauung möglich! Alle erforderlichen Unterlagen beim Standesamt abgeben', '⚠️ IMPORTANT: Marriage registration possible maximum 6 months before wedding! Submit all required documents to the registry office',
+  12, -6, -3, true),
 
 -- Phase 3
 (gen_random_uuid(), 'trauung_formalitaeten', 3, 1,
@@ -322,9 +322,9 @@ INSERT INTO task_templates (
   18, -10, -3, false),
 
 (gen_random_uuid(), 'trauung_formalitaeten', 2, 4,
-  'Dokumente beim Standesamt einreichen', 'Submit Documents to Registry Office',
-  'Alle erforderlichen Unterlagen beim Standesamt abgeben', 'Submit all required documents to the registry office',
-  18, -7, -3, true),
+  '⚠️ Dokumente beim Standesamt einreichen', '⚠️ Submit Documents to Registry Office',
+  '⚠️ WICHTIG: Eheanmeldung maximal 6 Monate vor Trauung möglich! Alle erforderlichen Unterlagen beim Standesamt abgeben', '⚠️ IMPORTANT: Marriage registration possible maximum 6 months before wedding! Submit all required documents to the registry office',
+  18, -6, -3, true),
 
 -- Phase 3
 (gen_random_uuid(), 'trauung_formalitaeten', 3, 1,
@@ -383,9 +383,9 @@ INSERT INTO task_templates (
   24, -12, -3, false),
 
 (gen_random_uuid(), 'trauung_formalitaeten', 2, 4,
-  'Dokumente beim Standesamt einreichen', 'Submit Documents to Registry Office',
-  'Alle erforderlichen Unterlagen beim Standesamt abgeben', 'Submit all required documents to the registry office',
-  24, -8, -3, true),
+  '⚠️ Dokumente beim Standesamt einreichen', '⚠️ Submit Documents to Registry Office',
+  '⚠️ WICHTIG: Eheanmeldung maximal 6 Monate vor Trauung möglich! Alle erforderlichen Unterlagen beim Standesamt abgeben', '⚠️ IMPORTANT: Marriage registration possible maximum 6 months before wedding! Submit all required documents to the registry office',
+  24, -6, -3, true),
 
 -- Phase 3
 (gen_random_uuid(), 'trauung_formalitaeten', 3, 1,
@@ -444,9 +444,9 @@ INSERT INTO task_templates (
   30, -15, -3, false),
 
 (gen_random_uuid(), 'trauung_formalitaeten', 2, 4,
-  'Dokumente beim Standesamt einreichen', 'Submit Documents to Registry Office',
-  'Alle erforderlichen Unterlagen beim Standesamt abgeben', 'Submit all required documents to the registry office',
-  30, -10, -3, true),
+  '⚠️ Dokumente beim Standesamt einreichen', '⚠️ Submit Documents to Registry Office',
+  '⚠️ WICHTIG: Eheanmeldung maximal 6 Monate vor Trauung möglich! Alle erforderlichen Unterlagen beim Standesamt abgeben', '⚠️ IMPORTANT: Marriage registration possible maximum 6 months before wedding! Submit all required documents to the registry office',
+  30, -6, -3, true),
 
 -- Phase 3
 (gen_random_uuid(), 'trauung_formalitaeten', 3, 1,
