@@ -51,17 +51,7 @@ export function calculateDueDateFromDuration(
 }
 
 function getCategoryFromDbCategory(dbCategory: string): string {
-  const categoryMap: Record<string, string> = {
-    'Location & Ablauf': 'location_venue',
-    'trauung_formalitaeten': 'ceremony_legal',
-    'Trauung & Formalitäten': 'ceremony_legal',
-    'Dienstleister & Leistungen': 'vendors_services',
-    'Gäste & Kommunikation': 'guests_communication',
-    'Gestaltung & Atmosphäre': 'styling_atmosphere',
-    'Organisation & Abschluss': 'organization_closure'
-  };
-
-  return categoryMap[dbCategory] || 'organization_closure';
+  return dbCategory;
 }
 
 function calculateDueDateFromOffset(
