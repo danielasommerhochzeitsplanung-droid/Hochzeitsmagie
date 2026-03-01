@@ -949,13 +949,29 @@ export default function TodosModule() {
 
                   {isExpanded && mainCategory.id === 'vendors_services' && mainCategory.subAreas ? (
                     <div className="border-t-2" style={{ borderColor: '#f3f4f6' }}>
-                      {mainCategory.subAreas.map(subArea => {
-                        const subAreaTasks = mainCategoryTasks.filter(task => {
+                      {(() => {
+                        const unassignedTasks = mainCategoryTasks.filter(task => {
                           const taskSubArea = getSubAreaFromTask(task);
-                          return taskSubArea === subArea.id;
+                          return taskSubArea === null;
                         });
 
-                        if (subAreaTasks.length === 0) return null;
+                        const subAreasWithTasks = mainCategory.subAreas.filter(subArea => {
+                          const subAreaTasks = mainCategoryTasks.filter(task => {
+                            const taskSubArea = getSubAreaFromTask(task);
+                            return taskSubArea === subArea.id;
+                          });
+                          return subAreaTasks.length > 0;
+                        });
+
+                        return (
+                          <>
+                            {subAreasWithTasks.map(subArea => {
+                              const subAreaTasks = mainCategoryTasks.filter(task => {
+                                const taskSubArea = getSubAreaFromTask(task);
+                                return taskSubArea === subArea.id;
+                              });
+
+                              if (subAreaTasks.length === 0) return null;
 
                         const isSubAreaExpanded = expandedSubAreas.has(subArea.id);
                         const completedInSubArea = subAreaTasks.filter(t => t.completed).length;
@@ -1224,6 +1240,68 @@ export default function TodosModule() {
                           </div>
                         );
                       })}
+
+                      {unassignedTasks.length > 0 && (
+                        <div className="border-b" style={{ borderColor: '#f3f4f6' }}>
+                          <div className="px-4 py-2 bg-gray-100">
+                            <h4 className="text-sm font-semibold" style={{ color: '#3b3b3d' }}>
+                              📌 Nicht zugeordnet
+                            </h4>
+                          </div>
+                          <div className="divide-y" style={{ borderColor: '#f3f4f6' }}>
+                            {unassignedTasks.map(task => {
+                              const isTaskExpanded = expandedTasks.has(task.id);
+                              const blockedBy = getBlockedTasks(task);
+                              const isBlocked = blockedBy.length > 0;
+                              const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
+
+                              return (
+                                <div key={task.id}>
+                                  <div
+                                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${isBlocked && !task.completed ? 'bg-gray-50 opacity-75' : ''}`}
+                                    onClick={() => toggleTaskExpansion(task.id)}
+                                  >
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (!isBlocked) {
+                                          toggleTaskCompletion(task);
+                                        }
+                                      }}
+                                      className="flex-shrink-0"
+                                      disabled={isBlocked && !task.completed}
+                                    >
+                                      {task.completed ? (
+                                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                      ) : isBlocked ? (
+                                        <Lock className="w-5 h-5 text-amber-500" />
+                                      ) : (
+                                        <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                      )}
+                                    </button>
+                                    <h4
+                                      className={`flex-1 font-medium ${
+                                        task.completed ? 'line-through text-gray-400' : 'text-gray-900'
+                                      }`}
+                                      style={{ fontFamily: 'Open Sans, sans-serif' }}
+                                    >
+                                      {getTaskTitle(task)}
+                                    </h4>
+                                    {isTaskExpanded ? (
+                                      <ChevronDown className="w-5 h-5 text-gray-400" />
+                                    ) : (
+                                      <ChevronRight className="w-5 h-5 text-gray-400" />
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
                     </div>
                   ) : isExpanded ? (
                     <div className="border-t-2 divide-y" style={{ borderColor: '#f3f4f6' }}>
