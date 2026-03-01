@@ -364,6 +364,7 @@ export interface Task extends BaseEntity {
   title: string;
   description?: string;
   category: string;
+  sub_area?: string;
   phase_id?: string;
   start_date?: string;
   due_date?: string;

@@ -407,6 +407,10 @@ export default function TodosModule() {
   };
 
   const getSubAreaFromTask = (task: Task): string | null => {
+    if (task.sub_area) {
+      return task.sub_area;
+    }
+
     const categoryLower = task.category.toLowerCase();
 
     if (categoryLower.includes('location') || categoryLower === 'location_venue') return 'location';

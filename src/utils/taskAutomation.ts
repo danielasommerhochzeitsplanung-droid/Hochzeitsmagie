@@ -112,6 +112,7 @@ export async function generateLocationTasksFromTemplates(
     tasks.push({
       template_id: template.id,
       category: getCategoryFromDbCategory(template.category),
+      sub_area: template.sub_area || undefined,
       due_date: dueDate,
       priority: template.is_critical ? 'high' : 'medium',
       completed: false,
