@@ -26,7 +26,16 @@ const mainCategories = [
     id: 'vendors_services',
     icon: '🤝',
     color: 'bg-blue-500',
-    subcategories: ['catering', 'planning']
+    subcategories: ['catering', 'planning'],
+    subAreas: [
+      { id: 'location', icon: '📍', label: 'Location & Ablauf' },
+      { id: 'memories', icon: '📸', label: 'Erinnerungen' },
+      { id: 'styling', icon: '🎨', label: 'Gestaltung & Atmosphäre' },
+      { id: 'logistics', icon: '🚗', label: 'Logistik' },
+      { id: 'music', icon: '🎵', label: 'Musik & Unterhaltung' },
+      { id: 'clothing', icon: '👗', label: 'Kleidung' },
+      { id: 'culinary', icon: '🍽️', label: 'Kulinarik' },
+    ]
   },
   {
     id: 'guests_communication',
@@ -80,6 +89,7 @@ export default function TodosModule() {
   const [expandedMainCategories, setExpandedMainCategories] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set());
+  const [expandedSubAreas, setExpandedSubAreas] = useState<Set<string>>(new Set());
   const [showArchived, setShowArchived] = useState(false);
 
   const [newTask, setNewTask] = useState({
@@ -382,6 +392,32 @@ export default function TodosModule() {
       }
       return newSet;
     });
+  };
+
+  const toggleSubAreaExpansion = (subAreaId: string) => {
+    setExpandedSubAreas(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(subAreaId)) {
+        newSet.delete(subAreaId);
+      } else {
+        newSet.add(subAreaId);
+      }
+      return newSet;
+    });
+  };
+
+  const getSubAreaFromTask = (task: Task): string | null => {
+    const categoryLower = task.category.toLowerCase();
+
+    if (categoryLower.includes('location') || categoryLower === 'location_venue') return 'location';
+    if (categoryLower.includes('memor') || categoryLower.includes('photo') || categoryLower.includes('video')) return 'memories';
+    if (categoryLower.includes('styling') || categoryLower.includes('atmosphere') || categoryLower.includes('decoration') || categoryLower.includes('flower')) return 'styling';
+    if (categoryLower.includes('logistics') || categoryLower.includes('transport')) return 'logistics';
+    if (categoryLower.includes('music') || categoryLower.includes('entertainment') || categoryLower.includes('dj')) return 'music';
+    if (categoryLower.includes('clothing') || categoryLower.includes('dress') || categoryLower.includes('suit')) return 'clothing';
+    if (categoryLower.includes('culinary') || categoryLower.includes('catering') || categoryLower.includes('food') || categoryLower.includes('cake')) return 'culinary';
+
+    return null;
   };
 
   const groupedByMainCategory = useMemo(() => {
@@ -911,7 +947,285 @@ export default function TodosModule() {
                     )}
                   </div>
 
-                  {isExpanded && (
+                  {isExpanded && mainCategory.id === 'vendors_services' && mainCategory.subAreas ? (
+                    <div className="border-t-2" style={{ borderColor: '#f3f4f6' }}>
+                      {mainCategory.subAreas.map(subArea => {
+                        const subAreaTasks = mainCategoryTasks.filter(task => {
+                          const taskSubArea = getSubAreaFromTask(task);
+                          return taskSubArea === subArea.id;
+                        });
+
+                        if (subAreaTasks.length === 0) return null;
+
+                        const isSubAreaExpanded = expandedSubAreas.has(subArea.id);
+                        const completedInSubArea = subAreaTasks.filter(t => t.completed).length;
+
+                        return (
+                          <div key={subArea.id} className="border-b" style={{ borderColor: '#f3f4f6' }}>
+                            <div
+                              className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors bg-gray-50/50"
+                              onClick={() => toggleSubAreaExpansion(subArea.id)}
+                            >
+                              <div className="text-xl flex-shrink-0">
+                                {subArea.icon}
+                              </div>
+                              <h4 className="text-sm font-semibold flex-1" style={{ color: '#3b3b3d' }}>
+                                {subArea.label}
+                              </h4>
+                              <span className="text-xs font-medium text-gray-500">
+                                {completedInSubArea}/{subAreaTasks.length}
+                              </span>
+                              {isSubAreaExpanded ? (
+                                <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              )}
+                            </div>
+
+                            {isSubAreaExpanded && (
+                              <div className="divide-y" style={{ borderColor: '#f3f4f6' }}>
+                                {subAreaTasks
+                                  .sort((a, b) => {
+                                    if (!a.phase_id && !b.phase_id) {
+                                      if (!a.order_in_phase || !b.order_in_phase) return 0;
+                                      return a.order_in_phase - b.order_in_phase;
+                                    }
+                                    if (!a.phase_id) return 1;
+                                    if (!b.phase_id) return -1;
+
+                                    const phaseA = sortedPhases.find(p => p.id === a.phase_id);
+                                    const phaseB = sortedPhases.find(p => p.id === b.phase_id);
+                                    if (!phaseA || !phaseB) return 0;
+
+                                    if (phaseA.order_index !== phaseB.order_index) {
+                                      return phaseA.order_index - phaseB.order_index;
+                                    }
+
+                                    return (a.order_in_phase || 0) - (b.order_in_phase || 0);
+                                  })
+                                  .map(task => {
+                                    const isTaskExpanded = expandedTasks.has(task.id);
+                                    const blockedBy = getBlockedTasks(task);
+                                    const isBlocked = blockedBy.length > 0;
+                                    const isOverdue = task.due_date && new Date(task.due_date) < new Date() && !task.completed;
+
+                                    return (
+                                      <div key={task.id}>
+                                        <div
+                                          className={`flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${isBlocked && !task.completed ? 'bg-gray-50 opacity-75' : ''}`}
+                                          onClick={() => toggleTaskExpansion(task.id)}
+                                        >
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (!isBlocked) {
+                                                toggleTaskCompletion(task);
+                                              }
+                                            }}
+                                            className="flex-shrink-0"
+                                            disabled={isBlocked && !task.completed}
+                                            title={isBlocked && !task.completed ? `Warte auf: ${blockedBy.join(', ')}` : ''}
+                                          >
+                                            {task.completed ? (
+                                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                                            ) : isBlocked ? (
+                                              <Lock className="w-5 h-5 text-amber-500" />
+                                            ) : (
+                                              <Circle className="w-5 h-5 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                            )}
+                                          </button>
+
+                                          <h4
+                                            className={`flex-1 font-medium ${
+                                              task.completed
+                                                ? 'line-through text-gray-400'
+                                                : isBlocked
+                                                  ? 'text-gray-500'
+                                                  : 'text-gray-900'
+                                            }`}
+                                            style={{ fontFamily: 'Open Sans, sans-serif' }}
+                                          >
+                                            {getTaskTitle(task)}
+                                            {isBlocked && !task.completed && (
+                                              <span className="ml-2 text-xs text-amber-600">
+                                                ({blockedBy.length} {blockedBy.length === 1 ? t('todos.taskDetails.dependency') : t('todos.taskDetails.dependencies')})
+                                              </span>
+                                            )}
+                                          </h4>
+
+                                          {isTaskExpanded ? (
+                                            <ChevronDown className="w-5 h-5 text-gray-400" />
+                                          ) : (
+                                            <ChevronRight className="w-5 h-5 text-gray-400" />
+                                          )}
+                                        </div>
+
+                                        {isTaskExpanded && (
+                                          <div className="px-4 pb-4 bg-gray-50">
+                                            <div className="pt-3 flex items-start justify-between gap-4">
+                                              <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                  {task.is_system_generated ? (
+                                                    <>
+                                                      <span className="text-lg">🤖</span>
+                                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 font-medium">
+                                                        {t('todos.taskDetails.recommendation')}
+                                                      </span>
+                                                      {task.manually_modified && (
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-700 font-medium">
+                                                          {t('todos.taskDetails.adjusted')}
+                                                        </span>
+                                                      )}
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      <span className="text-lg">💍</span>
+                                                      {task.needs_adjustment_warning && !task.warning_dismissed && (
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700 font-medium">
+                                                          ⚠️ {t('todos.taskDetails.checkDate')}
+                                                        </span>
+                                                      )}
+                                                    </>
+                                                  )}
+                                                </div>
+
+                                                {getTaskDescription(task) && (
+                                                  <p className="text-sm text-gray-600 mt-2">
+                                                    {getTaskDescription(task)}
+                                                  </p>
+                                                )}
+                                              </div>
+
+                                              <div className="flex items-center gap-2">
+                                                {!showArchived && (
+                                                  <button
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      handleEditTask(task);
+                                                    }}
+                                                    className="text-gray-400 hover:text-blue-500 transition-colors"
+                                                    title={t('todos.taskDetails.editTask')}
+                                                  >
+                                                    <Edit2 className="w-5 h-5" />
+                                                  </button>
+                                                )}
+                                                {showArchived ? (
+                                                  <>
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleRestoreTask(task.id);
+                                                      }}
+                                                      className="text-gray-400 hover:text-green-500 transition-colors"
+                                                      title={t('todos.taskDetails.restoreTask')}
+                                                    >
+                                                      <RefreshCw className="w-5 h-5" />
+                                                    </button>
+                                                    <button
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeletePermanently(task.id);
+                                                      }}
+                                                      className="text-gray-400 hover:text-rose-500 transition-colors"
+                                                      title={t('todos.taskDetails.deleteTaskPermanently')}
+                                                    >
+                                                      <X className="w-5 h-5" />
+                                                    </button>
+                                                  </>
+                                                ) : (
+                                                  <button
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      handleArchiveTask(task.id);
+                                                    }}
+                                                    className="text-gray-400 hover:text-amber-500 transition-colors"
+                                                    title={t('todos.taskDetails.archiveTask')}
+                                                  >
+                                                    <Archive className="w-5 h-5" />
+                                                  </button>
+                                                )}
+                                              </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-3 flex-wrap mt-3">
+                                              <span
+                                                className={`inline-flex items-center px-2 py-1 rounded text-xs text-white font-medium ${getCategoryColor(task.category)}`}
+                                              >
+                                                {t(`todos.categories.${task.category}`)}
+                                              </span>
+
+                                              {task.priority === 'high' && (
+                                                <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-rose-100 text-rose-700 font-medium">
+                                                  {t('todos.taskDetails.priorityHigh')}
+                                                </span>
+                                              )}
+
+                                              {task.due_date && (
+                                                <span className={`text-xs flex items-center gap-1 ${
+                                                  isOverdue ? 'text-rose-600 font-semibold' : 'text-gray-600'
+                                                }`}>
+                                                  <Calendar className="w-3.5 h-3.5" />
+                                                  {new Date(task.due_date).toLocaleDateString('de-DE')}
+                                                  {isOverdue && ` (${t('todos.taskDetails.overdue')})`}
+                                                </span>
+                                              )}
+
+                                              {task.assigned_to && (() => {
+                                                const assignedMember = supportTeam.find(m => m.id === task.assigned_to);
+                                                if (assignedMember) {
+                                                  return (
+                                                    <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-700 font-medium">
+                                                      👤 {assignedMember.name}
+                                                    </span>
+                                                  );
+                                                }
+                                                return null;
+                                              })()}
+                                            </div>
+
+                                            {isBlocked && !task.completed && (
+                                              <div className="mt-3 p-2 bg-amber-50 border border-amber-200 rounded flex items-start gap-2">
+                                                <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                                                <div className="text-sm text-amber-800">
+                                                  <div className="font-medium mb-1">{t('todos.taskDetails.waitingFor')}</div>
+                                                  <ul className="list-disc list-inside space-y-0.5">
+                                                    {blockedBy.map((taskName, idx) => (
+                                                      <li key={idx}>{taskName}</li>
+                                                    ))}
+                                                  </ul>
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {task.date_change_notice && (
+                                              <div className="mt-3 p-2 bg-orange-50 border border-orange-200 rounded flex items-start gap-2">
+                                                <AlertCircle className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+                                                <div className="flex-1 text-sm text-orange-800">
+                                                  {task.date_change_notice}
+                                                </div>
+                                                <button
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    dismissDateChangeNotice(task.id);
+                                                  }}
+                                                  className="text-orange-600 hover:text-orange-800"
+                                                >
+                                                  <X className="w-4 h-4" />
+                                                </button>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : isExpanded ? (
                     <div className="border-t-2 divide-y" style={{ borderColor: '#f3f4f6' }}>
                       {mainCategoryTasks.map(task => {
                         const isTaskExpanded = expandedTasks.has(task.id);
@@ -1107,7 +1421,7 @@ export default function TodosModule() {
                         );
                       })}
                     </div>
-                  )}
+                  ) : null}
                 </div>
               );
             })
