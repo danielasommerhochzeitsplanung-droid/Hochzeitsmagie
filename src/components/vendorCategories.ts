@@ -3,7 +3,7 @@ export const VENDOR_CATEGORIES = [
   { value: 'Catering', emoji: '🍽️' },
   { value: 'Fotograf', emoji: '📸' },
   { value: 'Videograf', emoji: '🎥' },
-  { value: 'DJ/Musik/Band', emoji: '🎵' },
+  { value: 'music_entertainment', emoji: '🎵' },
   { value: 'Florist/Blumen', emoji: '💐' },
   { value: 'Konditorei/Torte', emoji: '🎂' },
   { value: 'Hochzeitsplaner', emoji: '📋' },
