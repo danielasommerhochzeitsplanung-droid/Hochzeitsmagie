@@ -5,6 +5,7 @@ import { handleDateChange, generateLocationTasksFromTemplates } from '../utils/t
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
 import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
+import { migrateTaskSubAreasIfNeeded } from '../utils/taskSubAreaMigration';
 import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
 import { useTranslation } from 'react-i18next';
 
@@ -152,6 +153,12 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       return true;
     }
     return false;
+  }, []);
+
+  useEffect(() => {
+    migrateTaskSubAreasIfNeeded().then(() => {
+      setTasks(storage.tasks.getAll());
+    });
   }, []);
 
   useEffect(() => {
