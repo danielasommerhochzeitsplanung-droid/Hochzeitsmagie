@@ -1,0 +1,92 @@
+/*
+  # Add Music & Entertainment Tasks
+
+  1. New Tasks
+    - Adds task templates for music and entertainment planning
+    - Category: vendors_services
+    - Sub-area: music_entertainment
+    - Covers all planning durations: 30, 24, 18, 15, 12, 9, 6 months
+    - 3 phases per duration:
+      - Phase 1: Planning (define coverage areas, format, budget, research providers)
+      - Phase 2: Booking (book provider, align timeline/preferences, clarify technical requirements)
+      - Phase 3: Final coordination (obtain final alignment and confirmation)
+    - No dependencies to other tasks
+    - Critical tasks: budget planning, provider research, booking, final confirmation
+*/
+
+-- Insert Music & Entertainment tasks for 30 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 24, 22, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 23, 21, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 22, 20, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 21, 19, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 18, 14, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 6, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 5, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 30, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
+
+-- Insert Music & Entertainment tasks for 24 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 19, 17, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 18, 16, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 17, 15, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 16, 14, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 13, 9, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 5, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 4, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 24, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
+
+-- Insert Music & Entertainment tasks for 18 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 14, 12, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 13, 11, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 12, 10, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 11, 9, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 8, 4, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 4, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 3, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 18, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
+
+-- Insert Music & Entertainment tasks for 15 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 12, 10, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 11, 9, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 10, 8, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 9, 7, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 6, 2, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 4, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 3, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 15, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
+
+-- Insert Music & Entertainment tasks for 12 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 9, 7, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 8, 6, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 7, 5, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 6, 4, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 6, 4, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 4, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 3, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 12, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
+
+-- Insert Music & Entertainment tasks for 9 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 7, 5, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 6, 4, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 5, 3, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 4, 2, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 5, 4, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 3, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 2, 1, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 9, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
+
+-- Insert Music & Entertainment tasks for 6 months planning duration
+INSERT INTO task_templates (id, category, sub_area, planning_duration_months, phase, order_in_phase, title_de, title_en, description_de, description_en, recommended_offset_months, latest_completion_months, is_critical) VALUES
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 1, 1, 'Einsatzbereiche für Musik festlegen', 'Define music coverage areas', 'Festlegen, bei welchen Programmpunkten Musik vorgesehen ist.', 'Define at which parts of the event music will be included.', 4, 3.5, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 1, 2, 'Musikform definieren', 'Define music format', 'Entscheiden, ob DJ, Band, Live-Musik oder andere Formate gewünscht sind.', 'Decide whether DJ, band, live music or other formats are desired.', 3.5, 3, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 1, 3, 'Budget für Musik planen', 'Plan music budget', 'Budgetrahmen für Musik und Technik festlegen.', 'Define the budget range for music and technical requirements.', 3, 2.5, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 1, 4, 'Musikanbieter recherchieren und vergleichen', 'Research and compare music providers', 'Anbieter recherchieren und Angebote vergleichbar machen.', 'Research providers and compare offers.', 2.5, 2.5, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 2, 1, 'Hauptanbieter für Musik beauftragen', 'Book main music provider', 'Hauptanbieter verbindlich beauftragen und Vertragsdetails dokumentieren.', 'Book the main provider and document contract details.', 3, 2.5, true),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 2, 2, 'Ablauf und Musikwünsche abstimmen', 'Align timeline and music preferences', 'Zeitplan, Programmpunkte und Musikwünsche abstimmen.', 'Align timeline, program points and music preferences.', 2.5, 2, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 2, 3, 'Technik- und Aufbauanforderungen klären', 'Clarify technical and setup requirements', 'Technische Anforderungen, Aufbauzeiten und Ansprechpartner abstimmen.', 'Clarify technical requirements, setup times and contacts.', 2, 1, false),
+(gen_random_uuid(), 'vendors_services', 'music_entertainment', 6, 3, 1, 'Finale Abstimmung und Bestätigung einholen', 'Obtain final alignment and confirmation', 'Finale Zeiten, Aufbau und Ansprechpartner bestätigen.', 'Confirm final timings, setup and contacts.', 1, 0.5, true);
