@@ -448,7 +448,11 @@ export default function TodosModule() {
       .filter(task => {
         if (filterCategory !== 'all') {
           const mainCategoryId = categoryToMainCategory(task.category);
-          return mainCategoryId === filterCategory;
+          if (mainCategoryId === filterCategory) return true;
+
+          if (task.sub_area === filterCategory) return true;
+
+          return false;
         }
         return true;
       })
@@ -476,6 +480,10 @@ export default function TodosModule() {
           groups.set(mainCategoryId, []);
         }
         groups.get(mainCategoryId)!.push(task);
+
+        if (task.sub_area && groups.has(task.sub_area)) {
+          groups.get(task.sub_area)!.push(task);
+        }
       });
 
     return groups;
