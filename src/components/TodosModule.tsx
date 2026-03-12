@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, Edit2, ChevronDown, ChevronRight, Lock, Archive, Search } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, CreditCard as Edit2, ChevronDown, ChevronRight, Lock, Archive, Search } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task, Phase } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
