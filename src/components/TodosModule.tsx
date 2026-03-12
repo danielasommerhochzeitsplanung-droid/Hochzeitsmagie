@@ -50,9 +50,15 @@ const mainCategories = [
     subcategories: ['decoration']
   },
   {
+    id: 'music_entertainment',
+    icon: '🎵',
+    color: 'bg-indigo-500',
+    subcategories: ['music']
+  },
+  {
     id: 'organization_closure',
     icon: '📋',
-    color: 'bg-purple-500',
+    color: 'bg-violet-500',
     subcategories: []
   },
 ];
@@ -65,6 +71,7 @@ const categoryToMainCategory = (category: string): string => {
   if (categoryLower === 'catering' || categoryLower === 'vendors_services') return 'vendors_services';
   if (categoryLower === 'decoration' || categoryLower === 'styling_atmosphere') return 'styling_atmosphere';
   if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
+  if (categoryLower === 'music' || categoryLower === 'music_entertainment') return 'music_entertainment';
   if (categoryLower === 'organization_closure') return 'organization_closure';
 
   return 'organization_closure';
