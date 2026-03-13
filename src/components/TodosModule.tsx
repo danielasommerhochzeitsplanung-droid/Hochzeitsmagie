@@ -19,13 +19,13 @@ const mainCategories = [
   {
     id: 'ceremony_legal',
     icon: '💒',
-    color: 'bg-rose-500',
+    color: 'bg-blue-500',
     subcategories: ['planning']
   },
   {
     id: 'vendors_services',
     icon: '🤝',
-    color: 'bg-blue-500',
+    color: 'bg-purple-500',
     subcategories: ['catering', 'planning'],
     subAreas: [
       { id: 'location', icon: '📍', label: 'Location & Ablauf' },
@@ -50,6 +50,17 @@ const mainCategories = [
     subcategories: ['decoration']
   },
   {
+    id: 'styling_outfit',
+    icon: '👗',
+    color: 'bg-rose-500',
+    subcategories: [],
+    subAreas: [
+      { id: 'outfits_accessories', icon: '👗', label: 'Outfits & Accessoires' },
+      { id: 'beauty_styling', icon: '💄', label: 'Beauty & Styling' },
+      { id: 'rings', icon: '💍', label: 'Ringe' },
+    ]
+  },
+  {
     id: 'music_entertainment',
     icon: '🎵',
     color: 'bg-indigo-500',
@@ -58,7 +69,7 @@ const mainCategories = [
   {
     id: 'organization_closure',
     icon: '📋',
-    color: 'bg-violet-500',
+    color: 'bg-pink-500',
     subcategories: []
   },
 ];
@@ -70,6 +81,7 @@ const categoryToMainCategory = (category: string): string => {
   if (categoryLower === 'guests' || categoryLower === 'guests_communication') return 'guests_communication';
   if (categoryLower === 'catering' || categoryLower === 'vendors_services') return 'vendors_services';
   if (categoryLower === 'decoration' || categoryLower === 'styling_atmosphere') return 'styling_atmosphere';
+  if (categoryLower === 'styling_outfit') return 'styling_outfit';
   if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
   if (categoryLower === 'music' || categoryLower === 'music_entertainment') return 'music_entertainment';
   if (categoryLower === 'organization_closure') return 'organization_closure';
