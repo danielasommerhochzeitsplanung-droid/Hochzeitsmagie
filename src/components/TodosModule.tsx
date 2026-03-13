@@ -440,6 +440,10 @@ export default function TodosModule() {
     if (categoryLower.includes('clothing') || categoryLower.includes('dress') || categoryLower.includes('suit')) return 'clothing';
     if (categoryLower.includes('culinary') || categoryLower.includes('catering') || categoryLower.includes('food') || categoryLower.includes('cake')) return 'culinary';
 
+    if (categoryLower === 'styling_outfit') {
+      return null;
+    }
+
     return null;
   };
 
@@ -978,7 +982,7 @@ export default function TodosModule() {
                     )}
                   </div>
 
-                  {isExpanded && mainCategory.id === 'vendors_services' && mainCategory.subAreas ? (
+                  {isExpanded && (mainCategory.id === 'vendors_services' || mainCategory.id === 'styling_outfit') && mainCategory.subAreas ? (
                     <div className="border-t-2" style={{ borderColor: '#f3f4f6' }}>
                       {(() => {
                         const unassignedTasks = mainCategoryTasks.filter(task => {
