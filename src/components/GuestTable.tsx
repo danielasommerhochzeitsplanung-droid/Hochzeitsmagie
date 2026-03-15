@@ -1,4 +1,4 @@
-import { Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart, Award, UserCheck, Briefcase } from 'lucide-react';
+import { CreditCard as Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart, Award, UserCheck, Briefcase } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface DietaryRestriction {
@@ -20,8 +20,10 @@ interface Guest {
   number_of_adults: number;
   save_the_date_status: string;
   invitation_status: string;
+  rsvp_status: string;
   save_the_date_sent_date: string;
   invitation_sent_date: string;
+  rsvp_date: string;
   events: string[];
   accommodation_type: string;
   accommodation_rooms: number | null;
@@ -235,6 +237,9 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                 {t('guests.invitation')}
               </th>
               <th className="px-6 py-3 text-center text-xs uppercase tracking-wider" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif', fontWeight: 'normal' }}>
+                {t('guests.rsvp')}
+              </th>
+              <th className="px-6 py-3 text-center text-xs uppercase tracking-wider" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif', fontWeight: 'normal' }}>
                 {t('guests.events')}
               </th>
               <th className="px-6 py-3 text-center text-xs uppercase tracking-wider" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif', fontWeight: 'normal' }}>
@@ -251,7 +256,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
           <tbody className="divide-y divide-gray-200">
             {sortedGuests.length === 0 ? (
               <tr>
-                <td colSpan={10} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={11} className="px-6 py-8 text-center text-gray-500">
                   {isArchived ? t('guests.noArchivedGuests') : t('guests.noGuests')}
                 </td>
               </tr>
@@ -307,6 +312,12 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
                       ? <span className="text-xl">⭐</span>
                       : getStatusBadge(guest.invitation_status)
+                    }
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
+                      ? <span className="text-xl">⭐</span>
+                      : getStatusBadge(guest.rsvp_status)
                     }
                   </td>
                   <td className="px-6 py-4">

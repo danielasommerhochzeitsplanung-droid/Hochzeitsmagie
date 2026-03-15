@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ChevronDown, ChevronUp, Shield, Baby, Edit, Plus } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Shield, Baby, CreditCard as Edit, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { generateId } from '../lib/uuid';
 
@@ -29,8 +29,10 @@ interface Guest {
   number_of_adults: number;
   save_the_date_status: string;
   invitation_status: string;
+  rsvp_status: string;
   save_the_date_sent_date: string;
   invitation_sent_date: string;
+  rsvp_date: string;
   events: string[];
   accommodation_type: string;
   accommodation_rooms: number | null;
@@ -113,8 +115,10 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
     number_of_adults: 1,
     save_the_date_status: 'pending',
     invitation_status: 'pending',
+    rsvp_status: 'pending',
     save_the_date_sent_date: '',
     invitation_sent_date: '',
+    rsvp_date: '',
     events: [],
     accommodation_type: 'none',
     accommodation_rooms: null,
@@ -185,8 +189,10 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
         number_of_adults: 1,
         save_the_date_status: 'pending',
         invitation_status: 'pending',
+        rsvp_status: 'pending',
         save_the_date_sent_date: '',
         invitation_sent_date: '',
+        rsvp_date: '',
         events: [],
         accommodation_type: 'none',
         accommodation_rooms: null,
@@ -1007,6 +1013,41 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
                       type="date"
                       value={formData.invitation_sent_date}
                       onChange={(e) => setFormData({ ...formData, invitation_sent_date: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
+                      style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-6">
+                <label className="block text-sm mb-3" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  {t('guests.rsvp')}
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs mb-2" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>
+                      {t('guests.statusLabel')}
+                    </label>
+                    <select
+                      value={formData.rsvp_status}
+                      onChange={(e) => setFormData({ ...formData, rsvp_status: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
+                      style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
+                    >
+                      <option value="pending">{t('guests.statusPending')}</option>
+                      <option value="confirmed">{t('guests.statusConfirmed')}</option>
+                      <option value="declined">{t('guests.statusDeclined')}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs mb-2" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>
+                      {t('guests.rsvpDate')}
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.rsvp_date}
+                      onChange={(e) => setFormData({ ...formData, rsvp_date: e.target.value })}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-all"
                       style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d' }}
                     />

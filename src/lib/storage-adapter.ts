@@ -165,7 +165,12 @@ export interface Guest extends BaseEntity {
   email?: string;
   phone?: string;
   number_of_adults: number;
+  save_the_date_status: string;
+  invitation_status: string;
   rsvp_status: string;
+  save_the_date_sent_date: string;
+  invitation_sent_date: string;
+  rsvp_date: string;
   attendance_status: string;
   notes?: string;
   dietary_restrictions?: DietaryRestriction[];
