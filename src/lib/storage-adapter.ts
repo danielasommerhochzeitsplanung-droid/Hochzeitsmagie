@@ -246,18 +246,15 @@ export interface Vendor extends BaseEntity {
 
 export interface Location extends BaseEntity {
   name: string;
+  type: string;
   address: string;
-  city?: string;
-  postal_code?: string;
-  country?: string;
-  email?: string;
-  phone?: string;
-  website?: string;
-  capacity?: number;
-  notes?: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
   viewing_date?: string;
   reservation_date?: string;
-  archived: boolean;
+  notes: string;
+  archived?: boolean;
 }
 
 export interface SupportTeam extends BaseEntity {
