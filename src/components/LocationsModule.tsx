@@ -86,12 +86,6 @@ export default function LocationsModule() {
     }
   };
 
-  const handleDeleteLocation = (id: string) => {
-    if (window.confirm('Diese Location wirklich löschen?')) {
-      storage.locations.delete(id);
-      loadLocations();
-    }
-  };
 
   const handleArchiveLocation = (id: string, archived: boolean) => {
     storage.locations.update(id, { archived });
@@ -285,7 +279,6 @@ export default function LocationsModule() {
       <LocationTable
         locations={filteredLocations}
         onEdit={handleEditLocation}
-        onDelete={handleDeleteLocation}
         onArchive={handleArchiveLocation}
         showArchived={showArchived}
         onAddContact={handleAddContact}

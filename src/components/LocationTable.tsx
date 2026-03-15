@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Pencil, Trash2, MapPin, Phone, Mail, ChevronDown, ChevronUp, Calendar, Archive, ArchiveRestore } from 'lucide-react';
+import { Pencil, MapPin, Phone, Mail, ChevronDown, ChevronUp, Calendar, Archive, ArchiveRestore } from 'lucide-react';
 import { Location, storage } from '../lib/storage-adapter';
 import { LocationContact, LocationVendorAssignment } from './LocationsModule';
 
 interface LocationTableProps {
   locations: Location[];
   onEdit: (location: Location) => void;
-  onDelete: (id: string) => void;
   onArchive: (id: string, archived: boolean) => void;
   showArchived: boolean;
   onAddContact: (locationId: string) => void;
@@ -34,7 +33,6 @@ interface EventAtLocation {
 export default function LocationTable({
   locations,
   onEdit,
-  onDelete,
   onArchive,
   showArchived,
   onAddContact,
@@ -217,14 +215,6 @@ export default function LocationTable({
                     title={showArchived ? 'Wiederherstellen' : 'Archivieren'}
                   >
                     {showArchived ? <ArchiveRestore size={16} /> : <Archive size={16} />}
-                  </button>
-                  <button
-                    onClick={() => onDelete(location.id)}
-                    className="p-2 hover:bg-gray-100 rounded transition-colors"
-                    style={{ color: '#e63946' }}
-                    title="Löschen"
-                  >
-                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
