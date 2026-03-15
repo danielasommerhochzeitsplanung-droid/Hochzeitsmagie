@@ -119,6 +119,7 @@
     "statusSent": "Sent",
     "statusConfirmed": "Confirmed",
     "statusDeclined": "Declined",
+    "clickToChangeStatus": "Click to change status",
     "sentDate": "Sent Date",
     "saveTheDateConfirmed": "Save the Date Confirmed",
     "invitationsConfirmed": "Invitations Confirmed",

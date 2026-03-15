@@ -378,6 +378,21 @@ export default function GuestsModule() {
     loadGuests();
   };
 
+  const handleStatusChange = (guestId: string, statusType: 'save_the_date_status' | 'invitation_status' | 'rsvp_status', newStatus: string) => {
+    const storageFieldMap: { [key: string]: string } = {
+      save_the_date_status: 'save_the_date_status',
+      invitation_status: 'attendance_status',
+      rsvp_status: 'rsvp_status'
+    };
+
+    const storageField = storageFieldMap[statusType];
+    storage.guests.update(guestId, {
+      [storageField]: newStatus
+    });
+
+    loadGuests();
+  };
+
   return (
     <div className="space-y-6">
       <QuickAddBar
@@ -445,6 +460,7 @@ export default function GuestsModule() {
           onEdit={handleEditGuest}
           onDelete={handleArchiveGuest}
           onAddToSupportTeam={handleAddToSupportTeam}
+          onStatusChange={handleStatusChange}
         />
       ) : (
         <GuestTable

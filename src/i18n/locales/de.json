@@ -119,6 +119,7 @@
     "statusSent": "Versendet",
     "statusConfirmed": "Zugesagt",
     "statusDeclined": "Abgesagt",
+    "clickToChangeStatus": "Klicken zum Ändern des Status",
     "sentDate": "Versanddatum",
     "saveTheDateConfirmed": "Save the Date Zugesagt",
     "invitationsConfirmed": "Einladungen Zugesagt",

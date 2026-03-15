@@ -58,9 +58,10 @@ interface GuestTableProps {
   onRestore?: (id: string) => void;
   isArchived?: boolean;
   onAddToSupportTeam?: (guest: Guest) => void;
+  onStatusChange?: (guestId: string, statusType: 'save_the_date_status' | 'invitation_status' | 'rsvp_status', newStatus: string) => void;
 }
 
-export default function GuestTable({ guests, events, onEdit, onDelete, onRestore, isArchived = false, onAddToSupportTeam }: GuestTableProps) {
+export default function GuestTable({ guests, events, onEdit, onDelete, onRestore, isArchived = false, onAddToSupportTeam, onStatusChange }: GuestTableProps) {
   const { t, i18n } = useTranslation();
 
   const parentGuests = guests.filter(g => !g.is_child);
@@ -155,7 +156,24 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
     );
   };
 
-  const getStatusBadge = (status: string) => {
+  const statusOrder = ['pending', 'sent', 'confirmed', 'declined'];
+
+  const getNextStatus = (currentStatus: string) => {
+    const safeStatus = currentStatus || 'pending';
+    const currentIndex = statusOrder.indexOf(safeStatus);
+    const nextIndex = (currentIndex + 1) % statusOrder.length;
+    return statusOrder[nextIndex];
+  };
+
+  const handleStatusClick = (e: React.MouseEvent, guestId: string, statusType: 'save_the_date_status' | 'invitation_status' | 'rsvp_status', currentStatus: string) => {
+    e.stopPropagation();
+    if (onStatusChange && !isArchived) {
+      const nextStatus = getNextStatus(currentStatus);
+      onStatusChange(guestId, statusType, nextStatus);
+    }
+  };
+
+  const getStatusBadge = (status: string, guestId: string, statusType: 'save_the_date_status' | 'invitation_status' | 'rsvp_status') => {
     const safeStatus = status || 'pending';
 
     const statusStyles: { [key: string]: { bg: string; text: string } } = {
@@ -169,8 +187,16 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
 
     return (
       <span
-        className="px-2 py-1 rounded-full text-xs"
-        style={{ backgroundColor: style.bg, color: style.text, fontFamily: 'Open Sans, sans-serif' }}
+        className="px-2 py-1 rounded-full text-xs transition-all"
+        style={{
+          backgroundColor: style.bg,
+          color: style.text,
+          fontFamily: 'Open Sans, sans-serif',
+          cursor: isArchived ? 'default' : 'pointer',
+          userSelect: 'none'
+        }}
+        onClick={(e) => handleStatusClick(e, guestId, statusType, safeStatus)}
+        title={isArchived ? '' : t('guests.clickToChangeStatus')}
       >
         {t(`guests.status${safeStatus.charAt(0).toUpperCase()}${safeStatus.slice(1)}`)}
       </span>
@@ -307,19 +333,19 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                   <td className="px-6 py-4 text-center">
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
                       ? <span className="text-xl">⭐</span>
-                      : getStatusBadge(guest.save_the_date_status)
+                      : getStatusBadge(guest.save_the_date_status, guest.id, 'save_the_date_status')
                     }
                   </td>
                   <td className="px-6 py-4 text-center">
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
                       ? <span className="text-xl">⭐</span>
-                      : getStatusBadge(guest.invitation_status)
+                      : getStatusBadge(guest.invitation_status, guest.id, 'invitation_status')
                     }
                   </td>
                   <td className="px-6 py-4 text-center">
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
                       ? <span className="text-xl">⭐</span>
-                      : getStatusBadge(guest.rsvp_status)
+                      : getStatusBadge(guest.rsvp_status, guest.id, 'rsvp_status')
                     }
                   </td>
                   <td className="px-6 py-4">
