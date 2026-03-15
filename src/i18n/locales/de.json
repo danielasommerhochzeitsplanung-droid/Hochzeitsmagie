@@ -51,7 +51,8 @@
     "quickAddEvent": "Event",
     "quickAddLocation": "Location",
     "quickAddVendor": "Dienstleister",
-    "of": "von"
+    "of": "von",
+    "openGuestsModule": "Zum Gästemodul"
   },
   "guests": {
     "addGuest": "Gast hinzufügen",
@@ -121,6 +122,13 @@
     "statusDeclined": "Abgesagt",
     "clickToChangeStatus": "Klicken zum Ändern des Status",
     "sentDate": "Versanddatum",
+    "batchSaveTheDate": "Alle Save the Dates als versendet markieren",
+    "batchInvitation": "Alle Einladungen als versendet markieren",
+    "batchHint": "Markiert nur Gäste mit Status 'Ausstehend'",
+    "batchSaveTheDateSuccess": "{{count}} Save the Date(s) als versendet markiert",
+    "batchSaveTheDateNone": "Keine ausstehenden Save the Dates vorhanden",
+    "batchInvitationSuccess": "{{count}} Einladung(en) als versendet markiert",
+    "batchInvitationNone": "Keine ausstehenden Einladungen vorhanden",
     "saveTheDateConfirmed": "Save the Date Zugesagt",
     "invitationsConfirmed": "Einladungen Zugesagt",
     "accommodation": "Übernachtung",

@@ -51,7 +51,8 @@
     "quickAddEvent": "Event",
     "quickAddLocation": "Location",
     "quickAddVendor": "Vendor",
-    "of": "of"
+    "of": "of",
+    "openGuestsModule": "Go to Guests Module"
   },
   "guests": {
     "addGuest": "Add Guest",
@@ -121,6 +122,13 @@
     "statusDeclined": "Declined",
     "clickToChangeStatus": "Click to change status",
     "sentDate": "Sent Date",
+    "batchSaveTheDate": "Mark all Save the Dates as sent",
+    "batchInvitation": "Mark all Invitations as sent",
+    "batchHint": "Only marks guests with 'Pending' status",
+    "batchSaveTheDateSuccess": "Marked {{count}} Save the Date(s) as sent",
+    "batchSaveTheDateNone": "No pending Save the Dates available",
+    "batchInvitationSuccess": "Marked {{count}} invitation(s) as sent",
+    "batchInvitationNone": "No pending invitations available",
     "saveTheDateConfirmed": "Save the Date Confirmed",
     "invitationsConfirmed": "Invitations Confirmed",
     "accommodation": "Accommodation",

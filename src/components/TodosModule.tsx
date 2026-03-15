@@ -85,7 +85,7 @@ const categoryToMainCategory = (category: string): string => {
 
 export default function TodosModule() {
   const { t } = useTranslation();
-  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, subAreas, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, archiveSubArea, unarchiveSubArea, taskModalTrigger } = useWeddingData();
+  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, subAreas, guests, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, archiveSubArea, unarchiveSubArea, taskModalTrigger } = useWeddingData();
   const { getTaskTitle, getTaskDescription } = useTaskTemplates();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -643,6 +643,44 @@ export default function TodosModule() {
   const getCategoryColor = (category: string) => {
     const cat = taskCategories.find(c => c.id === category);
     return cat?.color || 'bg-gray-500';
+  };
+
+  const getGuestInvitationStats = (task: Task) => {
+    if (!task.template_id) return null;
+
+    const activeGuests = guests.filter(g => !g.archived);
+
+    if (task.template_id.includes('save_the_date_versenden') ||
+        task.template_id.includes('_1_3')) {
+      const sent = activeGuests.filter(g =>
+        g.save_the_date_status === 'sent' ||
+        g.save_the_date_status === 'confirmed' ||
+        g.save_the_date_status === 'declined'
+      ).length;
+      return {
+        type: 'savethedate',
+        sent,
+        total: activeGuests.length,
+        label: t('guests.saveTheDate')
+      };
+    }
+
+    if (task.template_id.includes('einladungen_versenden') ||
+        task.template_id.includes('_2_2')) {
+      const sent = activeGuests.filter(g =>
+        g.invitation_status === 'sent' ||
+        g.invitation_status === 'confirmed' ||
+        g.invitation_status === 'declined'
+      ).length;
+      return {
+        type: 'invitation',
+        sent,
+        total: activeGuests.length,
+        label: t('guests.invitation')
+      };
+    }
+
+    return null;
   };
 
   const showAutoTaskBanner = tasks.length === 0 && weddingData?.wedding_date && !weddingData?.auto_tasks_initialized;
@@ -1221,6 +1259,47 @@ export default function TodosModule() {
                                                     {getTaskDescription(task)}
                                                   </p>
                                                 )}
+
+                                                {(() => {
+                                                  const guestStats = getGuestInvitationStats(task);
+                                                  if (!guestStats) return null;
+
+                                                  const percentage = guestStats.total > 0
+                                                    ? Math.round((guestStats.sent / guestStats.total) * 100)
+                                                    : 0;
+
+                                                  return (
+                                                    <div className="mt-3 p-3 bg-white rounded-lg border border-gray-200">
+                                                      <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-sm font-medium text-gray-700">
+                                                          {guestStats.type === 'savethedate' ? '📬' : '💌'} {guestStats.label}
+                                                        </span>
+                                                        <span className="text-sm font-bold" style={{ color: '#d6b15b' }}>
+                                                          {guestStats.sent} / {guestStats.total}
+                                                        </span>
+                                                      </div>
+                                                      <div className="w-full bg-gray-200 rounded-full h-2">
+                                                        <div
+                                                          className="h-2 rounded-full transition-all"
+                                                          style={{
+                                                            width: `${percentage}%`,
+                                                            backgroundColor: percentage === 100 ? '#2e7d32' : '#d6b15b'
+                                                          }}
+                                                        />
+                                                      </div>
+                                                      <a
+                                                        href="#"
+                                                        onClick={(e) => {
+                                                          e.preventDefault();
+                                                          window.location.hash = 'guests';
+                                                        }}
+                                                        className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                                                      >
+                                                        {t('common.openGuestsModule') || 'Zum Gästemodul'}
+                                                      </a>
+                                                    </div>
+                                                  );
+                                                })()}
                                               </div>
 
                                               <div className="flex items-center gap-2">

@@ -395,6 +395,50 @@ export default function GuestsModule() {
     loadGuests();
   };
 
+  const handleBatchSaveTheDateSent = () => {
+    const today = new Date().toISOString().split('T')[0];
+    let updatedCount = 0;
+
+    guests.forEach(guest => {
+      if (guest.save_the_date_status === 'pending') {
+        storage.guests.update(guest.id, {
+          save_the_date_status: 'sent',
+          save_the_date_sent_date: today
+        });
+        updatedCount++;
+      }
+    });
+
+    if (updatedCount > 0) {
+      loadGuests();
+      alert(t('guests.batchSaveTheDateSuccess', { count: updatedCount }));
+    } else {
+      alert(t('guests.batchSaveTheDateNone'));
+    }
+  };
+
+  const handleBatchInvitationSent = () => {
+    const today = new Date().toISOString().split('T')[0];
+    let updatedCount = 0;
+
+    guests.forEach(guest => {
+      if (guest.invitation_status === 'pending') {
+        storage.guests.update(guest.id, {
+          attendance_status: 'sent',
+          invitation_sent_date: today
+        });
+        updatedCount++;
+      }
+    });
+
+    if (updatedCount > 0) {
+      loadGuests();
+      alert(t('guests.batchInvitationSuccess', { count: updatedCount }));
+    } else {
+      alert(t('guests.batchInvitationNone'));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <QuickAddBar
@@ -453,7 +497,39 @@ export default function GuestsModule() {
         </button>
       </div>
 
-      <div className="border-b border-gray-200 mb-4"></div>
+      {activeTab === 'active' && (
+        <div className="flex gap-3 pb-4 border-b border-gray-200 mb-4">
+          <button
+            onClick={handleBatchSaveTheDateSent}
+            disabled={guests.filter(g => g.save_the_date_status === 'pending').length === 0}
+            className="px-4 py-2 rounded-md text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: '#e8f5e9',
+              color: '#2e7d32',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 500
+            }}
+          >
+            📬 {t('guests.batchSaveTheDate')} ({guests.filter(g => g.save_the_date_status === 'pending').length})
+          </button>
+          <button
+            onClick={handleBatchInvitationSent}
+            disabled={guests.filter(g => g.invitation_status === 'pending').length === 0}
+            className="px-4 py-2 rounded-md text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: '#e3f2fd',
+              color: '#1565c0',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 500
+            }}
+          >
+            💌 {t('guests.batchInvitation')} ({guests.filter(g => g.invitation_status === 'pending').length})
+          </button>
+          <div className="text-sm text-gray-500 flex items-center ml-auto" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+            {t('guests.batchHint')}
+          </div>
+        </div>
+      )}
 
       {activeTab === 'active' ? (
         <GuestTable
