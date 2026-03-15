@@ -1269,9 +1269,9 @@ export default function TodosModule() {
                                                     : 0;
 
                                                   return (
-                                                    <div className="mt-3 p-3 bg-white rounded-lg border border-gray-200">
+                                                    <div className="mt-3 p-3 bg-gray-50 rounded-lg border">
                                                       <div className="flex items-center justify-between mb-2">
-                                                        <span className="text-sm font-medium text-gray-700">
+                                                        <span className="text-sm font-medium" style={{ color: '#3b3b3d' }}>
                                                           {guestStats.type === 'savethedate' ? '📬' : '💌'} {guestStats.label}
                                                         </span>
                                                         <span className="text-sm font-bold" style={{ color: '#d6b15b' }}>
@@ -1283,7 +1283,7 @@ export default function TodosModule() {
                                                           className="h-2 rounded-full transition-all"
                                                           style={{
                                                             width: `${percentage}%`,
-                                                            backgroundColor: percentage === 100 ? '#2e7d32' : '#d6b15b'
+                                                            backgroundColor: '#d6b15b'
                                                           }}
                                                         />
                                                       </div>
@@ -1293,7 +1293,8 @@ export default function TodosModule() {
                                                           e.preventDefault();
                                                           window.location.hash = 'guests';
                                                         }}
-                                                        className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                                                        className="text-xs hover:underline mt-1 inline-block"
+                                                        style={{ color: '#d6b15b' }}
                                                       >
                                                         {t('common.openGuestsModule') || 'Zum Gästemodul'}
                                                       </a>
