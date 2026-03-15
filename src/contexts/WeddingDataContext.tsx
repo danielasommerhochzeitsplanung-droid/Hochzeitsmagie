@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useEffect } from 'react';
-import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase, StorageError } from '../lib/storage-adapter';
+import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase, SubArea, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
 import { handleDateChange, generateLocationTasksFromTemplates } from '../utils/taskAutomation';
 import { generateId } from '../lib/uuid';
@@ -7,6 +7,7 @@ import { useImportFeedback } from '../hooks/useImportFeedback';
 import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
 import { migrateTaskSubAreasIfNeeded } from '../utils/taskSubAreaMigration';
 import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
+import { initializeSubAreasIfNeeded } from '../utils/subAreaInitialization';
 import { useTranslation } from 'react-i18next';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -21,7 +22,7 @@ interface SaveState {
   errorMessage?: string;
 }
 
-export type { Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase };
+export type { Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase, SubArea };
 
 interface WeddingDataContextType {
   weddingData: WeddingData;
@@ -35,6 +36,7 @@ interface WeddingDataContextType {
   programItems: ProgramItem[];
   tasks: Task[];
   phases: Phase[];
+  subAreas: SubArea[];
   storageChangeCounter: number;
 
   updateWeddingData: (data: Partial<WeddingData>) => Promise<void>;
@@ -81,6 +83,11 @@ interface WeddingDataContextType {
   updatePhase: (id: string, phase: Partial<Phase>) => void;
   deletePhase: (id: string) => void;
 
+  addSubArea: (subArea: Omit<SubArea, 'id' | 'created_at'>) => SubArea;
+  updateSubArea: (id: string, subArea: Partial<SubArea>) => void;
+  archiveSubArea: (subAreaId: string) => void;
+  unarchiveSubArea: (subAreaId: string) => void;
+
   exportData: () => void;
   importData: (jsonData: string) => void;
   clearAllData: () => void;
@@ -102,6 +109,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
   const [weddingData, setWeddingData] = useState<WeddingData>(() => {
     migrateCategoriesIfNeeded();
+    initializeSubAreasIfNeeded();
     const data = storage.weddingData.getAll();
     return data.length > 0 ? data[0] : getDefaultWeddingData();
   });
@@ -125,6 +133,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     }
     return existingPhases;
   });
+  const [subAreas, setSubAreas] = useState<SubArea[]>(() => storage.subAreas.getAll());
 
   const incrementStorageCounter = useCallback(() => {
     setStorageChangeCounter(prev => prev + 1);
@@ -729,6 +738,45 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     setTaskModalTrigger({ assigneeId, timestamp: Date.now() });
   }, []);
 
+  const addSubArea = (subArea: Omit<SubArea, 'id' | 'created_at'>) => {
+    try {
+      const newSubArea = storage.subAreas.create(subArea);
+      setSubAreas(prev => [...prev, newSubArea]);
+      incrementStorageCounter();
+      showSaveIndicator();
+      return newSubArea;
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
+  };
+
+  const updateSubArea = (id: string, subArea: Partial<SubArea>) => {
+    try {
+      storage.subAreas.update(id, subArea);
+      setSubAreas(prev => prev.map(s => s.id === id ? { ...s, ...subArea } : s));
+      incrementStorageCounter();
+      showSaveIndicator();
+    } catch (error) {
+      handleStorageError(error);
+      throw error;
+    }
+  };
+
+  const archiveSubArea = (subAreaId: string) => {
+    const subArea = subAreas.find(s => s.sub_area_id === subAreaId);
+    if (subArea) {
+      updateSubArea(subArea.id, { is_archived: true });
+    }
+  };
+
+  const unarchiveSubArea = (subAreaId: string) => {
+    const subArea = subAreas.find(s => s.sub_area_id === subAreaId);
+    if (subArea) {
+      updateSubArea(subArea.id, { is_archived: false });
+    }
+  };
+
   const value: WeddingDataContextType = {
     weddingData,
     guests,
@@ -741,6 +789,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     programItems,
     tasks,
     phases,
+    subAreas,
     storageChangeCounter,
     updateWeddingData,
     addGuest,
@@ -775,6 +824,10 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     addPhase,
     updatePhase,
     deletePhase,
+    addSubArea,
+    updateSubArea,
+    archiveSubArea,
+    unarchiveSubArea,
     exportData,
     importData,
     clearAllData,

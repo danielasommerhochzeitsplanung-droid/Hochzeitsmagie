@@ -85,7 +85,7 @@ const categoryToMainCategory = (category: string): string => {
 
 export default function TodosModule() {
   const { t } = useTranslation();
-  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, taskModalTrigger } = useWeddingData();
+  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, subAreas, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, archiveSubArea, unarchiveSubArea, taskModalTrigger } = useWeddingData();
   const { getTaskTitle, getTaskDescription } = useTaskTemplates();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -104,6 +104,7 @@ export default function TodosModule() {
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set());
   const [expandedSubAreas, setExpandedSubAreas] = useState<Set<string>>(new Set());
   const [showArchived, setShowArchived] = useState(false);
+  const [showArchivedSubAreas, setShowArchivedSubAreas] = useState(false);
 
   const [newTask, setNewTask] = useState({
     title: '',
@@ -441,6 +442,23 @@ export default function TodosModule() {
     return null;
   };
 
+  const isSubAreaArchived = (subAreaId: string | null): boolean => {
+    if (!subAreaId) return false;
+    const subArea = subAreas.find(s => s.sub_area_id === subAreaId);
+    return subArea?.is_archived ?? false;
+  };
+
+  const getVisibleSubAreasForCategory = (categoryId: string) => {
+    const category = taskCategories.find(c => c.id === categoryId);
+    if (!category?.subAreas) return [];
+
+    return category.subAreas.filter(subArea => {
+      const dbSubArea = subAreas.find(s => s.sub_area_id === subArea.id);
+      if (!dbSubArea) return true;
+      return showArchivedSubAreas || !dbSubArea.is_archived;
+    });
+  };
+
   const groupedByMainCategory = useMemo(() => {
     const groups = new Map<string, Task[]>();
 
@@ -450,6 +468,13 @@ export default function TodosModule() {
 
     tasks
       .filter(task => (task.archived || false) === showArchived)
+      .filter(task => {
+        const taskSubArea = getSubAreaFromTask(task);
+        if (taskSubArea && !showArchivedSubAreas && isSubAreaArchived(taskSubArea)) {
+          return false;
+        }
+        return true;
+      })
       .filter(task => {
         if (filterStatus === 'completed' && !task.completed) return false;
         if (filterStatus === 'active' && task.completed) return false;
@@ -497,7 +522,7 @@ export default function TodosModule() {
       });
 
     return groups;
-  }, [tasks, showArchived, filterStatus, filterCategory, filterAssignee, searchQuery, getTaskTitle, getTaskDescription]);
+  }, [tasks, showArchived, showArchivedSubAreas, filterStatus, filterCategory, filterAssignee, searchQuery, getTaskTitle, getTaskDescription, subAreas]);
 
   const completionStats = useMemo(() => {
     const activeTasks = tasks.filter(t => !t.archived);
@@ -695,6 +720,20 @@ export default function TodosModule() {
             >
               <Archive className="w-4 h-4" />
               {t('todos.archivedTasks')}
+            </button>
+          </div>
+
+          <div className="flex gap-2 ml-4">
+            <button
+              onClick={() => setShowArchivedSubAreas(!showArchivedSubAreas)}
+              className={`px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2 ${
+                showArchivedSubAreas
+                  ? 'bg-amber-100 text-amber-700 border-2 border-amber-500'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Archive className="w-4 h-4" />
+              Archivierte Bereiche {showArchivedSubAreas ? 'ausblenden' : 'anzeigen'}
             </button>
           </div>
 
@@ -985,6 +1024,13 @@ export default function TodosModule() {
                         });
 
                         const subAreasWithTasks = mainCategory.subAreas.filter(subArea => {
+                          const dbSubArea = subAreas.find(s => s.sub_area_id === subArea.id);
+                          const isSubAreaArchived = dbSubArea?.is_archived ?? false;
+
+                          if (!showArchivedSubAreas && isSubAreaArchived) {
+                            return false;
+                          }
+
                           const subAreaTasks = mainCategoryTasks.filter(task => {
                             const taskSubArea = getSubAreaFromTask(task);
                             return taskSubArea === subArea.id;
@@ -1005,25 +1051,61 @@ export default function TodosModule() {
                         const isSubAreaExpanded = expandedSubAreas.has(subArea.id);
                         const completedInSubArea = subAreaTasks.filter(t => t.completed).length;
 
+                        const dbSubArea = subAreas.find(s => s.sub_area_id === subArea.id);
+                        const isArchived = dbSubArea?.is_archived ?? false;
+
                         return (
                           <div key={subArea.id} className="border-b" style={{ borderColor: '#f3f4f6' }}>
                             <div
-                              className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors bg-gray-50/50"
-                              onClick={() => toggleSubAreaExpansion(subArea.id)}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors bg-gray-50/50"
                             >
-                              <div className="text-xl flex-shrink-0">
-                                {subArea.icon}
+                              <div
+                                className="flex items-center gap-3 flex-1 cursor-pointer"
+                                onClick={() => toggleSubAreaExpansion(subArea.id)}
+                              >
+                                <div className="text-xl flex-shrink-0">
+                                  {subArea.icon}
+                                </div>
+                                <h4 className="text-sm font-semibold flex-1" style={{ color: '#3b3b3d' }}>
+                                  {subArea.label}
+                                  {isArchived && (
+                                    <span className="ml-2 text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded">
+                                      Archiviert
+                                    </span>
+                                  )}
+                                </h4>
+                                <span className="text-xs font-medium text-gray-500">
+                                  {completedInSubArea}/{subAreaTasks.length}
+                                </span>
+                                {isSubAreaExpanded ? (
+                                  <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                )}
                               </div>
-                              <h4 className="text-sm font-semibold flex-1" style={{ color: '#3b3b3d' }}>
-                                {subArea.label}
-                              </h4>
-                              <span className="text-xs font-medium text-gray-500">
-                                {completedInSubArea}/{subAreaTasks.length}
-                              </span>
-                              {isSubAreaExpanded ? (
-                                <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                              ) : (
-                                <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              {!showArchived && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (isArchived) {
+                                      unarchiveSubArea(subArea.id);
+                                    } else {
+                                      archiveSubArea(subArea.id);
+                                    }
+                                  }}
+                                  className={`p-2 rounded-lg transition-colors flex-shrink-0 ${
+                                    isArchived
+                                      ? 'text-green-600 hover:bg-green-50'
+                                      : 'text-gray-400 hover:text-amber-600 hover:bg-amber-50'
+                                  }`}
+                                  title={isArchived ? 'Bereich wiederherstellen' : 'Bereich archivieren'}
+                                >
+                                  {isArchived ? (
+                                    <RefreshCw className="w-4 h-4" />
+                                  ) : (
+                                    <Archive className="w-4 h-4" />
+                                  )}
+                                </button>
                               )}
                             </div>
 

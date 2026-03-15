@@ -27,7 +27,8 @@ type StorageKey =
   | 'guest_table_assignments'
   | 'wedding_data'
   | 'tasks'
-  | 'phases';
+  | 'phases'
+  | 'sub_areas';
 
 interface BaseEntity {
   id: string;
@@ -360,6 +361,14 @@ export interface Phase extends BaseEntity {
   is_system_phase: boolean;
 }
 
+export interface SubArea extends BaseEntity {
+  sub_area_id: string;
+  parent_category: string;
+  label: string;
+  icon: string;
+  is_archived: boolean;
+}
+
 export interface Task extends BaseEntity {
   title: string;
   description?: string;
@@ -402,6 +411,7 @@ class StorageAdapter {
   weddingData = new LocalStorageAdapter<WeddingData>('wedding_data');
   tasks = new LocalStorageAdapter<Task>('tasks');
   phases = new LocalStorageAdapter<Phase>('phases');
+  subAreas = new LocalStorageAdapter<SubArea>('sub_areas');
 
   constructor() {
     this.initializeVersion();
