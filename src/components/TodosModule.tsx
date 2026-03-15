@@ -35,6 +35,7 @@ const mainCategories = [
       { id: 'music', icon: '🎵', label: 'Musik & Unterhaltung' },
       { id: 'clothing', icon: '👗', label: 'Kleidung' },
       { id: 'catering_drinks', icon: '🍽️', label: 'Kulinarik & Getränke' },
+      { id: 'transport_logistics', icon: '🚗', label: 'Transport & Logistik' },
     ]
   },
   {
@@ -435,10 +436,10 @@ export default function TodosModule() {
     if (categoryLower.includes('location') || categoryLower === 'location_venue') return 'location';
     if (categoryLower.includes('memor') || categoryLower.includes('photo') || categoryLower.includes('video')) return 'memories';
     if (categoryLower.includes('styling') || categoryLower.includes('atmosphere') || categoryLower.includes('decoration') || categoryLower.includes('flower')) return 'styling';
-    if (categoryLower.includes('logistics') || categoryLower.includes('transport')) return 'logistics';
     if (categoryLower.includes('music') || categoryLower.includes('entertainment') || categoryLower.includes('dj')) return 'music';
     if (categoryLower.includes('clothing') || categoryLower.includes('dress') || categoryLower.includes('suit')) return 'clothing';
     if (categoryLower.includes('catering') || categoryLower.includes('culinary') || categoryLower.includes('food') || categoryLower.includes('cake') || categoryLower.includes('drink')) return 'catering_drinks';
+    if (categoryLower.includes('transport') || categoryLower.includes('logistics')) return 'transport_logistics';
 
     if (categoryLower === 'styling_outfit') {
       return null;
