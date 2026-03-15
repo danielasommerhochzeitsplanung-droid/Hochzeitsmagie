@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Pencil, Trash2, MapPin, Phone, Mail, ChevronDown, ChevronUp, Calendar, Archive, ArchiveRestore } from 'lucide-react';
-import { Location } from './LocationModal';
+import { Location, storage } from '../lib/storage-adapter';
 import { LocationContact, LocationVendorAssignment } from './LocationsModule';
-import { storage } from '../lib/storage-adapter';
 
 interface LocationTableProps {
   locations: Location[];

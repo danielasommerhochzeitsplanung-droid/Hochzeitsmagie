@@ -1,21 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-export interface Location {
-  id: string;
-  name: string;
-  type: string;
-  address: string;
-  contact_name: string;
-  contact_phone: string;
-  contact_email: string;
-  viewing_date?: string;
-  reservation_date?: string;
-  notes: string;
-  archived?: boolean;
-  created_at?: string;
-}
+import { Location } from '../lib/storage-adapter';
 
 interface LocationModalProps {
   isOpen: boolean;

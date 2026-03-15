@@ -91,6 +91,7 @@ class LocalStorageAdapter<T extends BaseEntity> {
         ...data,
         id: generateId(),
         created_at: new Date().toISOString(),
+        archived: (data as any).archived ?? false,
       } as T;
       items.push(newItem);
       localStorage.setItem(this.getStorageKey(), JSON.stringify(items));
@@ -254,7 +255,7 @@ export interface Location extends BaseEntity {
   viewing_date?: string;
   reservation_date?: string;
   notes: string;
-  archived?: boolean;
+  archived: boolean;
 }
 
 export interface SupportTeam extends BaseEntity {

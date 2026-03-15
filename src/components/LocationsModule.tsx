@@ -58,7 +58,7 @@ export default function LocationsModule() {
 
   const loadLocations = () => {
     const allLocations = storage.locations.getAll();
-    const filtered = allLocations.filter(l => l.archived === showArchived);
+    const filtered = allLocations.filter(l => (l.archived ?? false) === showArchived);
     const sorted = filtered.sort((a, b) => a.name.localeCompare(b.name));
     setLocations(sorted);
   };
