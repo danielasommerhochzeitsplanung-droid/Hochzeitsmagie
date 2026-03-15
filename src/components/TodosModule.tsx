@@ -28,13 +28,9 @@ const mainCategories = [
     color: 'bg-purple-500',
     subcategories: ['catering', 'planning'],
     subAreas: [
-      { id: 'location', icon: '📍', label: 'Location & Ablauf' },
       { id: 'memories', icon: '📸', label: 'Erinnerungen' },
-      { id: 'styling', icon: '🎨', label: 'Gestaltung & Atmosphäre' },
-      { id: 'logistics', icon: '🚗', label: 'Logistik' },
-      { id: 'music', icon: '🎵', label: 'Musik & Unterhaltung' },
-      { id: 'clothing', icon: '👗', label: 'Kleidung' },
       { id: 'catering_drinks', icon: '🍽️', label: 'Kulinarik & Getränke' },
+      { id: 'music_entertainment', icon: '🎵', label: 'Musik & Unterhaltung' },
       { id: 'transport_logistics', icon: '🚗', label: 'Transport & Logistik' },
     ]
   },
