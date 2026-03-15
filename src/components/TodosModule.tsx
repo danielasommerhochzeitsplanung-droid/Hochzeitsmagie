@@ -34,7 +34,7 @@ const mainCategories = [
       { id: 'logistics', icon: '🚗', label: 'Logistik' },
       { id: 'music', icon: '🎵', label: 'Musik & Unterhaltung' },
       { id: 'clothing', icon: '👗', label: 'Kleidung' },
-      { id: 'culinary', icon: '🍽️', label: 'Kulinarik' },
+      { id: 'catering_drinks', icon: '🍽️', label: 'Kulinarik & Getränke' },
     ]
   },
   {
@@ -438,7 +438,7 @@ export default function TodosModule() {
     if (categoryLower.includes('logistics') || categoryLower.includes('transport')) return 'logistics';
     if (categoryLower.includes('music') || categoryLower.includes('entertainment') || categoryLower.includes('dj')) return 'music';
     if (categoryLower.includes('clothing') || categoryLower.includes('dress') || categoryLower.includes('suit')) return 'clothing';
-    if (categoryLower.includes('culinary') || categoryLower.includes('catering') || categoryLower.includes('food') || categoryLower.includes('cake')) return 'culinary';
+    if (categoryLower.includes('catering') || categoryLower.includes('culinary') || categoryLower.includes('food') || categoryLower.includes('cake') || categoryLower.includes('drink')) return 'catering_drinks';
 
     if (categoryLower === 'styling_outfit') {
       return null;
