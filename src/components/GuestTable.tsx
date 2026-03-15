@@ -156,6 +156,8 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
   };
 
   const getStatusBadge = (status: string) => {
+    const safeStatus = status || 'pending';
+
     const statusStyles: { [key: string]: { bg: string; text: string } } = {
       pending: { bg: '#f3f4f6', text: '#6b7280' },
       sent: { bg: '#e0f7f6', text: '#4ECDC4' },
@@ -163,14 +165,14 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
       declined: { bg: '#e8e8e8', text: '#3b3b3d' }
     };
 
-    const style = statusStyles[status] || statusStyles.pending;
+    const style = statusStyles[safeStatus] || statusStyles.pending;
 
     return (
       <span
         className="px-2 py-1 rounded-full text-xs"
         style={{ backgroundColor: style.bg, color: style.text, fontFamily: 'Open Sans, sans-serif' }}
       >
-        {t(`guests.status${status.charAt(0).toUpperCase()}${status.slice(1)}`)}
+        {t(`guests.status${safeStatus.charAt(0).toUpperCase()}${safeStatus.slice(1)}`)}
       </span>
     );
   };
