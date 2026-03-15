@@ -58,16 +58,14 @@ const mainCategories = [
     ]
   },
   {
-    id: 'music_entertainment',
-    icon: '🎵',
-    color: 'bg-indigo-500',
-    subcategories: ['music']
-  },
-  {
     id: 'organization_closure',
     icon: '📋',
     color: 'bg-pink-500',
-    subcategories: []
+    subcategories: [],
+    subAreas: [
+      { id: 'support_team', icon: '💪', label: 'Helfer & Supportteam' },
+      { id: 'guest_care', icon: '🎁', label: 'Gästebetreuung' },
+    ]
   },
 ];
 
@@ -80,7 +78,6 @@ const categoryToMainCategory = (category: string): string => {
   if (categoryLower === 'decoration' || categoryLower === 'styling_atmosphere') return 'styling_atmosphere';
   if (categoryLower === 'styling_outfit') return 'styling_outfit';
   if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
-  if (categoryLower === 'music' || categoryLower === 'music_entertainment') return 'music_entertainment';
   if (categoryLower === 'organization_closure') return 'organization_closure';
 
   return 'organization_closure';
