@@ -9,7 +9,6 @@ import { LocationVendorAssignmentModal } from './LocationVendorAssignmentModal';
 import EventModal, { Event } from './EventModal';
 import QuickAddBar from './QuickAddBar';
 import VendorModal from './VendorModal';
-import LocationTasksSection from './LocationTasksSection';
 
 export interface LocationContact {
   id?: string;
@@ -297,8 +296,6 @@ export default function LocationsModule() {
         onDeleteVendorAssignment={handleDeleteVendorAssignment}
         onAddEvent={handleAddEvent}
       />
-
-      <LocationTasksSection />
 
       <LocationModal
         isOpen={isModalOpen}
