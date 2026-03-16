@@ -137,7 +137,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
       star: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b', label: '⭐ Brauttisch' },
       vip: { icon: <Star className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b', label: 'VIP' },
       family: { icon: <Heart className="w-3 h-3" />, bg: '#ffe4e6', color: '#e11d48', label: 'Familie' },
-      friend: { icon: <UserCheck className="w-3 h-3" />, bg: '#e0f7f6', color: '#4ECDC4', label: 'Freund/in' },
+      friend: { icon: <UserCheck className="w-3 h-3" />, bg: '#fef9e6', color: '#d6b15b', label: 'Freund/in' },
       colleague: { icon: <Briefcase className="w-3 h-3" />, bg: '#f3f4f6', color: '#6b7280', label: 'Kollege/in' },
       child: { icon: <Baby className="w-3 h-3" />, bg: '#dbeafe', color: '#3b82f6', label: 'Kind' }
     };
@@ -178,7 +178,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
 
     const statusStyles: { [key: string]: { bg: string; text: string } } = {
       pending: { bg: '#f3f4f6', text: '#6b7280' },
-      sent: { bg: '#e0f7f6', text: '#4ECDC4' },
+      sent: { bg: '#fef9e6', text: '#d6b15b' },
       confirmed: { bg: '#fef9e6', text: '#d6b15b' },
       declined: { bg: '#e8e8e8', text: '#3b3b3d' }
     };
@@ -297,7 +297,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                         onClick={() => onEdit(guest)}
                         className="transition-colors"
                         style={{ color: '#9ca3af' }}
-                        onMouseEnter={(e) => e.currentTarget.style.color = '#4ECDC4'}
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#d6b15b'}
                         onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
                         title={t('guests.edit')}
                       >
@@ -361,9 +361,9 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                   <td className="px-6 py-4 text-center">
                     {guest.support_team_id ? (
                       <div className="flex items-center justify-center gap-1">
-                        <Shield className="w-4 h-4" style={{ color: '#4ECDC4' }} />
+                        <Shield className="w-4 h-4" style={{ color: '#d6b15b' }} />
                         {guest.support_team_role && (
-                          <span className="text-xs" style={{ color: '#4ECDC4', fontFamily: 'Open Sans, sans-serif' }}>
+                          <span className="text-xs" style={{ color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}>
                             {guest.support_team_role}
                           </span>
                         )}
@@ -378,8 +378,8 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                         <button
                           onClick={() => onAddToSupportTeam(guest)}
                           className="p-2 rounded-lg transition-colors"
-                          style={{ color: '#4ECDC4' }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0f7f6'}
+                          style={{ color: '#d6b15b' }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef9e6'}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                           title={t('guests.addToSupportTeam')}
                         >
@@ -390,8 +390,8 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                         <button
                           onClick={() => onRestore(guest.id)}
                           className="p-2 rounded-lg transition-colors"
-                          style={{ color: '#4ECDC4' }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0f7f6'}
+                          style={{ color: '#d6b15b' }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef9e6'}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                           title={t('guests.restore')}
                         >
@@ -418,7 +418,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
       </div>
 
       {!isArchived && guests.length > 0 && (
-        <div className="rounded-lg p-6 shadow" style={{ background: 'linear-gradient(to right, #fef9e6, #e0f7f6)' }}>
+        <div className="rounded-lg p-6 shadow" style={{ background: 'linear-gradient(to right, #fef9e6, #fef9e6)' }}>
           <h3 className="text-lg mb-4" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 'normal' }}>{t('guests.summary')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -441,7 +441,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <div className="text-sm mb-1" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>{t('guests.saveTheDateSent')}</div>
-              <div className="text-2xl" style={{ color: '#4ECDC4', fontFamily: 'Open Sans, sans-serif' }}>
+              <div className="text-2xl" style={{ color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}>
                 {saveTheDateSent} / {guests.length}
               </div>
             </div>
@@ -453,7 +453,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
             </div>
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <div className="text-sm mb-1" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>{t('guests.invitationsSent')}</div>
-              <div className="text-2xl" style={{ color: '#4ECDC4', fontFamily: 'Open Sans, sans-serif' }}>
+              <div className="text-2xl" style={{ color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}>
                 {invitationsSent} / {guests.length}
               </div>
             </div>
@@ -539,7 +539,7 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                               <span
                                 key={i}
                                 className="px-2 py-1 rounded-full text-xs"
-                                style={{ backgroundColor: '#e0f7f6', color: '#4ECDC4', fontFamily: 'Open Sans, sans-serif' }}
+                                style={{ backgroundColor: '#fef9e6', color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
                               >
                                 {r}
                               </span>
