@@ -76,6 +76,9 @@ export default function GanttChart({
 }: GanttChartProps) {
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('month');
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(
+    new Set(taskCategories.map(cat => cat.id))
+  );
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<GanttItem | null>(null);
   const [resizingItem, setResizingItem] = useState<{ item: GanttItem; side: 'left' | 'right' } | null>(null);
@@ -306,6 +309,18 @@ export default function GanttChart({
       return newSet;
     });
   };
+
+  const toggleCategory = useCallback((categoryId: string) => {
+    setCollapsedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  }, []);
 
   const handleDragStart = (item: GanttItem, e: React.MouseEvent) => {
     e.preventDefault();
@@ -570,120 +585,261 @@ export default function GanttChart({
                 </div>
               </div>
 
-              {!group.collapsed && group.items.map((item, itemIdx) => {
-                const position = getItemPosition(item);
-                const isHovered = hoveredItem === item.id;
-                const overdue = isOverdue(item);
+              {!group.collapsed && (() => {
+                if (group.type === 'task') {
+                  const tasksByCategory = new Map<string, GanttItem[]>();
+                  group.items.forEach(item => {
+                    const cat = item.category || 'uncategorized';
+                    if (!tasksByCategory.has(cat)) {
+                      tasksByCategory.set(cat, []);
+                    }
+                    tasksByCategory.get(cat)!.push(item);
+                  });
 
-                return (
-                  <div
-                    key={item.id}
-                    className="flex border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                    style={{ height: `${rowHeight}px` }}
-                    onMouseEnter={() => setHoveredItem(item.id)}
-                    onMouseLeave={() => setHoveredItem(null)}
-                  >
-                    <div
-                      className="flex-shrink-0 border-r-2 flex items-center gap-2 px-3 pl-10"
-                      style={{ width: `${leftColumnWidth}px`, borderColor: '#e5e5e5' }}
-                    >
-                      {item.type === 'task' && (
-                        <button
-                          onClick={() => onToggleTask(item.data as Task)}
-                          className="flex-shrink-0"
+                  return taskCategories.map(category => {
+                    const categoryItems = tasksByCategory.get(category.id) || [];
+                    if (categoryItems.length === 0) return null;
+
+                    const isCategoryCollapsed = collapsedCategories.has(category.id);
+
+                    return (
+                      <div key={category.id}>
+                        <div
+                          className="flex border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                          style={{ height: `${rowHeight}px` }}
+                          onClick={() => toggleCategory(category.id)}
                         >
-                          {item.completed ? (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                          ) : (
-                            <Circle className="w-4 h-4 text-gray-400 hover:text-emerald-500 transition-colors" />
-                          )}
-                        </button>
-                      )}
-                      <span
-                        className={`text-xs truncate flex-1 ${
-                          item.completed ? 'line-through text-gray-400' : 'text-gray-700'
-                        }`}
-                      >
-                        {item.title}
-                      </span>
-                      {overdue && (
-                        <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                      )}
-                    </div>
+                          <div
+                            className="flex-shrink-0 border-r-2 flex items-center gap-2 px-3 pl-10"
+                            style={{ width: `${leftColumnWidth}px`, borderColor: '#e5e5e5' }}
+                          >
+                            {isCategoryCollapsed ? (
+                              <ChevronRight className="w-3 h-3 text-gray-500" />
+                            ) : (
+                              <ChevronDown className="w-3 h-3 text-gray-500" />
+                            )}
+                            <span className="text-base">{category.icon}</span>
+                            <span className="text-xs font-semibold text-gray-700 truncate flex-1">
+                              {category.id === 'location_venue' && 'Location & Venue'}
+                              {category.id === 'ceremony_legal' && 'Trauung & Formalitäten'}
+                              {category.id === 'vendors_services' && 'Dienstleister & Services'}
+                              {category.id === 'guests_communication' && 'Gäste & Kommunikation'}
+                              {category.id === 'styling_atmosphere' && 'Styling & Atmosphäre'}
+                              {category.id === 'styling_outfit' && 'Styling & Outfit'}
+                              {category.id === 'organization_closure' && 'Organisation & Abschluss'}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              ({categoryItems.length})
+                            </span>
+                          </div>
+                          <div className="flex-1 relative" id="gantt-timeline">
+                            {todayPercent >= 0 && todayPercent <= 100 && (
+                              <div
+                                className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                                style={{ left: `${todayPercent}%` }}
+                              />
+                            )}
+                            {weddingPercent >= 0 && weddingPercent <= 100 && (
+                              <div
+                                className="absolute top-0 bottom-0 w-0.5 bg-rose-600 z-10 pointer-events-none"
+                                style={{ left: `${weddingPercent}%` }}
+                              />
+                            )}
+                          </div>
+                        </div>
 
-                    <div className="flex-1 relative" id="gantt-timeline">
-                      {todayPercent >= 0 && todayPercent <= 100 && (
-                        <div
-                          className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
-                          style={{ left: `${todayPercent}%` }}
-                        />
-                      )}
-                      {weddingPercent >= 0 && weddingPercent <= 100 && (
-                        <div
-                          className="absolute top-0 bottom-0 w-0.5 bg-rose-600 z-10 pointer-events-none"
-                          style={{ left: `${weddingPercent}%` }}
-                        />
-                      )}
+                        {!isCategoryCollapsed && categoryItems.map(item => {
+                          const position = getItemPosition(item);
+                          const isHovered = hoveredItem === item.id;
+                          const overdue = isOverdue(item);
 
+                          return (
+                            <div
+                              key={item.id}
+                              className="flex border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                              style={{ height: `${rowHeight}px` }}
+                              onMouseEnter={() => setHoveredItem(item.id)}
+                              onMouseLeave={() => setHoveredItem(null)}
+                            >
+                              <div
+                                className="flex-shrink-0 border-r-2 flex items-center gap-2 px-3 pl-20"
+                                style={{ width: `${leftColumnWidth}px`, borderColor: '#e5e5e5' }}
+                              >
+                                <button
+                                  onClick={() => onToggleTask(item.data as Task)}
+                                  className="flex-shrink-0"
+                                >
+                                  {item.completed ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                  ) : (
+                                    <Circle className="w-4 h-4 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                  )}
+                                </button>
+                                <span
+                                  className={`text-xs truncate flex-1 ${
+                                    item.completed ? 'line-through text-gray-400' : 'text-gray-700'
+                                  }`}
+                                >
+                                  {item.title}
+                                </span>
+                                {overdue && (
+                                  <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                )}
+                              </div>
+
+                              <div className="flex-1 relative" id="gantt-timeline">
+                                {todayPercent >= 0 && todayPercent <= 100 && (
+                                  <div
+                                    className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                                    style={{ left: `${todayPercent}%` }}
+                                  />
+                                )}
+                                {weddingPercent >= 0 && weddingPercent <= 100 && (
+                                  <div
+                                    className="absolute top-0 bottom-0 w-0.5 bg-rose-600 z-10 pointer-events-none"
+                                    style={{ left: `${weddingPercent}%` }}
+                                  />
+                                )}
+
+                                <div
+                                  className="absolute top-1/2 -translate-y-1/2 rounded cursor-move flex items-center px-2 group/bar"
+                                  style={{
+                                    left: `${position.left}%`,
+                                    width: `${position.width}%`,
+                                    height: '24px',
+                                    backgroundColor: getItemColor(item),
+                                    opacity: item.completed ? 0.5 : overdue ? 0.9 : 0.85,
+                                    border: isHovered ? '2px solid #3b3b3d' : overdue ? '2px solid #dc2626' : 'none',
+                                    boxShadow: isHovered ? '0 4px 6px rgba(0,0,0,0.2)' : 'none',
+                                  }}
+                                  onMouseDown={(e) => handleDragStart(item, e)}
+                                >
+                                  <div
+                                    className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-black/20"
+                                    onMouseDown={(e) => handleResizeStart(item, 'left', e)}
+                                  />
+                                  <div
+                                    className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-black/20"
+                                    onMouseDown={(e) => handleResizeStart(item, 'right', e)}
+                                  />
+                                  {position.width > 5 && (
+                                    <span className="text-xs text-white font-medium truncate">
+                                      {item.title}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {isHovered && (
+                                  <div
+                                    className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                                    style={{
+                                      left: `${position.left + position.width / 2}%`,
+                                      top: '-60px',
+                                      transform: 'translateX(-50%)',
+                                    }}
+                                  >
+                                    <div className="font-semibold mb-1">{item.title}</div>
+                                    <div className="text-gray-300">
+                                      {item.startDate.toLocaleDateString('de-DE')}
+                                      {item.endDate.getTime() !== item.startDate.getTime() &&
+                                        ` - ${item.endDate.toLocaleDateString('de-DE')}`
+                                      }
+                                    </div>
+                                    {overdue && (
+                                      <div className="text-red-400 text-xs mt-1">
+                                        Überfällig
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  });
+                }
+
+                return group.items.map(item => {
+                  const position = getItemPosition(item);
+                  const isHovered = hoveredItem === item.id;
+                  const overdue = isOverdue(item);
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                      style={{ height: `${rowHeight}px` }}
+                      onMouseEnter={() => setHoveredItem(item.id)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                    >
                       <div
-                        className="absolute top-1/2 -translate-y-1/2 rounded cursor-move flex items-center px-2 group/bar"
-                        style={{
-                          left: `${position.left}%`,
-                          width: `${position.width}%`,
-                          height: '24px',
-                          backgroundColor: getItemColor(item),
-                          opacity: item.completed ? 0.5 : overdue ? 0.9 : 0.85,
-                          border: isHovered ? '2px solid #3b3b3d' : overdue ? '2px solid #dc2626' : 'none',
-                          boxShadow: isHovered ? '0 4px 6px rgba(0,0,0,0.2)' : 'none',
-                        }}
-                        onMouseDown={(e) => handleDragStart(item, e)}
+                        className="flex-shrink-0 border-r-2 flex items-center gap-2 px-3 pl-10"
+                        style={{ width: `${leftColumnWidth}px`, borderColor: '#e5e5e5' }}
                       >
-                        {(item.type === 'task' || item.type === 'event') && (
-                          <>
-                            <div
-                              className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-black/20"
-                              onMouseDown={(e) => handleResizeStart(item, 'left', e)}
-                            />
-                            <div
-                              className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-black/20"
-                              onMouseDown={(e) => handleResizeStart(item, 'right', e)}
-                            />
-                          </>
-                        )}
-                        {position.width > 5 && (
-                          <span className="text-xs text-white font-medium truncate">
-                            {item.title}
-                          </span>
-                        )}
+                        <span className="text-xs truncate flex-1 text-gray-700">
+                          {item.title}
+                        </span>
                       </div>
 
-                      {isHovered && (
+                      <div className="flex-1 relative" id="gantt-timeline">
+                        {todayPercent >= 0 && todayPercent <= 100 && (
+                          <div
+                            className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                            style={{ left: `${todayPercent}%` }}
+                          />
+                        )}
+                        {weddingPercent >= 0 && weddingPercent <= 100 && (
+                          <div
+                            className="absolute top-0 bottom-0 w-0.5 bg-rose-600 z-10 pointer-events-none"
+                            style={{ left: `${weddingPercent}%` }}
+                          />
+                        )}
+
                         <div
-                          className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                          className="absolute top-1/2 -translate-y-1/2 rounded cursor-move flex items-center px-2 group/bar"
                           style={{
-                            left: `${position.left + position.width / 2}%`,
-                            top: '-60px',
-                            transform: 'translateX(-50%)',
+                            left: `${position.left}%`,
+                            width: `${position.width}%`,
+                            height: '24px',
+                            backgroundColor: getItemColor(item),
+                            opacity: 0.85,
+                            border: isHovered ? '2px solid #3b3b3d' : 'none',
+                            boxShadow: isHovered ? '0 4px 6px rgba(0,0,0,0.2)' : 'none',
                           }}
+                          onMouseDown={(e) => handleDragStart(item, e)}
                         >
-                          <div className="font-semibold mb-1">{item.title}</div>
-                          <div className="text-gray-300">
-                            {item.startDate.toLocaleDateString('de-DE')}
-                            {item.endDate.getTime() !== item.startDate.getTime() &&
-                              ` - ${item.endDate.toLocaleDateString('de-DE')}`
-                            }
-                          </div>
-                          {overdue && (
-                            <div className="text-red-400 text-xs mt-1">
-                              Überfällig
-                            </div>
+                          {position.width > 5 && (
+                            <span className="text-xs text-white font-medium truncate">
+                              {item.title}
+                            </span>
                           )}
                         </div>
-                      )}
+
+                        {isHovered && (
+                          <div
+                            className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                            style={{
+                              left: `${position.left + position.width / 2}%`,
+                              top: '-60px',
+                              transform: 'translateX(-50%)',
+                            }}
+                          >
+                            <div className="font-semibold mb-1">{item.title}</div>
+                            <div className="text-gray-300">
+                              {item.startDate.toLocaleDateString('de-DE')}
+                              {item.endDate.getTime() !== item.startDate.getTime() &&
+                                ` - ${item.endDate.toLocaleDateString('de-DE')}`
+                              }
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                });
+              })()}
             </div>
           ))}
         </div>

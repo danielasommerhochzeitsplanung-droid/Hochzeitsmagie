@@ -12,7 +12,9 @@ import {
   MapPin,
   Users,
   Briefcase,
-  Filter
+  Filter,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import { Task, Event, Vendor, Location, SupportTeam } from '../lib/storage-adapter';
 import { taskCategories } from './taskTemplates';
@@ -450,6 +452,22 @@ export default function TimelineView({
 
   const weddingPercent = ((weddingDateObj.getTime() - startDate.getTime()) / (totalDays * 24 * 60 * 60 * 1000)) * 100;
 
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(
+    new Set(taskCategories.map(cat => cat.id))
+  );
+
+  const toggleCategory = useCallback((categoryId: string) => {
+    setCollapsedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  }, []);
+
   const groupedItems = useMemo(() => {
     const groups = new Map<string, TimelineItem[]>();
 
@@ -641,126 +659,277 @@ export default function TimelineView({
           })}
 
           <div className="p-4 space-y-8">
-            {Array.from(groupedItems.entries()).map(([type, items]) => (
-              <div key={type} className="space-y-2">
-                <div className="flex items-center gap-2 mb-3">
-                  <div
-                    className="w-8 h-8 rounded flex items-center justify-center text-white text-sm"
-                    style={{ backgroundColor: getItemColor(items[0]) }}
-                  >
-                    {getItemIcon(items[0])}
-                  </div>
-                  <h4 className="text-sm font-bold" style={{ color: '#3b3b3d' }}>
-                    {type === 'event' && 'Events'}
-                    {type === 'task' && 'Aufgaben'}
-                    {type === 'vendor' && 'Dienstleister'}
-                    {type === 'location' && 'Locations'}
-                    {type === 'support' && 'Support Team'}
-                  </h4>
-                  <span className="text-xs text-gray-500">
-                    ({items.length})
-                  </span>
-                </div>
+            {Array.from(groupedItems.entries()).map(([type, items]) => {
+              if (type === 'task') {
+                const tasksByCategory = new Map<string, TimelineItem[]>();
+                items.forEach(item => {
+                  const cat = item.category || 'uncategorized';
+                  if (!tasksByCategory.has(cat)) {
+                    tasksByCategory.set(cat, []);
+                  }
+                  tasksByCategory.get(cat)!.push(item);
+                });
 
-                <div className="space-y-2">
-                  {items.map(item => {
-                    const position = getItemPosition(item);
-                    const itemConflicts = conflicts.filter(c => c.itemId === item.id);
-                    const isHovered = hoveredItem === item.id;
-                    const isEvent = item.type === 'event';
-
-                    return (
+                return (
+                  <div key={type} className="space-y-2">
+                    <div className="flex items-center gap-2 mb-3">
                       <div
-                        key={item.id}
-                        className="relative group"
-                        onMouseEnter={() => setHoveredItem(item.id)}
-                        onMouseLeave={() => setHoveredItem(null)}
+                        className="w-8 h-8 rounded flex items-center justify-center text-white text-sm"
+                        style={{ backgroundColor: getItemColor(items[0]) }}
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          {item.type === 'task' && (
-                            <button
-                              onClick={() => onToggleTask(item.data as Task)}
-                              className="flex-shrink-0"
-                            >
-                              {item.completed ? (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                              ) : (
-                                <Circle className="w-4 h-4 text-gray-400 hover:text-emerald-500 transition-colors" />
-                              )}
-                            </button>
-                          )}
-                          <span
-                            className={`text-xs ${item.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}
-                            style={{ fontFamily: 'Open Sans, sans-serif' }}
-                          >
-                            {item.title}
-                          </span>
-                          {itemConflicts.map((conflict, idx) => (
-                            <div key={idx} title={conflict.message}>
-                              {getConflictIcon(conflict.type)}
-                            </div>
-                          ))}
-                        </div>
+                        {getItemIcon(items[0])}
+                      </div>
+                      <h4 className="text-sm font-bold" style={{ color: '#3b3b3d' }}>
+                        Aufgaben
+                      </h4>
+                      <span className="text-xs text-gray-500">
+                        ({items.length})
+                      </span>
+                    </div>
 
-                        <div className={`relative ${isEvent ? 'h-12' : 'h-8'} bg-gray-100 rounded-md overflow-visible`}>
-                          <div
-                            draggable={item.type === 'task' || item.type === 'event'}
-                            onDragStart={(e) => handleDragStart(item, e)}
-                            className={`absolute h-full rounded-md transition-all ${
-                              (item.type === 'task' || item.type === 'event') ? 'cursor-move' : 'cursor-default'
-                            } hover:opacity-100 hover:shadow-lg flex items-center px-2`}
-                            style={{
-                              left: `${position.left}%`,
-                              width: `${position.width}%`,
-                              backgroundColor: getItemColor(item),
-                              opacity: item.completed ? 0.4 : 0.9,
-                              border: isHovered ? '2px solid #3b3b3d' : 'none',
-                              zIndex: isHovered ? 10 : 1,
-                            }}
-                          >
-                            {position.width > 3 && (
-                              <div className="flex items-center gap-1.5 text-white">
-                                {getItemIcon(item)}
-                                <span className="text-xs font-medium truncate">
-                                  {item.title}
-                                </span>
+                    <div className="space-y-4 ml-4">
+                      {taskCategories.map(category => {
+                        const categoryItems = tasksByCategory.get(category.id) || [];
+                        if (categoryItems.length === 0) return null;
+
+                        const isCollapsed = collapsedCategories.has(category.id);
+
+                        return (
+                          <div key={category.id} className="space-y-2">
+                            <button
+                              onClick={() => toggleCategory(category.id)}
+                              className="flex items-center gap-2 w-full hover:bg-gray-50 rounded px-2 py-1.5 transition-colors"
+                            >
+                              {isCollapsed ? (
+                                <ChevronRight className="w-4 h-4 text-gray-500" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4 text-gray-500" />
+                              )}
+                              <span className="text-lg">{category.icon}</span>
+                              <span className="text-xs font-semibold text-gray-700">
+                                {category.id === 'location_venue' && 'Location & Venue'}
+                                {category.id === 'ceremony_legal' && 'Trauung & Formalitäten'}
+                                {category.id === 'vendors_services' && 'Dienstleister & Services'}
+                                {category.id === 'guests_communication' && 'Gäste & Kommunikation'}
+                                {category.id === 'styling_atmosphere' && 'Styling & Atmosphäre'}
+                                {category.id === 'styling_outfit' && 'Styling & Outfit'}
+                                {category.id === 'organization_closure' && 'Organisation & Abschluss'}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                ({categoryItems.length})
+                              </span>
+                            </button>
+
+                            {!isCollapsed && (
+                              <div className="space-y-2 ml-6">
+                                {categoryItems.map(item => {
+                                  const position = getItemPosition(item);
+                                  const itemConflicts = conflicts.filter(c => c.itemId === item.id);
+                                  const isHovered = hoveredItem === item.id;
+
+                                  return (
+                                    <div
+                                      key={item.id}
+                                      className="relative group"
+                                      onMouseEnter={() => setHoveredItem(item.id)}
+                                      onMouseLeave={() => setHoveredItem(null)}
+                                    >
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <button
+                                          onClick={() => onToggleTask(item.data as Task)}
+                                          className="flex-shrink-0"
+                                        >
+                                          {item.completed ? (
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                          ) : (
+                                            <Circle className="w-4 h-4 text-gray-400 hover:text-emerald-500 transition-colors" />
+                                          )}
+                                        </button>
+                                        <span
+                                          className={`text-xs ${item.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}
+                                          style={{ fontFamily: 'Open Sans, sans-serif' }}
+                                        >
+                                          {item.title}
+                                        </span>
+                                        {itemConflicts.map((conflict, idx) => (
+                                          <div key={idx} title={conflict.message}>
+                                            {getConflictIcon(conflict.type)}
+                                          </div>
+                                        ))}
+                                      </div>
+
+                                      <div className="relative h-8 bg-gray-100 rounded-md overflow-visible">
+                                        <div
+                                          draggable
+                                          onDragStart={(e) => handleDragStart(item, e)}
+                                          className="absolute h-full rounded-md transition-all cursor-move hover:opacity-100 hover:shadow-lg flex items-center px-2"
+                                          style={{
+                                            left: `${position.left}%`,
+                                            width: `${position.width}%`,
+                                            backgroundColor: getItemColor(item),
+                                            opacity: item.completed ? 0.4 : 0.9,
+                                            border: isHovered ? '2px solid #3b3b3d' : 'none',
+                                            zIndex: isHovered ? 10 : 1,
+                                          }}
+                                        >
+                                          {position.width > 3 && (
+                                            <div className="flex items-center gap-1.5 text-white">
+                                              {getItemIcon(item)}
+                                              <span className="text-xs font-medium truncate">
+                                                {item.title}
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {isHovered && (
+                                          <div
+                                            className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                                            style={{
+                                              left: `${position.left}%`,
+                                              top: '-70px',
+                                              transform: 'translateX(-50%)',
+                                            }}
+                                          >
+                                            <div className="font-semibold mb-1">{item.title}</div>
+                                            <div className="text-gray-300">
+                                              {item.startDate.toLocaleDateString('de-DE')}
+                                              {item.endDate && item.endDate.getTime() !== item.startDate.getTime() &&
+                                                ` - ${item.endDate.toLocaleDateString('de-DE')}`
+                                              }
+                                            </div>
+                                            {itemConflicts.length > 0 && (
+                                              <div className="text-amber-300 text-xs mt-1">
+                                                {itemConflicts[0].message}
+                                              </div>
+                                            )}
+                                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
+                                              <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             )}
                           </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
 
-                          {isHovered && (
+              return (
+                <div key={type} className="space-y-2">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div
+                      className="w-8 h-8 rounded flex items-center justify-center text-white text-sm"
+                      style={{ backgroundColor: getItemColor(items[0]) }}
+                    >
+                      {getItemIcon(items[0])}
+                    </div>
+                    <h4 className="text-sm font-bold" style={{ color: '#3b3b3d' }}>
+                      {type === 'event' && 'Events'}
+                      {type === 'vendor' && 'Dienstleister'}
+                      {type === 'location' && 'Locations'}
+                      {type === 'support' && 'Support Team'}
+                    </h4>
+                    <span className="text-xs text-gray-500">
+                      ({items.length})
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {items.map(item => {
+                      const position = getItemPosition(item);
+                      const itemConflicts = conflicts.filter(c => c.itemId === item.id);
+                      const isHovered = hoveredItem === item.id;
+                      const isEvent = item.type === 'event';
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="relative group"
+                          onMouseEnter={() => setHoveredItem(item.id)}
+                          onMouseLeave={() => setHoveredItem(null)}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className="text-xs text-gray-700"
+                              style={{ fontFamily: 'Open Sans, sans-serif' }}
+                            >
+                              {item.title}
+                            </span>
+                            {itemConflicts.map((conflict, idx) => (
+                              <div key={idx} title={conflict.message}>
+                                {getConflictIcon(conflict.type)}
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className={`relative ${isEvent ? 'h-12' : 'h-8'} bg-gray-100 rounded-md overflow-visible`}>
                             <div
-                              className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                              draggable={item.type === 'task' || item.type === 'event'}
+                              onDragStart={(e) => handleDragStart(item, e)}
+                              className={`absolute h-full rounded-md transition-all ${
+                                (item.type === 'task' || item.type === 'event') ? 'cursor-move' : 'cursor-default'
+                              } hover:opacity-100 hover:shadow-lg flex items-center px-2`}
                               style={{
                                 left: `${position.left}%`,
-                                top: '-70px',
-                                transform: 'translateX(-50%)',
+                                width: `${position.width}%`,
+                                backgroundColor: getItemColor(item),
+                                opacity: item.completed ? 0.4 : 0.9,
+                                border: isHovered ? '2px solid #3b3b3d' : 'none',
+                                zIndex: isHovered ? 10 : 1,
                               }}
                             >
-                              <div className="font-semibold mb-1">{item.title}</div>
-                              <div className="text-gray-300">
-                                {item.startDate.toLocaleDateString('de-DE')}
-                                {item.endDate && item.endDate.getTime() !== item.startDate.getTime() &&
-                                  ` - ${item.endDate.toLocaleDateString('de-DE')}`
-                                }
-                              </div>
-                              {itemConflicts.length > 0 && (
-                                <div className="text-amber-300 text-xs mt-1">
-                                  {itemConflicts[0].message}
+                              {position.width > 3 && (
+                                <div className="flex items-center gap-1.5 text-white">
+                                  {getItemIcon(item)}
+                                  <span className="text-xs font-medium truncate">
+                                    {item.title}
+                                  </span>
                                 </div>
                               )}
-                              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
-                                <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
-                              </div>
                             </div>
-                          )}
+
+                            {isHovered && (
+                              <div
+                                className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                                style={{
+                                  left: `${position.left}%`,
+                                  top: '-70px',
+                                  transform: 'translateX(-50%)',
+                                }}
+                              >
+                                <div className="font-semibold mb-1">{item.title}</div>
+                                <div className="text-gray-300">
+                                  {item.startDate.toLocaleDateString('de-DE')}
+                                  {item.endDate && item.endDate.getTime() !== item.startDate.getTime() &&
+                                    ` - ${item.endDate.toLocaleDateString('de-DE')}`
+                                  }
+                                </div>
+                                {itemConflicts.length > 0 && (
+                                  <div className="text-amber-300 text-xs mt-1">
+                                    {itemConflicts[0].message}
+                                  </div>
+                                )}
+                                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
+                                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
