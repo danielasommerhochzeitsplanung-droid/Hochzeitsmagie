@@ -17,6 +17,7 @@ import SupportTeamModule from './components/SupportTeamModule';
 import LocationsModule from './components/LocationsModule';
 import BudgetModule from './components/BudgetModule';
 import SeatingModule from './components/SeatingModule';
+import ScrollToTopButton from './components/ScrollToTopButton';
 
 interface WeddingData {
   id?: string;
@@ -355,6 +356,7 @@ function App() {
               <SeatingModule />
             ) : null}
           </main>
+          <ScrollToTopButton />
         </div>
       );
     }
