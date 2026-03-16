@@ -1313,7 +1313,7 @@ export default function TodosModule() {
                                                     className="text-gray-400 hover:text-blue-500 transition-colors"
                                                     title={t('todos.taskDetails.editTask')}
                                                   >
-                                                    <Edit2 className="w-5 h-5" />
+                                                    <span className="text-lg">✏️</span>
                                                   </button>
                                                 )}
                                                 {showArchived ? (
