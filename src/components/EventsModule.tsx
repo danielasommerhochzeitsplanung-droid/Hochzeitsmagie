@@ -118,26 +118,7 @@ export default function EventsModule() {
   };
 
   const handleAddCustomEvent = () => {
-    setEditingEvent({
-      id: '',
-      name_de: '',
-      name_en: '',
-      emoji: '',
-      active: true,
-      is_enabled: false,
-      date: null,
-      time_start: null,
-      time_end: null,
-      location_id: null,
-      transport_info: '',
-      transport_time_start: null,
-      transport_time_end: null,
-      transport_type: '',
-      transport_from: '',
-      transport_to: '',
-      transport_provider: '',
-      transport_notes: '',
-    } as Event);
+    setEditingEvent(null);
     setIsModalOpen(true);
     setIsDropdownOpen(false);
   };
@@ -188,7 +169,6 @@ export default function EventsModule() {
           saveVendorAssignments(updatedEvent.id, vendorIds);
           saveSupportTeamAssignments(updatedEvent.id, supportTeamIds);
           loadEvents();
-          setEditingEvent(updatedEvent as Event);
           resolve(undefined);
         } catch (err: any) {
           console.error('Error saving event details:', err);
@@ -203,7 +183,6 @@ export default function EventsModule() {
           saveVendorAssignments(newEvent.id, vendorIds);
           saveSupportTeamAssignments(newEvent.id, supportTeamIds);
           loadEvents();
-          setEditingEvent(newEvent as Event);
           resolve(newEvent.id);
         } catch (err: any) {
           console.error('Error saving event details:', err);

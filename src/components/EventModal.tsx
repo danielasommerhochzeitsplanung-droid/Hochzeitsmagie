@@ -369,6 +369,8 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
     if (newEventId) {
       setNewEventId(newEventId);
       setShowSuccessDialog(true);
+    } else {
+      onClose();
     }
   };
 
