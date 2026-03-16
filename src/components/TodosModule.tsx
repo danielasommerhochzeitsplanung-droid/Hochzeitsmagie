@@ -1040,7 +1040,7 @@ export default function TodosModule() {
                     <div className="text-3xl flex-shrink-0">
                       {mainCategory.icon}
                     </div>
-                    <h3 className="text-lg font-bold flex-1" style={{ color: '#3b3b3d' }}>
+                    <h3 className="text-lg flex-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 400 }}>
                       {t(`todos.categories.${mainCategory.id}`)}
                     </h3>
                     <span className="text-sm font-medium text-gray-500">
@@ -1104,7 +1104,7 @@ export default function TodosModule() {
                                 <div className="text-xl flex-shrink-0">
                                   {subArea.icon}
                                 </div>
-                                <h4 className="text-sm font-semibold flex-1" style={{ color: '#3b3b3d' }}>
+                                <h4 className="text-sm flex-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 400 }}>
                                   {subArea.label}
                                   {isArchived && (
                                     <span className="ml-2 text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded">
@@ -1435,7 +1435,7 @@ export default function TodosModule() {
                       {unassignedTasks.length > 0 && (
                         <div className="border-b" style={{ borderColor: '#f3f4f6' }}>
                           <div className="px-4 py-2 bg-gray-100">
-                            <h4 className="text-sm font-semibold" style={{ color: '#3b3b3d' }}>
+                            <h4 className="text-sm" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 400 }}>
                               📌 Nicht zugeordnet
                             </h4>
                           </div>
@@ -1724,7 +1724,7 @@ export default function TodosModule() {
                     <div className="text-3xl flex-shrink-0">
                       {categoryInfo?.icon || '📋'}
                     </div>
-                    <h3 className="text-lg font-bold flex-1" style={{ color: '#3b3b3d' }}>
+                    <h3 className="text-lg flex-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 400 }}>
                       {categoryInfo?.label || category}
                     </h3>
                     <span className="text-sm font-medium text-gray-500">
