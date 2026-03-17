@@ -43,28 +43,28 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
   const allEntries = useMemo((): CalendarEntry[] => {
     const entries: CalendarEntry[] = [];
 
-    if (!weddingData.events) return entries;
-
-    weddingData.events.forEach(event => {
-      if (event.date) {
-        entries.push({
-          id: `event-${event.id}`,
-          title: event.title,
-          date: event.date,
-          time_start: event.time,
-          type: 'event',
-          source_module: 'events',
-          source_id: event.id,
-          color: TYPE_COLORS.event,
-          location: event.location_id ? weddingData.locations.find(l => l.id === event.location_id)?.name : undefined,
-          description: event.description,
-        });
-      }
-    });
+    if (weddingData.events) {
+      weddingData.events.forEach(event => {
+        if (event.date) {
+          entries.push({
+            id: `event-${event.id}`,
+            title: event.title,
+            date: event.date,
+            time_start: event.time,
+            type: 'event',
+            source_module: 'events',
+            source_id: event.id,
+            color: TYPE_COLORS.event,
+            location: event.location_id ? weddingData.locations?.find(l => l.id === event.location_id)?.name : undefined,
+            description: event.description,
+          });
+        }
+      });
+    }
 
     if (weddingData.program_items) {
       weddingData.program_items.forEach(item => {
-        const event = weddingData.events.find(e => e.id === item.event_id);
+        const event = weddingData.events?.find(e => e.id === item.event_id);
         if (event?.date && item.start_time) {
           entries.push({
             id: `program-${item.id}`,
