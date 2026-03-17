@@ -132,6 +132,7 @@ export default function GanttChart({
           title: `${vendor.name} - Erstkontakt`,
           startDate: date,
           endDate: date,
+          category: vendor.category,
           data: vendor,
         });
       }
@@ -143,6 +144,7 @@ export default function GanttChart({
           title: `${vendor.name} - Termin`,
           startDate: date,
           endDate: date,
+          category: vendor.category,
           data: vendor,
         });
       }
@@ -765,8 +767,7 @@ export default function GanttChart({
                 if (group.type === 'vendor') {
                   const vendorsByCategory = new Map<string, GanttItem[]>();
                   group.items.forEach(item => {
-                    const vendor = item.data as Vendor;
-                    const cat = vendor.category || 'Sonstiges';
+                    const cat = item.category || 'Sonstiges';
                     if (!vendorsByCategory.has(cat)) {
                       vendorsByCategory.set(cat, []);
                     }
