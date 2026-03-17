@@ -56,16 +56,18 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
       console.log('Processing events:', weddingData.events);
       weddingData.events.forEach(event => {
         if (event.date) {
+          const eventName = event.name_de || event.name_en || event.title || '';
           entries.push({
             id: `event-${event.id}`,
-            title: event.title,
+            title: eventName,
             date: event.date,
-            time_start: event.time,
+            time_start: event.time_start,
+            time_end: event.time_end,
             type: 'event',
             source_module: 'events',
             source_id: event.id,
             color: TYPE_COLORS.event,
-            location: event.location_id ? weddingData.locations?.find(l => l.id === event.location_id)?.name : undefined,
+            location: event.location_id ? weddingData.locations?.find(l => l.id === event.location_id)?.name : event.location,
             description: event.description,
           });
         }
