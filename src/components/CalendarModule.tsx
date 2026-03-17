@@ -34,10 +34,8 @@ const TYPE_COLORS: Record<CalendarEntryType, string> = {
 };
 
 export default function CalendarModule({ onClose }: CalendarModuleProps) {
-  console.log('🔴 CalendarModule MOUNTED');
   const { t } = useTranslation();
-  const { weddingData } = useWeddingData();
-  console.log('🔴 weddingData received:', weddingData);
+  const { weddingData, events, tasks, vendors, programItems, locations } = useWeddingData();
 
   const [view, setView] = useState<CalendarView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -45,57 +43,43 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
   const allEntries = useMemo((): CalendarEntry[] => {
     const entries: CalendarEntry[] = [];
 
-    console.log('CalendarModule - weddingData:', {
-      events: weddingData.events?.length,
-      tasks: weddingData.tasks?.length,
-      vendors: weddingData.vendors?.length,
-      programItems: weddingData.program_items?.length
+    events.forEach(event => {
+      if (event.date) {
+        entries.push({
+          id: `event-${event.id}`,
+          title: event.title || '',
+          date: event.date,
+          time_start: event.time,
+          time_end: undefined,
+          type: 'event',
+          source_module: 'events',
+          source_id: event.id,
+          color: TYPE_COLORS.event,
+          location: event.location_id ? locations.find(l => l.id === event.location_id)?.name : undefined,
+          description: event.description,
+        });
+      }
     });
 
-    if (weddingData.events) {
-      console.log('Processing events:', weddingData.events);
-      weddingData.events.forEach(event => {
-        if (event.date) {
-          const eventName = event.name_de || event.name_en || event.title || '';
-          entries.push({
-            id: `event-${event.id}`,
-            title: eventName,
-            date: event.date,
-            time_start: event.time_start,
-            time_end: event.time_end,
-            type: 'event',
-            source_module: 'events',
-            source_id: event.id,
-            color: TYPE_COLORS.event,
-            location: event.location_id ? weddingData.locations?.find(l => l.id === event.location_id)?.name : event.location,
-            description: event.description,
-          });
-        }
-      });
-    }
+    programItems.forEach(item => {
+      const event = events.find(e => e.id === item.event_id);
+      if (event?.date && item.start_time) {
+        entries.push({
+          id: `program-${item.id}`,
+          title: item.title,
+          date: event.date,
+          time_start: item.start_time,
+          type: 'program_item',
+          source_module: 'program',
+          source_id: item.id,
+          color: TYPE_COLORS.program_item,
+          location: item.location,
+          description: item.description,
+        });
+      }
+    });
 
-    if (weddingData.program_items) {
-      weddingData.program_items.forEach(item => {
-        const event = weddingData.events?.find(e => e.id === item.event_id);
-        if (event?.date && item.start_time) {
-          entries.push({
-            id: `program-${item.id}`,
-            title: item.title,
-            date: event.date,
-            time_start: item.start_time,
-            type: 'program_item',
-            source_module: 'program',
-            source_id: item.id,
-            color: TYPE_COLORS.program_item,
-            location: item.location,
-            description: item.description,
-          });
-        }
-      });
-    }
-
-    if (weddingData.tasks) {
-      weddingData.tasks.forEach(task => {
+    tasks.forEach(task => {
       if (task.due_date) {
         entries.push({
           id: `task-due-${task.id}`,
@@ -121,10 +105,8 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
         });
       }
     });
-    }
 
-    if (weddingData.vendors) {
-      weddingData.vendors.forEach(vendor => {
+    vendors.forEach(vendor => {
       if (vendor.final_payment_due) {
         entries.push({
           id: `vendor-payment-${vendor.id}`,
@@ -137,19 +119,16 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
         });
       }
     });
-    }
-
-    console.log('Total entries created:', entries.length, entries);
 
     return entries.sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time_start || '00:00'}`);
       const dateB = new Date(`${b.date}T${b.time_start || '00:00'}`);
       return dateA.getTime() - dateB.getTime();
     });
-  }, [weddingData, t]);
+  }, [events, tasks, vendors, programItems, locations, t]);
 
   const weddingDayEntries = useMemo(() => {
-    const weddingDate = weddingData.wedding_data?.[0]?.wedding_date;
+    const weddingDate = weddingData.wedding_date;
     if (!weddingDate) return [];
     return allEntries.filter(e => e.date === weddingDate);
   }, [allEntries, weddingData]);
@@ -463,8 +442,8 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
               <div className="mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
                 <h3 className="text-lg font-medium text-neutral-900 mb-2">{t('calendar.wedding_day_timeline')}</h3>
                 <p className="text-sm text-neutral-600">
-                  {weddingData.wedding_data?.[0]?.wedding_date
-                    ? new Date(weddingData.wedding_data[0].wedding_date).toLocaleDateString('de-DE', {
+                  {weddingData.wedding_date
+                    ? new Date(weddingData.wedding_date).toLocaleDateString('de-DE', {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
