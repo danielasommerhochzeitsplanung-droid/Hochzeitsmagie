@@ -124,6 +124,7 @@ export default function GanttChart({
     });
 
     vendors.forEach(vendor => {
+      console.log('Processing vendor:', vendor.name, 'Category:', vendor.category, 'First contact:', vendor.first_contact_date, 'Next appt:', vendor.next_appointment);
       if (vendor.first_contact_date) {
         const date = new Date(vendor.first_contact_date);
         items.push({
@@ -774,8 +775,11 @@ export default function GanttChart({
                     vendorsByCategory.get(cat)!.push(item);
                   });
 
+                  console.log('Vendors by category:', Array.from(vendorsByCategory.entries()));
+
                   return VENDOR_CATEGORIES.map(category => {
                     const categoryItems = vendorsByCategory.get(category.value) || [];
+                    console.log(`Category ${category.value}:`, categoryItems.length, 'items');
                     if (categoryItems.length === 0) return null;
 
                     const isCategoryCollapsed = collapsedCategories.has(`vendor-${category.value}`);
