@@ -758,5 +758,25 @@
       "conflict": "Konflikt/Sensibel"
     },
     "categoryLegend": "Gast-Kategorien"
+  },
+  "calendar": {
+    "title": "Kalender",
+    "today": "Heute",
+    "more": "weitere",
+    "start": "Start",
+    "untitled_task": "Unbenannte Aufgabe",
+    "payment_due": "Zahlung fällig",
+    "no_events": "Keine Termine an diesem Tag",
+    "wedding_day": "Hochzeitstag",
+    "wedding_day_timeline": "Ablaufplan Hochzeitstag",
+    "no_wedding_date": "Kein Hochzeitsdatum festgelegt",
+    "no_wedding_events": "Keine Termine für den Hochzeitstag",
+    "type": {
+      "event": "Event",
+      "program_item": "Programmpunkt",
+      "task": "Aufgabe",
+      "vendor_appointment": "Termin",
+      "vendor_deadline": "Deadline"
+    }
   }
 }

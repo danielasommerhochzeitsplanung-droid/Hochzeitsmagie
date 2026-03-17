@@ -758,5 +758,25 @@
       "conflict": "Conflict/Sensitive"
     },
     "categoryLegend": "Guest Categories"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "today": "Today",
+    "more": "more",
+    "start": "Start",
+    "untitled_task": "Untitled Task",
+    "payment_due": "Payment Due",
+    "no_events": "No events on this day",
+    "wedding_day": "Wedding Day",
+    "wedding_day_timeline": "Wedding Day Timeline",
+    "no_wedding_date": "No wedding date set",
+    "no_wedding_events": "No events for wedding day",
+    "type": {
+      "event": "Event",
+      "program_item": "Program Item",
+      "task": "Task",
+      "vendor_appointment": "Appointment",
+      "vendor_deadline": "Deadline"
+    }
   }
 }
