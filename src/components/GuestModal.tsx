@@ -229,7 +229,7 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
         badge_type: ''
       });
     }
-  }, [guest, isOpen, parentGuest, allGuests]);
+  }, [guest, isOpen, parentGuest]);
 
   const calculateNumberOfAdults = (guestData: Guest) => {
     let adultsCount = guestData.partner_name.trim() ? 2 : 1;
