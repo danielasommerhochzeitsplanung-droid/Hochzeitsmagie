@@ -34,8 +34,10 @@ const TYPE_COLORS: Record<CalendarEntryType, string> = {
 };
 
 export default function CalendarModule({ onClose }: CalendarModuleProps) {
+  console.log('🔴 CalendarModule MOUNTED');
   const { t } = useTranslation();
   const { weddingData } = useWeddingData();
+  console.log('🔴 weddingData received:', weddingData);
 
   const [view, setView] = useState<CalendarView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
