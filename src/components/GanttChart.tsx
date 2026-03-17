@@ -17,6 +17,7 @@ import {
 import { Task, Event, Vendor, Location, SupportTeam, Phase } from '../lib/storage-adapter';
 import { taskCategories } from './taskTemplates';
 import { getPhaseColor } from '../utils/phaseManagement';
+import { VENDOR_CATEGORIES, getCategoryEmoji } from './vendorCategories';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -750,6 +751,142 @@ export default function GanttChart({
                                         Überfällig
                                       </div>
                                     )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  });
+                }
+
+                if (group.type === 'vendor') {
+                  const vendorsByCategory = new Map<string, GanttItem[]>();
+                  group.items.forEach(item => {
+                    const vendor = item.data as Vendor;
+                    const cat = vendor.category || 'Sonstiges';
+                    if (!vendorsByCategory.has(cat)) {
+                      vendorsByCategory.set(cat, []);
+                    }
+                    vendorsByCategory.get(cat)!.push(item);
+                  });
+
+                  return VENDOR_CATEGORIES.map(category => {
+                    const categoryItems = vendorsByCategory.get(category.value) || [];
+                    if (categoryItems.length === 0) return null;
+
+                    const isCategoryCollapsed = collapsedCategories.has(`vendor-${category.value}`);
+
+                    return (
+                      <div key={`vendor-${category.value}`}>
+                        <div
+                          className="flex border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                          style={{ height: `${rowHeight}px` }}
+                          onClick={() => toggleCategory(`vendor-${category.value}`)}
+                        >
+                          <div
+                            className="flex-shrink-0 border-r-2 flex items-center gap-2 px-3 pl-10"
+                            style={{ width: `${leftColumnWidth}px`, borderColor: '#e5e5e5' }}
+                          >
+                            {isCategoryCollapsed ? (
+                              <ChevronRight className="w-3 h-3 text-gray-500" />
+                            ) : (
+                              <ChevronDown className="w-3 h-3 text-gray-500" />
+                            )}
+                            <span className="text-base">{category.emoji}</span>
+                            <span className="text-xs font-semibold text-gray-700 truncate flex-1">
+                              {category.value}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              ({categoryItems.length})
+                            </span>
+                          </div>
+                          <div className="flex-1 relative" id="gantt-timeline">
+                            {todayPercent >= 0 && todayPercent <= 100 && (
+                              <div
+                                className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                                style={{ left: `${todayPercent}%` }}
+                              />
+                            )}
+                            {weddingPercent >= 0 && weddingPercent <= 100 && (
+                              <div
+                                className="absolute top-0 bottom-0 w-0.5 bg-rose-600 z-10 pointer-events-none"
+                                style={{ left: `${weddingPercent}%` }}
+                              />
+                            )}
+                          </div>
+                        </div>
+
+                        {!isCategoryCollapsed && categoryItems.map(item => {
+                          const position = getItemPosition(item);
+                          const isHovered = hoveredItem === item.id;
+
+                          return (
+                            <div
+                              key={item.id}
+                              className="flex border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                              style={{ height: `${rowHeight}px` }}
+                              onMouseEnter={() => setHoveredItem(item.id)}
+                              onMouseLeave={() => setHoveredItem(null)}
+                            >
+                              <div
+                                className="flex-shrink-0 border-r-2 flex items-center gap-2 px-3 pl-20"
+                                style={{ width: `${leftColumnWidth}px`, borderColor: '#e5e5e5' }}
+                              >
+                                <span className="text-xs truncate flex-1 text-gray-700">
+                                  {item.title}
+                                </span>
+                              </div>
+
+                              <div className="flex-1 relative" id="gantt-timeline">
+                                {todayPercent >= 0 && todayPercent <= 100 && (
+                                  <div
+                                    className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                                    style={{ left: `${todayPercent}%` }}
+                                  />
+                                )}
+                                {weddingPercent >= 0 && weddingPercent <= 100 && (
+                                  <div
+                                    className="absolute top-0 bottom-0 w-0.5 bg-rose-600 z-10 pointer-events-none"
+                                    style={{ left: `${weddingPercent}%` }}
+                                  />
+                                )}
+
+                                <div
+                                  className="absolute top-1/2 -translate-y-1/2 rounded cursor-move flex items-center px-2 group/bar"
+                                  style={{
+                                    left: `${position.left}%`,
+                                    width: `${position.width}%`,
+                                    height: '24px',
+                                    backgroundColor: getItemColor(item),
+                                    opacity: 0.85,
+                                    border: isHovered ? '2px solid #3b3b3d' : 'none',
+                                    boxShadow: isHovered ? '0 4px 6px rgba(0,0,0,0.2)' : 'none',
+                                  }}
+                                  onMouseDown={(e) => handleDragStart(item, e)}
+                                >
+                                  {position.width > 5 && (
+                                    <span className="text-xs text-white font-medium truncate">
+                                      {item.title}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {isHovered && (
+                                  <div
+                                    className="absolute z-20 bg-gray-900 text-white text-xs rounded px-3 py-2 shadow-xl whitespace-nowrap pointer-events-none"
+                                    style={{
+                                      left: `${position.left + position.width / 2}%`,
+                                      top: '-60px',
+                                      transform: 'translateX(-50%)',
+                                    }}
+                                  >
+                                    <div className="font-semibold mb-1">{item.title}</div>
+                                    <div className="text-gray-300">
+                                      {item.startDate.toLocaleDateString('de-DE')}
+                                    </div>
                                   </div>
                                 )}
                               </div>
