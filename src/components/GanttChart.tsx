@@ -18,20 +18,7 @@ import { Task, Event, Vendor, Location, SupportTeam, Phase } from '../lib/storag
 import { taskCategories } from './taskTemplates';
 import { getPhaseColor } from '../utils/phaseManagement';
 import { VENDOR_CATEGORIES, getCategoryEmoji } from './vendorCategories';
-
-interface SubArea {
-  id: string;
-  icon: string;
-  label: string;
-}
-
-interface MainCategory {
-  id: string;
-  icon: string;
-  color: string;
-  subcategories: string[];
-  subAreas?: SubArea[];
-}
+import { mainCategories, categoryToMainCategory } from './mainCategories';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -75,80 +62,6 @@ interface GanttGroup {
   items: GanttItem[];
   collapsed: boolean;
 }
-
-const mainCategories: MainCategory[] = [
-  {
-    id: 'location_venue',
-    icon: '🏛️',
-    color: '#10b981',
-    subcategories: ['location']
-  },
-  {
-    id: 'ceremony_legal',
-    icon: '💒',
-    color: '#3b82f6',
-    subcategories: ['planning']
-  },
-  {
-    id: 'vendors_services',
-    icon: '🤝',
-    color: '#a855f7',
-    subcategories: ['catering', 'planning'],
-    subAreas: [
-      { id: 'memories', icon: '📸', label: 'Erinnerungen' },
-      { id: 'catering_drinks', icon: '🍽️', label: 'Kulinarik & Getränke' },
-      { id: 'music_entertainment', icon: '🎵', label: 'Musik & Unterhaltung' },
-      { id: 'transport_logistics', icon: '🚗', label: 'Transport & Logistik' },
-    ]
-  },
-  {
-    id: 'guests_communication',
-    icon: '👥',
-    color: '#f59e0b',
-    subcategories: ['guests']
-  },
-  {
-    id: 'styling_atmosphere',
-    icon: '🎨',
-    color: '#06b6d4',
-    subcategories: ['decoration']
-  },
-  {
-    id: 'styling_outfit',
-    icon: '👗',
-    color: '#f43f5e',
-    subcategories: [],
-    subAreas: [
-      { id: 'outfits_accessories', icon: '👗', label: 'Outfits & Accessoires' },
-      { id: 'beauty_styling', icon: '💄', label: 'Beauty & Styling' },
-      { id: 'rings', icon: '💍', label: 'Ringe' },
-    ]
-  },
-  {
-    id: 'organization_closure',
-    icon: '📋',
-    color: '#ec4899',
-    subcategories: [],
-    subAreas: [
-      { id: 'support_team', icon: '💪', label: 'Helfer & Supportteam' },
-      { id: 'guest_care', icon: '🎁', label: 'Gästebetreuung' },
-    ]
-  },
-];
-
-const categoryToMainCategory = (category: string): string => {
-  const categoryLower = category.toLowerCase();
-
-  if (categoryLower === 'location' || categoryLower === 'location_venue') return 'location_venue';
-  if (categoryLower === 'guests' || categoryLower === 'guests_communication') return 'guests_communication';
-  if (categoryLower === 'catering' || categoryLower === 'vendors_services') return 'vendors_services';
-  if (categoryLower === 'decoration' || categoryLower === 'styling_atmosphere') return 'styling_atmosphere';
-  if (categoryLower === 'styling_outfit') return 'styling_outfit';
-  if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten') return 'ceremony_legal';
-  if (categoryLower === 'organization_closure') return 'organization_closure';
-
-  return 'organization_closure';
-};
 
 export default function GanttChart({
   tasks,
