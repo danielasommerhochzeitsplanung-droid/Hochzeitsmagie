@@ -43,7 +43,15 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
   const allEntries = useMemo((): CalendarEntry[] => {
     const entries: CalendarEntry[] = [];
 
+    console.log('CalendarModule - weddingData:', {
+      events: weddingData.events?.length,
+      tasks: weddingData.tasks?.length,
+      vendors: weddingData.vendors?.length,
+      programItems: weddingData.program_items?.length
+    });
+
     if (weddingData.events) {
+      console.log('Processing events:', weddingData.events);
       weddingData.events.forEach(event => {
         if (event.date) {
           entries.push({
@@ -126,6 +134,8 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
       }
     });
     }
+
+    console.log('Total entries created:', entries.length, entries);
 
     return entries.sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time_start || '00:00'}`);
