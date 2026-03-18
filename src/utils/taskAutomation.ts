@@ -60,7 +60,7 @@ function calculateDueDateFromOffset(
 ): string {
   const wedding = new Date(weddingDate);
   const dueDate = new Date(wedding);
-  dueDate.setMonth(dueDate.getMonth() + offsetMonths);
+  dueDate.setMonth(dueDate.getMonth() - offsetMonths);
   return dueDate.toISOString().split('T')[0];
 }
 
