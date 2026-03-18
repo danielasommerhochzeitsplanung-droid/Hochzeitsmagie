@@ -758,45 +758,5 @@
       "conflict": "Conflict/Sensitive"
     },
     "categoryLegend": "Guest Categories"
-  },
-  "calendar": {
-    "title": "Calendar",
-    "today": "Today",
-    "more": "more",
-    "start": "Start",
-    "untitled_task": "Untitled Task",
-    "payment_due": "Payment Due",
-    "no_events": "No events on this day",
-    "wedding_day": "Wedding Day",
-    "wedding_day_timeline": "Wedding Day Timeline",
-    "no_wedding_date": "No wedding date set",
-    "no_wedding_events": "No events for wedding day",
-    "date": "Date",
-    "time": "Time",
-    "location": "Location",
-    "description": "Description",
-    "source": "Source",
-    "close": "Close",
-    "assigned_to": "Assigned to",
-    "category": "Category",
-    "completed": "Completed",
-    "mark_complete": "Mark as complete",
-    "priority": "Priority",
-    "priority_high": "High Priority",
-    "notes": "Notes",
-    "dependencies": "Dependencies",
-    "start_date": "Start Date",
-    "due_date": "Due Date",
-    "phase": "Phase",
-    "sub_area": "Sub Area",
-    "system_generated": "System Generated",
-    "manually_modified": "Manually Modified",
-    "type": {
-      "event": "Event",
-      "program_item": "Program Item",
-      "task": "Task",
-      "vendor_appointment": "Appointment",
-      "vendor_deadline": "Deadline"
-    }
   }
 }

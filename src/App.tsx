@@ -343,7 +343,7 @@ function App() {
             ) : activeModule === 'events' ? (
               <EventsModule />
             ) : activeModule === 'calendar' ? (
-              <CalendarModule onClose={() => setActiveModule(null)} />
+              <CalendarModule />
             ) : activeModule === 'todos' ? (
               <TodosModule />
             ) : activeModule === 'support_team' ? (
