@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, List, Grid3x3, Clock, Printer } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, List, Grid3x3, Clock, Printer, ExternalLink, CheckCircle2, MapPin, Users, Briefcase, ListTodo } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 
 interface CalendarModuleProps {
@@ -35,7 +35,7 @@ const TYPE_COLORS: Record<CalendarEntryType, string> = {
 
 export default function CalendarModule({ onClose }: CalendarModuleProps) {
   const { t } = useTranslation();
-  const { weddingData, events, tasks, vendors, programItems, locations } = useWeddingData();
+  const { weddingData, events, tasks, vendors, programItems, locations, guests, supportTeam, updateTask } = useWeddingData();
 
   const [view, setView] = useState<CalendarView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -533,83 +533,180 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
         }
       `}</style>
 
-      {selectedEntry && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelectedEntry(null)}>
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6 border-b border-neutral-200">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h3 className="text-xl font-medium text-neutral-900 mb-2">{selectedEntry.title}</h3>
-                  <span
-                    className="inline-block px-3 py-1 text-xs rounded-full font-medium"
-                    style={{ backgroundColor: `${selectedEntry.color}20`, color: selectedEntry.color }}
+      {selectedEntry && (() => {
+        const sourceData = (() => {
+          switch (selectedEntry.source_module) {
+            case 'tasks': {
+              const task = tasks.find(t => t.id === selectedEntry.source_id);
+              if (!task) return null;
+              const assignee = task.assigned_to
+                ? guests.find(g => g.id === task.assigned_to) || supportTeam.find(s => s.id === task.assigned_to)
+                : null;
+              return {
+                type: 'task',
+                data: task,
+                assignee,
+                canComplete: true,
+              };
+            }
+            case 'events': {
+              const event = events.find(e => e.id === selectedEntry.source_id);
+              const location = event?.location_id ? locations.find(l => l.id === event.location_id) : null;
+              return { type: 'event', data: event, location };
+            }
+            case 'vendors': {
+              const vendor = vendors.find(v => v.id === selectedEntry.source_id);
+              return { type: 'vendor', data: vendor };
+            }
+            case 'program': {
+              const program = programItems.find(p => p.id === selectedEntry.source_id);
+              return { type: 'program', data: program };
+            }
+            default:
+              return null;
+          }
+        })();
+
+        const handleCompleteTask = () => {
+          if (sourceData?.type === 'task' && sourceData.data) {
+            updateTask(sourceData.data.id, { completed: true });
+            setSelectedEntry(null);
+          }
+        };
+
+        return (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelectedEntry(null)}>
+            <div className="bg-white rounded-lg shadow-xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-neutral-200">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-medium text-neutral-900 mb-2">{selectedEntry.title}</h3>
+                    <span
+                      className="inline-block px-3 py-1 text-xs rounded-full font-medium"
+                      style={{ backgroundColor: `${selectedEntry.color}20`, color: selectedEntry.color }}
+                    >
+                      {t(`calendar.type.${selectedEntry.type}`)}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setSelectedEntry(null)}
+                    className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
                   >
-                    {t(`calendar.type.${selectedEntry.type}`)}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setSelectedEntry(null)}
-                  className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-neutral-600" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.date')}</div>
-                <div className="text-base text-neutral-900">
-                  {new Date(selectedEntry.date).toLocaleDateString('de-DE', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
+                    <X className="w-5 h-5 text-neutral-600" />
+                  </button>
                 </div>
               </div>
 
-              {selectedEntry.time_start && (
+              <div className="p-6 space-y-4">
                 <div>
-                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.time')}</div>
+                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.date')}</div>
                   <div className="text-base text-neutral-900">
-                    {selectedEntry.time_start}
-                    {selectedEntry.time_end && ` - ${selectedEntry.time_end}`}
+                    {new Date(selectedEntry.date).toLocaleDateString('de-DE', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                   </div>
                 </div>
-              )}
 
-              {selectedEntry.location && (
-                <div>
-                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.location')}</div>
-                  <div className="text-base text-neutral-900">{selectedEntry.location}</div>
+                {selectedEntry.time_start && (
+                  <div>
+                    <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.time')}</div>
+                    <div className="text-base text-neutral-900">
+                      {selectedEntry.time_start}
+                      {selectedEntry.time_end && ` - ${selectedEntry.time_end}`}
+                    </div>
+                  </div>
+                )}
+
+                {selectedEntry.location && (
+                  <div>
+                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      {t('calendar.location')}
+                    </div>
+                    <div className="text-base text-neutral-900">{selectedEntry.location}</div>
+                  </div>
+                )}
+
+                {sourceData?.type === 'task' && sourceData.assignee && (
+                  <div>
+                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      {t('calendar.assigned_to')}
+                    </div>
+                    <div className="text-base text-neutral-900">
+                      {sourceData.assignee.name || `${sourceData.assignee.first_name || ''} ${sourceData.assignee.last_name || ''}`.trim()}
+                    </div>
+                  </div>
+                )}
+
+                {sourceData?.type === 'task' && sourceData.data.category && (
+                  <div>
+                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                      <ListTodo className="w-4 h-4" />
+                      {t('calendar.category')}
+                    </div>
+                    <div className="text-base text-neutral-900">{sourceData.data.category}</div>
+                  </div>
+                )}
+
+                {sourceData?.type === 'vendor' && sourceData.data.category && (
+                  <div>
+                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4" />
+                      {t('calendar.category')}
+                    </div>
+                    <div className="text-base text-neutral-900">{sourceData.data.category}</div>
+                  </div>
+                )}
+
+                {selectedEntry.description && (
+                  <div>
+                    <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
+                    <div className="text-base text-neutral-900 whitespace-pre-wrap">{selectedEntry.description}</div>
+                  </div>
+                )}
+
+                {sourceData?.type === 'task' && sourceData.data.completed && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <span className="text-sm text-green-700 font-medium">{t('calendar.completed')}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-200 flex justify-between items-center">
+                <div className="text-sm text-neutral-500 flex items-center gap-2">
+                  {selectedEntry.source_module === 'tasks' && <ListTodo className="w-4 h-4" />}
+                  {selectedEntry.source_module === 'events' && <CalendarIcon className="w-4 h-4" />}
+                  {selectedEntry.source_module === 'vendors' && <Briefcase className="w-4 h-4" />}
+                  {selectedEntry.source_module === 'program' && <Clock className="w-4 h-4" />}
+                  <span className="capitalize">{selectedEntry.source_module}</span>
                 </div>
-              )}
-
-              {selectedEntry.description && (
-                <div>
-                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
-                  <div className="text-base text-neutral-900">{selectedEntry.description}</div>
+                <div className="flex gap-2">
+                  {sourceData?.type === 'task' && !sourceData.data.completed && (
+                    <button
+                      onClick={handleCompleteTask}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      {t('calendar.mark_complete')}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSelectedEntry(null)}
+                    className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors"
+                  >
+                    {t('calendar.close')}
+                  </button>
                 </div>
-              )}
-
-              <div>
-                <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.source')}</div>
-                <div className="text-base text-neutral-900 capitalize">{selectedEntry.source_module}</div>
               </div>
             </div>
-
-            <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-200 flex justify-end">
-              <button
-                onClick={() => setSelectedEntry(null)}
-                className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors"
-              >
-                {t('calendar.close')}
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

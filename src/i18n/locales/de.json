@@ -777,6 +777,10 @@
     "description": "Beschreibung",
     "source": "Quelle",
     "close": "Schließen",
+    "assigned_to": "Zugewiesen an",
+    "category": "Kategorie",
+    "completed": "Erledigt",
+    "mark_complete": "Als erledigt markieren",
     "type": {
       "event": "Event",
       "program_item": "Programmpunkt",

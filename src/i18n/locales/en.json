@@ -777,6 +777,10 @@
     "description": "Description",
     "source": "Source",
     "close": "Close",
+    "assigned_to": "Assigned to",
+    "category": "Category",
+    "completed": "Completed",
+    "mark_complete": "Mark as complete",
     "type": {
       "event": "Event",
       "program_item": "Program Item",
