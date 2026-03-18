@@ -771,6 +771,12 @@
     "wedding_day_timeline": "Wedding Day Timeline",
     "no_wedding_date": "No wedding date set",
     "no_wedding_events": "No events for wedding day",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "description": "Description",
+    "source": "Source",
+    "close": "Close",
     "type": {
       "event": "Event",
       "program_item": "Program Item",

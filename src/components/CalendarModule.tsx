@@ -39,6 +39,7 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
 
   const [view, setView] = useState<CalendarView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedEntry, setSelectedEntry] = useState<CalendarEntry | null>(null);
 
   const allEntries = useMemo((): CalendarEntry[] => {
     const entries: CalendarEntry[] = [];
@@ -340,15 +341,16 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                     </div>
                     <div className="space-y-1">
                       {entries.slice(0, 3).map(entry => (
-                        <div
+                        <button
                           key={entry.id}
-                          className="text-xs px-2 py-1 rounded truncate"
+                          onClick={() => setSelectedEntry(entry)}
+                          className="text-xs px-2 py-1 rounded truncate w-full text-left hover:opacity-80 transition-opacity"
                           style={{ backgroundColor: `${entry.color}20`, color: entry.color }}
                           title={entry.title}
                         >
                           {entry.time_start && <span className="font-medium">{entry.time_start} </span>}
                           {entry.title}
-                        </div>
+                        </button>
                       ))}
                       {entries.length > 3 && (
                         <div className="text-xs text-neutral-500 px-2">+{entries.length - 3} {t('calendar.more')}</div>
@@ -374,9 +376,10 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                     </div>
                     <div className="space-y-2">
                       {entries.map(entry => (
-                        <div
+                        <button
                           key={entry.id}
-                          className="text-xs px-2 py-2 rounded border"
+                          onClick={() => setSelectedEntry(entry)}
+                          className="text-xs px-2 py-2 rounded border w-full text-left hover:shadow-sm transition-shadow"
                           style={{ borderColor: entry.color, backgroundColor: `${entry.color}10` }}
                         >
                           {entry.time_start && (
@@ -386,7 +389,7 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                           {entry.location && (
                             <div className="text-neutral-600 mt-1">{entry.location}</div>
                           )}
-                        </div>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -405,7 +408,11 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                 ) : (
                   <div className="divide-y divide-neutral-100">
                     {getEntriesForDate(currentDate).map(entry => (
-                      <div key={entry.id} className="p-4 hover:bg-neutral-50 transition-colors">
+                      <button
+                        key={entry.id}
+                        onClick={() => setSelectedEntry(entry)}
+                        className="p-4 hover:bg-neutral-50 transition-colors w-full text-left"
+                      >
                         <div className="flex items-start gap-4">
                           <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: entry.color }} />
                           <div className="flex-1">
@@ -429,7 +436,7 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                             </span>
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -460,9 +467,10 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
               ) : (
                 <div className="space-y-3">
                   {weddingDayEntries.map((entry, idx) => (
-                    <div
+                    <button
                       key={entry.id}
-                      className="relative pl-8 pb-6 border-l-2"
+                      onClick={() => setSelectedEntry(entry)}
+                      className="relative pl-8 pb-6 border-l-2 w-full text-left"
                       style={{ borderColor: idx === weddingDayEntries.length - 1 ? 'transparent' : entry.color }}
                     >
                       <div
@@ -494,7 +502,7 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                           <p className="text-sm text-neutral-600 mt-2">{entry.description}</p>
                         )}
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -524,6 +532,84 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
           }
         }
       `}</style>
+
+      {selectedEntry && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelectedEntry(null)}>
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b border-neutral-200">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h3 className="text-xl font-medium text-neutral-900 mb-2">{selectedEntry.title}</h3>
+                  <span
+                    className="inline-block px-3 py-1 text-xs rounded-full font-medium"
+                    style={{ backgroundColor: `${selectedEntry.color}20`, color: selectedEntry.color }}
+                  >
+                    {t(`calendar.type.${selectedEntry.type}`)}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedEntry(null)}
+                  className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-neutral-600" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.date')}</div>
+                <div className="text-base text-neutral-900">
+                  {new Date(selectedEntry.date).toLocaleDateString('de-DE', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </div>
+              </div>
+
+              {selectedEntry.time_start && (
+                <div>
+                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.time')}</div>
+                  <div className="text-base text-neutral-900">
+                    {selectedEntry.time_start}
+                    {selectedEntry.time_end && ` - ${selectedEntry.time_end}`}
+                  </div>
+                </div>
+              )}
+
+              {selectedEntry.location && (
+                <div>
+                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.location')}</div>
+                  <div className="text-base text-neutral-900">{selectedEntry.location}</div>
+                </div>
+              )}
+
+              {selectedEntry.description && (
+                <div>
+                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
+                  <div className="text-base text-neutral-900">{selectedEntry.description}</div>
+                </div>
+              )}
+
+              <div>
+                <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.source')}</div>
+                <div className="text-base text-neutral-900 capitalize">{selectedEntry.source_module}</div>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-200 flex justify-end">
+              <button
+                onClick={() => setSelectedEntry(null)}
+                className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors"
+              >
+                {t('calendar.close')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

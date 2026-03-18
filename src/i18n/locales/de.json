@@ -771,6 +771,12 @@
     "wedding_day_timeline": "Ablaufplan Hochzeitstag",
     "no_wedding_date": "Kein Hochzeitsdatum festgelegt",
     "no_wedding_events": "Keine Termine für den Hochzeitstag",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "location": "Ort",
+    "description": "Beschreibung",
+    "source": "Quelle",
+    "close": "Schließen",
     "type": {
       "event": "Event",
       "program_item": "Programmpunkt",
