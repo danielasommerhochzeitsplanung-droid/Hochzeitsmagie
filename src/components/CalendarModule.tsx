@@ -35,7 +35,7 @@ const TYPE_COLORS: Record<CalendarEntryType, string> = {
 
 export default function CalendarModule({ onClose }: CalendarModuleProps) {
   const { t } = useTranslation();
-  const { weddingData, events, tasks, vendors, programItems, locations, guests, supportTeam, updateTask } = useWeddingData();
+  const { weddingData, events, tasks, vendors, programItems, locations, guests, supportTeam, updateTask, phases, subAreas } = useWeddingData();
 
   const [view, setView] = useState<CalendarView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -597,83 +597,228 @@ export default function CalendarModule({ onClose }: CalendarModuleProps) {
                 </div>
               </div>
 
-              <div className="p-6 space-y-4">
-                <div>
-                  <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.date')}</div>
-                  <div className="text-base text-neutral-900">
-                    {new Date(selectedEntry.date).toLocaleDateString('de-DE', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </div>
-                </div>
+              <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                {sourceData?.type === 'task' && sourceData.data && (() => {
+                  const task = sourceData.data;
+                  const phase = task.phase_id ? phases.find(p => p.id === task.phase_id) : null;
+                  const subArea = task.sub_area ? subAreas.find(s => s.id === task.sub_area) : null;
+                  const dependentTasks = task.depends_on?.map(depId => tasks.find(t => t.id === depId)).filter(Boolean) || [];
 
-                {selectedEntry.time_start && (
-                  <div>
-                    <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.time')}</div>
-                    <div className="text-base text-neutral-900">
-                      {selectedEntry.time_start}
-                      {selectedEntry.time_end && ` - ${selectedEntry.time_end}`}
-                    </div>
-                  </div>
+                  return (
+                    <>
+                      {task.priority === 'high' && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
+                          <span className="text-sm text-red-700 font-medium">⚠️ {t('calendar.priority_high')}</span>
+                        </div>
+                      )}
+
+                      {task.is_system_generated && (
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <span>🤖</span>
+                          <span>{t('calendar.system_generated')}</span>
+                        </div>
+                      )}
+
+                      {task.manually_modified && (
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <span>✏️</span>
+                          <span>{t('calendar.manually_modified')}</span>
+                        </div>
+                      )}
+
+                      {task.category && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                            <ListTodo className="w-4 h-4" />
+                            {t('calendar.category')}
+                          </div>
+                          <div className="text-base text-neutral-900">{task.category}</div>
+                        </div>
+                      )}
+
+                      {subArea && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.sub_area')}</div>
+                          <div className="text-base text-neutral-900">{subArea.name}</div>
+                        </div>
+                      )}
+
+                      {phase && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.phase')}</div>
+                          <div className="text-base text-neutral-900">{phase.name}</div>
+                        </div>
+                      )}
+
+                      {task.start_date && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.start_date')}</div>
+                          <div className="text-base text-neutral-900">
+                            {new Date(task.start_date).toLocaleDateString('de-DE', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {task.due_date && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.due_date')}</div>
+                          <div className="text-base text-neutral-900">
+                            {new Date(task.due_date).toLocaleDateString('de-DE', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {sourceData.assignee && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            {t('calendar.assigned_to')}
+                          </div>
+                          <div className="text-base text-neutral-900">
+                            {sourceData.assignee.name || `${sourceData.assignee.first_name || ''} ${sourceData.assignee.last_name || ''}`.trim()}
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.priority')}</div>
+                        <div className="text-base text-neutral-900 capitalize">{task.priority}</div>
+                      </div>
+
+                      {task.description && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
+                          <div className="text-base text-neutral-900 whitespace-pre-wrap">{task.description}</div>
+                        </div>
+                      )}
+
+                      {task.notes && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.notes')}</div>
+                          <div className="text-base text-neutral-900 whitespace-pre-wrap">{task.notes}</div>
+                        </div>
+                      )}
+
+                      {dependentTasks.length > 0 && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-2">{t('calendar.dependencies')}</div>
+                          <div className="space-y-2">
+                            {dependentTasks.map(depTask => (
+                              <div key={depTask?.id} className="text-sm bg-neutral-50 p-2 rounded border border-neutral-200">
+                                {depTask?.title || t('calendar.untitled_task')}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {task.date_change_notice && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                          <div className="text-sm text-amber-700">{task.date_change_notice}</div>
+                        </div>
+                      )}
+
+                      {task.completed && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <span className="text-sm text-green-700 font-medium">
+                            {t('calendar.completed')}
+                            {task.completed_at && ` - ${new Date(task.completed_at).toLocaleDateString('de-DE')}`}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {sourceData?.type === 'event' && sourceData.data && (() => {
+                  const event = sourceData.data;
+                  return (
+                    <>
+                      <div>
+                        <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.date')}</div>
+                        <div className="text-base text-neutral-900">
+                          {new Date(event.date).toLocaleDateString('de-DE', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </div>
+                      </div>
+
+                      {event.time && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.time')}</div>
+                          <div className="text-base text-neutral-900">{event.time}</div>
+                        </div>
+                      )}
+
+                      {sourceData.location && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            {t('calendar.location')}
+                          </div>
+                          <div className="text-base text-neutral-900">{sourceData.location.name}</div>
+                          {sourceData.location.address && (
+                            <div className="text-sm text-neutral-600 mt-1">{sourceData.location.address}</div>
+                          )}
+                        </div>
+                      )}
+
+                      {event.description && (
+                        <div>
+                          <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
+                          <div className="text-base text-neutral-900 whitespace-pre-wrap">{event.description}</div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {sourceData?.type === 'vendor' && sourceData.data && (
+                  <>
+                    {sourceData.data.category && (
+                      <div>
+                        <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                          <Briefcase className="w-4 h-4" />
+                          {t('calendar.category')}
+                        </div>
+                        <div className="text-base text-neutral-900">{sourceData.data.category}</div>
+                      </div>
+                    )}
+                  </>
                 )}
 
-                {selectedEntry.location && (
-                  <div>
-                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      {t('calendar.location')}
-                    </div>
-                    <div className="text-base text-neutral-900">{selectedEntry.location}</div>
-                  </div>
-                )}
-
-                {sourceData?.type === 'task' && sourceData.assignee && (
-                  <div>
-                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      {t('calendar.assigned_to')}
-                    </div>
-                    <div className="text-base text-neutral-900">
-                      {sourceData.assignee.name || `${sourceData.assignee.first_name || ''} ${sourceData.assignee.last_name || ''}`.trim()}
-                    </div>
-                  </div>
-                )}
-
-                {sourceData?.type === 'task' && sourceData.data.category && (
-                  <div>
-                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
-                      <ListTodo className="w-4 h-4" />
-                      {t('calendar.category')}
-                    </div>
-                    <div className="text-base text-neutral-900">{sourceData.data.category}</div>
-                  </div>
-                )}
-
-                {sourceData?.type === 'vendor' && sourceData.data.category && (
-                  <div>
-                    <div className="text-sm font-medium text-neutral-500 mb-1 flex items-center gap-2">
-                      <Briefcase className="w-4 h-4" />
-                      {t('calendar.category')}
-                    </div>
-                    <div className="text-base text-neutral-900">{sourceData.data.category}</div>
-                  </div>
-                )}
-
-                {selectedEntry.description && (
-                  <div>
-                    <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
-                    <div className="text-base text-neutral-900 whitespace-pre-wrap">{selectedEntry.description}</div>
-                  </div>
-                )}
-
-                {sourceData?.type === 'task' && sourceData.data.completed && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <span className="text-sm text-green-700 font-medium">{t('calendar.completed')}</span>
-                  </div>
+                {sourceData?.type === 'program' && sourceData.data && (
+                  <>
+                    {selectedEntry.time_start && (
+                      <div>
+                        <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.time')}</div>
+                        <div className="text-base text-neutral-900">
+                          {selectedEntry.time_start}
+                          {selectedEntry.time_end && ` - ${selectedEntry.time_end}`}
+                        </div>
+                      </div>
+                    )}
+                    {selectedEntry.description && (
+                      <div>
+                        <div className="text-sm font-medium text-neutral-500 mb-1">{t('calendar.description')}</div>
+                        <div className="text-base text-neutral-900 whitespace-pre-wrap">{selectedEntry.description}</div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
