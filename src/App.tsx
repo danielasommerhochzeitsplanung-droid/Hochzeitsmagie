@@ -4,7 +4,6 @@ import { Settings, Save, Download, Upload } from 'lucide-react';
 import { useWeddingData } from './contexts/WeddingDataContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import SettingsModal from './components/SettingsModal';
-import FirstSetupDialog from './components/FirstSetupDialog';
 import StorageQuotaBanner from './components/StorageQuotaBanner';
 import ModuleCard from './components/ModuleCard';
 import GuestsModule from './components/GuestsModule';
@@ -29,7 +28,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks, taskModalTrigger, addGuest, loadTasksFromMaster, tasks } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, taskModalTrigger, addGuest, loadTasksFromMaster, tasks } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
@@ -37,7 +36,7 @@ function App() {
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [activeModule, setActiveModule] = useState<ModuleType>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [showFirstSetup, setShowFirstSetup] = useState(false);
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -47,14 +46,8 @@ function App() {
         groom_name: contextWeddingData.couple_name_2 || '',
         wedding_date: contextWeddingData.wedding_date,
       });
-
-      if (tasks.length === 0 && !showFirstSetup) {
-        setShowFirstSetup(true);
-      }
-    } else if (!contextWeddingData.couple_name_1 && !contextWeddingData.couple_name_2 && !showFirstSetup) {
-      setShowFirstSetup(true);
     }
-  }, [contextWeddingData, showFirstSetup, tasks.length]);
+  }, [contextWeddingData]);
 
   useEffect(() => {
     if (weddingData) {
@@ -85,11 +78,78 @@ function App() {
 
     if (!brideName || !groomName || !weddingDate) return;
 
+    const planningStartDate = new Date().toISOString().split('T')[0];
+
     await updateWeddingData({
       couple_name_1: brideName,
       couple_name_2: groomName,
       wedding_date: weddingDate,
+      planning_start_date: planningStartDate,
+      auto_tasks_enabled: true,
     });
+
+    addGuest({
+      name: brideName,
+      number_of_adults: 1,
+      side: 'Beide',
+      specific_relationship: 'other',
+      relationship_category: 'wedding_couple',
+      save_the_date_status: '★',
+      invitation_status: '★',
+      rsvp_status: 'accepted',
+      attendance_status: 'confirmed',
+      peanut_allergy: false,
+      tree_nut_allergy: false,
+      gluten_intolerance: false,
+      lactose_intolerance: false,
+      halal: false,
+      gift_received: 'no',
+      thank_you_sent: false,
+      is_child: false,
+      seated_with_parents: false,
+      archived: false,
+    });
+
+    addGuest({
+      name: groomName,
+      number_of_adults: 1,
+      side: 'Beide',
+      specific_relationship: 'other',
+      relationship_category: 'wedding_couple',
+      save_the_date_status: '★',
+      invitation_status: '★',
+      rsvp_status: 'accepted',
+      attendance_status: 'confirmed',
+      peanut_allergy: false,
+      tree_nut_allergy: false,
+      gluten_intolerance: false,
+      lactose_intolerance: false,
+      halal: false,
+      gift_received: 'no',
+      thank_you_sent: false,
+      is_child: false,
+      seated_with_parents: false,
+      archived: false,
+    });
+
+    const allCategories = [
+      'location',
+      'catering:food',
+      'catering:drinks',
+      'styling:atmosphere',
+      'styling:outfit',
+      'vendors_services',
+      'memories',
+      'music_entertainment',
+      'guests_communication',
+      'organization:planning',
+      'organization:transport_logistics',
+      'organization:guest_care',
+      'organization:support_team',
+      'organization:closure'
+    ];
+
+    await loadTasksFromMaster(allCategories);
 
     setWeddingData({
       bride_name: brideName,
@@ -133,100 +193,6 @@ function App() {
     reader.readAsText(file);
   };
 
-  const handleFirstSetupComplete = async (data: {
-    partner1: string;
-    partner2: string;
-    gender1: 'male' | 'female' | '';
-    gender2: 'male' | 'female' | '';
-    weddingDate: string;
-    planningStartDate: string;
-    selectedCategories: string[];
-  }) => {
-    try {
-      await updateWeddingData({
-        couple_name_1: data.partner1,
-        couple_name_2: data.partner2,
-        couple_gender_1: data.gender1,
-        couple_gender_2: data.gender2,
-        wedding_date: data.weddingDate,
-        planning_start_date: data.planningStartDate,
-        auto_tasks_enabled: true,
-      });
-
-      const determineSide = (gender: 'male' | 'female' | '') => {
-        if (gender === 'female') return 'Braut';
-        if (gender === 'male') return 'Bräutigam';
-        return 'Beide';
-      };
-
-      const determineRelationship = (gender: 'male' | 'female' | '') => {
-        if (gender === 'female') return 'bride';
-        if (gender === 'male') return 'groom';
-        return 'other';
-      };
-
-      addGuest({
-        name: data.partner1,
-        number_of_adults: 1,
-        side: determineSide(data.gender1),
-        specific_relationship: determineRelationship(data.gender1),
-        relationship_category: 'wedding_couple',
-        save_the_date_status: '★',
-        invitation_status: '★',
-        rsvp_status: 'accepted',
-        attendance_status: 'confirmed',
-        peanut_allergy: false,
-        tree_nut_allergy: false,
-        gluten_intolerance: false,
-        lactose_intolerance: false,
-        halal: false,
-        gift_received: 'no',
-        thank_you_sent: false,
-        is_child: false,
-        seated_with_parents: false,
-        archived: false,
-      });
-
-      addGuest({
-        name: data.partner2,
-        number_of_adults: 1,
-        side: determineSide(data.gender2),
-        specific_relationship: determineRelationship(data.gender2),
-        relationship_category: 'wedding_couple',
-        save_the_date_status: '★',
-        invitation_status: '★',
-        rsvp_status: 'accepted',
-        attendance_status: 'confirmed',
-        peanut_allergy: false,
-        tree_nut_allergy: false,
-        gluten_intolerance: false,
-        lactose_intolerance: false,
-        halal: false,
-        gift_received: 'no',
-        thank_you_sent: false,
-        is_child: false,
-        seated_with_parents: false,
-        archived: false,
-      });
-
-      await loadTasksFromMaster(data.selectedCategories);
-
-      setShowFirstSetup(false);
-    } catch (error) {
-      console.error('Error during first setup:', error);
-      alert('Fehler beim Speichern. Bitte versuche es erneut.');
-    }
-  };
-
-
-  if (showFirstSetup) {
-    return (
-      <>
-        <LanguageSwitcher />
-        <FirstSetupDialog isOpen={showFirstSetup} onComplete={handleFirstSetupComplete} />
-      </>
-    );
-  }
 
   if (weddingData) {
     if (activeModule) {
