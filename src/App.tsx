@@ -29,7 +29,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks, taskModalTrigger, addGuest } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, initializeAutoTasks, taskModalTrigger, addGuest, loadTasksFromMaster, tasks } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [brideName, setBrideName] = useState('');
   const [groomName, setGroomName] = useState('');
@@ -47,10 +47,14 @@ function App() {
         groom_name: contextWeddingData.couple_name_2 || '',
         wedding_date: contextWeddingData.wedding_date,
       });
+
+      if (tasks.length === 0 && !showFirstSetup) {
+        setShowFirstSetup(true);
+      }
     } else if (!contextWeddingData.couple_name_1 && !contextWeddingData.couple_name_2 && !showFirstSetup) {
       setShowFirstSetup(true);
     }
-  }, [contextWeddingData, showFirstSetup]);
+  }, [contextWeddingData, showFirstSetup, tasks.length]);
 
   useEffect(() => {
     if (weddingData) {
@@ -136,6 +140,7 @@ function App() {
     gender2: 'male' | 'female' | '';
     weddingDate: string;
     planningStartDate: string;
+    selectedCategories: string[];
   }) => {
     try {
       await updateWeddingData({
@@ -204,6 +209,7 @@ function App() {
         archived: false,
       });
 
+      await loadTasksFromMaster(data.selectedCategories);
 
       setShowFirstSetup(false);
     } catch (error) {

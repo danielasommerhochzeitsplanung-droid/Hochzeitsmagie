@@ -760,6 +760,26 @@
     "categoryLegend": "Guest Categories"
   },
   "master_tasks": {
+    "categories": {
+      "location_venue": "Location & Venue",
+      "ceremony_legal": "Ceremony & Legal",
+      "vendors_services": "Vendors & Services",
+      "guests_communication": "Guests & Communication",
+      "styling_atmosphere": "Styling & Atmosphere",
+      "styling_outfit": "Styling & Outfit",
+      "organization_closure": "Organization & Closure"
+    },
+    "sub_areas": {
+      "memories": "Memories",
+      "catering_drinks": "Catering & Drinks",
+      "music_entertainment": "Music & Entertainment",
+      "transport_logistics": "Transport & Logistics",
+      "outfits_accessories": "Outfits & Accessories",
+      "beauty_styling": "Beauty & Styling",
+      "rings": "Rings",
+      "support_team": "Support Team",
+      "guest_care": "Guest Care"
+    },
     "catering_drinks": {
       "culinary_concept": "Define culinary concept",
       "drinks_concept": "Define drinks concept",

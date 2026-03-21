@@ -760,6 +760,26 @@
     "categoryLegend": "Gast-Kategorien"
   },
   "master_tasks": {
+    "categories": {
+      "location_venue": "Location & Ablauf",
+      "ceremony_legal": "Trauung & Formalitäten",
+      "vendors_services": "Dienstleister & Services",
+      "guests_communication": "Gäste & Kommunikation",
+      "styling_atmosphere": "Styling & Atmosphäre",
+      "styling_outfit": "Styling & Outfit",
+      "organization_closure": "Organisation & Abschluss"
+    },
+    "sub_areas": {
+      "memories": "Erinnerungen",
+      "catering_drinks": "Kulinarik & Getränke",
+      "music_entertainment": "Musik & Unterhaltung",
+      "transport_logistics": "Transport & Logistik",
+      "outfits_accessories": "Outfits & Accessoires",
+      "beauty_styling": "Beauty & Styling",
+      "rings": "Ringe",
+      "support_team": "Helfer & Supportteam",
+      "guest_care": "Gästebetreuung"
+    },
     "catering_drinks": {
       "culinary_concept": "Kulinarisches Konzept festlegen",
       "drinks_concept": "Getränkekonzept festlegen",

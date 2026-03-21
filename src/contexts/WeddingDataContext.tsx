@@ -7,6 +7,7 @@ import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
 import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
 import { initializeSubAreasIfNeeded } from '../utils/subAreaInitialization';
 import { useTranslation } from 'react-i18next';
+import { loadMasterTasksByCategories } from '../utils/masterTasksLoader';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -76,6 +77,7 @@ interface WeddingDataContextType {
   deleteTask: (id: string) => void;
   initializeAutoTasks: () => Promise<void>;
   dismissTaskWarning: (id: string) => void;
+  loadTasksFromMaster: (selectedCategories: string[]) => Promise<void>;
 
   addPhase: (phase: Omit<Phase, 'id' | 'created_at'>) => Phase;
   updatePhase: (id: string, phase: Partial<Phase>) => void;
@@ -566,6 +568,68 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     updateTask(id, { warning_dismissed: true });
   };
 
+  const loadTasksFromMaster = async (selectedCategories: string[]) => {
+    try {
+      const filters = selectedCategories.map(cat => {
+        const parts = cat.split(':');
+        if (parts.length === 2) {
+          return { category: parts[0], subArea: parts[1] };
+        }
+        return { category: cat };
+      });
+
+      const masterTasks = await loadMasterTasksByCategories(filters);
+
+      const weddingDate = weddingData.wedding_date;
+      if (!weddingDate) {
+        console.error('Wedding date not set');
+        return;
+      }
+
+      const weddingDateObj = new Date(weddingDate);
+      const planningStartDate = weddingData.planning_start_date
+        ? new Date(weddingData.planning_start_date)
+        : new Date();
+
+      masterTasks.forEach(masterTask => {
+        let dueDate: Date | undefined;
+
+        if (masterTask.planning_hint === 'start') {
+          dueDate = new Date(planningStartDate);
+          dueDate.setDate(dueDate.getDate() + 7);
+        } else if (masterTask.planning_hint === 'middle') {
+          const midPoint = new Date(
+            (planningStartDate.getTime() + weddingDateObj.getTime()) / 2
+          );
+          dueDate = midPoint;
+        } else if (masterTask.planning_hint === 'final') {
+          dueDate = new Date(weddingDateObj);
+          dueDate.setDate(dueDate.getDate() - 30);
+        } else if (masterTask.planning_hint === 'after') {
+          dueDate = new Date(weddingDateObj);
+          dueDate.setDate(dueDate.getDate() + 14);
+        }
+
+        const phase = dueDate ? calculatePhaseForTask(dueDate.toISOString(), weddingDate, phases) : undefined;
+
+        const newTask: Omit<Task, 'id' | 'created_at'> = {
+          title: `master_tasks.${masterTask.i18n_key}.title`,
+          description: `master_tasks.${masterTask.i18n_key}.description`,
+          completed: false,
+          due_date: dueDate?.toISOString(),
+          category: masterTask.category,
+          sub_area: masterTask.sub_area || undefined,
+          phase_id: phase?.id,
+          optional: masterTask.optional,
+        };
+
+        addTask(newTask);
+      });
+    } catch (error) {
+      console.error('Error loading tasks from master:', error);
+    }
+  };
+
   const addPhase = (phase: Omit<Phase, 'id' | 'created_at'>) => {
     try {
       const newPhase = storage.phases.create(phase);
@@ -768,6 +832,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     deleteTask,
     initializeAutoTasks,
     dismissTaskWarning,
+    loadTasksFromMaster,
     addPhase,
     updatePhase,
     deletePhase,

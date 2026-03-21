@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
+import TaskSelectionDialog from './TaskSelectionDialog';
 
 interface FirstSetupDialogProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface FirstSetupDialogProps {
     gender2: 'male' | 'female' | '';
     weddingDate: string;
     planningStartDate: string;
+    selectedCategories: string[];
   }) => void;
 }
 
@@ -20,6 +22,15 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
   const [gender2, setGender2] = useState<'male' | 'female' | ''>('');
   const [weddingDate, setWeddingDate] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState('');
+  const [showTaskSelection, setShowTaskSelection] = useState(false);
+  const [basicData, setBasicData] = useState<{
+    partner1: string;
+    partner2: string;
+    gender1: 'male' | 'female' | '';
+    gender2: 'male' | 'female' | '';
+    weddingDate: string;
+    planningStartDate: string;
+  } | null>(null);
 
   if (!isOpen) return null;
 
@@ -31,7 +42,7 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       return;
     }
 
-    onComplete({
+    setBasicData({
       partner1: partner1.trim(),
       partner2: partner2.trim(),
       gender1,
@@ -39,7 +50,26 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       weddingDate,
       planningStartDate,
     });
+    setShowTaskSelection(true);
   };
+
+  const handleTaskSelectionComplete = (selectedCategories: string[]) => {
+    if (basicData) {
+      onComplete({
+        ...basicData,
+        selectedCategories,
+      });
+    }
+  };
+
+  if (showTaskSelection) {
+    return (
+      <TaskSelectionDialog
+        isOpen={true}
+        onComplete={handleTaskSelectionComplete}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 overflow-y-auto py-4 sm:py-8">

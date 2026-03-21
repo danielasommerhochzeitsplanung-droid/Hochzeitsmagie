@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, CreditCard as Edit2, ChevronDown, ChevronRight, Lock, Archive, Search } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, AlertCircle, Plus, Filter, X, RefreshCw, CreditCard as Edit2, ChevronDown, ChevronRight, Lock, Archive, Search, ListPlus } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task, Phase } from '../lib/storage-adapter';
 import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
 import TimelineView from './TimelineView';
 import GanttChart from './GanttChart';
 import { getPhaseColor, PHASE_COLORS, createCustomPhase } from '../utils/phaseManagement';
+import TaskSelectionDialog from './TaskSelectionDialog';
 
 const mainCategories = [
   {
@@ -98,10 +99,11 @@ const getTaskDescription = (task: Task, t: any): string => {
 
 export default function TodosModule() {
   const { t } = useTranslation();
-  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, subAreas, guests, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, archiveSubArea, unarchiveSubArea, taskModalTrigger } = useWeddingData();
+  const { weddingData, tasks, phases, events, vendors, locations, supportTeam, subAreas, guests, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, archiveSubArea, unarchiveSubArea, taskModalTrigger, loadTasksFromMaster } = useWeddingData();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showRecalculateDialog, setShowRecalculateDialog] = useState(false);
+  const [showTaskSelectionDialog, setShowTaskSelectionDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -873,6 +875,21 @@ export default function TodosModule() {
           >
             <RefreshCw className="w-4 h-4" />
             {t('todos.buttons.recalculate')}
+          </button>
+
+          <button
+            onClick={() => setShowTaskSelectionDialog(true)}
+            className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2"
+            style={{
+              borderColor: '#d6b15b',
+              color: '#3b3b3d',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 600
+            }}
+            title="Weitere Aufgaben aus dem Katalog hinzufügen"
+          >
+            <ListPlus className="w-4 h-4" />
+            Weitere Aufgaben
           </button>
         </div>
       </div>
@@ -2656,6 +2673,15 @@ export default function TodosModule() {
           </div>
         </div>
       )}
+
+      <TaskSelectionDialog
+        isOpen={showTaskSelectionDialog}
+        onComplete={async (selectedCategories) => {
+          await loadTasksFromMaster(selectedCategories);
+          setShowTaskSelectionDialog(false);
+        }}
+        onCancel={() => setShowTaskSelectionDialog(false)}
+      />
 
     </div>
   );
