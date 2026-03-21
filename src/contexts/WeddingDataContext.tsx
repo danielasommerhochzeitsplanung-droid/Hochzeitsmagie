@@ -580,47 +580,15 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
 
       const masterTasks = await loadMasterTasksByCategories(filters);
 
-      const weddingDate = weddingData.wedding_date;
-      if (!weddingDate) {
-        console.error('Wedding date not set');
-        return;
-      }
-
-      const weddingDateObj = new Date(weddingDate);
-      const planningStartDate = weddingData.planning_start_date
-        ? new Date(weddingData.planning_start_date)
-        : new Date();
-
       masterTasks.forEach(masterTask => {
-        let dueDate: Date | undefined;
-
-        if (masterTask.planning_hint === 'start') {
-          dueDate = new Date(planningStartDate);
-          dueDate.setDate(dueDate.getDate() + 7);
-        } else if (masterTask.planning_hint === 'middle') {
-          const midPoint = new Date(
-            (planningStartDate.getTime() + weddingDateObj.getTime()) / 2
-          );
-          dueDate = midPoint;
-        } else if (masterTask.planning_hint === 'final') {
-          dueDate = new Date(weddingDateObj);
-          dueDate.setDate(dueDate.getDate() - 30);
-        } else if (masterTask.planning_hint === 'after') {
-          dueDate = new Date(weddingDateObj);
-          dueDate.setDate(dueDate.getDate() + 14);
-        }
-
-        const phase = dueDate ? calculatePhaseForTask(dueDate.toISOString(), weddingDate, phases) : undefined;
-
         const newTask: Omit<Task, 'id' | 'created_at'> = {
-          title: `master_tasks.${masterTask.i18n_key}.title`,
-          description: `master_tasks.${masterTask.i18n_key}.description`,
+          title: masterTask.i18n_key,
+          description: '',
           completed: false,
-          due_date: dueDate?.toISOString(),
           category: masterTask.category,
           sub_area: masterTask.sub_area || undefined,
-          phase_id: phase?.id,
           optional: masterTask.optional,
+          is_system_generated: true,
         };
 
         addTask(newTask);
