@@ -5,7 +5,6 @@ import { useWeddingData } from './contexts/WeddingDataContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import SettingsModal from './components/SettingsModal';
 import FirstSetupDialog from './components/FirstSetupDialog';
-import AutoTaskSetupDialog from './components/AutoTaskSetupDialog';
 import StorageQuotaBanner from './components/StorageQuotaBanner';
 import ModuleCard from './components/ModuleCard';
 import GuestsModule from './components/GuestsModule';
@@ -39,13 +38,6 @@ function App() {
   const [activeModule, setActiveModule] = useState<ModuleType>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showFirstSetup, setShowFirstSetup] = useState(false);
-  const [showAutoTaskSetup, setShowAutoTaskSetup] = useState(false);
-  const [pendingSetupData, setPendingSetupData] = useState<{
-    partner1: string;
-    partner2: string;
-    weddingDate: string;
-    planningStartDate: string;
-  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -212,7 +204,6 @@ function App() {
         archived: false,
       });
 
-      await initializeAutoTasks(data.weddingDate, data.planningStartDate);
 
       setShowFirstSetup(false);
     } catch (error) {
@@ -221,50 +212,12 @@ function App() {
     }
   };
 
-  const handleAutoTaskEnable = async () => {
-    if (!pendingSetupData) return;
-
-    try {
-      await updateWeddingData({
-        auto_tasks_enabled: true,
-      });
-
-      await initializeAutoTasks(pendingSetupData.weddingDate, pendingSetupData.planningStartDate);
-
-      setShowAutoTaskSetup(false);
-      setPendingSetupData(null);
-    } catch (error) {
-      console.error('Error enabling auto tasks:', error);
-      alert('Fehler beim Erstellen der Aufgaben. Bitte versuche es erneut.');
-    }
-  };
-
-  const handleAutoTaskSkip = () => {
-    setShowAutoTaskSetup(false);
-    setPendingSetupData(null);
-  };
 
   if (showFirstSetup) {
     return (
       <>
         <LanguageSwitcher />
         <FirstSetupDialog isOpen={showFirstSetup} onComplete={handleFirstSetupComplete} />
-      </>
-    );
-  }
-
-  if (showAutoTaskSetup && pendingSetupData) {
-    return (
-      <>
-        <LanguageSwitcher />
-        <AutoTaskSetupDialog
-          isOpen={showAutoTaskSetup}
-          onClose={handleAutoTaskSkip}
-          onEnable={handleAutoTaskEnable}
-          onSkip={handleAutoTaskSkip}
-          planningStartDate={pendingSetupData.planningStartDate}
-          weddingDate={pendingSetupData.weddingDate}
-        />
       </>
     );
   }

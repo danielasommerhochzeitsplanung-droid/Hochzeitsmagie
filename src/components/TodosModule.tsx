@@ -7,7 +7,6 @@ import { taskCategories, standardTasks, TaskTemplate } from './taskTemplates';
 import TimelineView from './TimelineView';
 import GanttChart from './GanttChart';
 import { getPhaseColor, PHASE_COLORS, createCustomPhase } from '../utils/phaseManagement';
-import { useTaskTemplates } from '../hooks/useTaskTemplates';
 
 const mainCategories = [
   {
@@ -83,10 +82,17 @@ const categoryToMainCategory = (category: string): string => {
   return 'organization_closure';
 };
 
+const getTaskTitle = (task: Task): string => {
+  return task.title || 'Unbenannter Task';
+};
+
+const getTaskDescription = (task: Task): string => {
+  return task.description || '';
+};
+
 export default function TodosModule() {
   const { t } = useTranslation();
   const { weddingData, tasks, phases, events, vendors, locations, supportTeam, subAreas, guests, addTask, updateTask, updateEvent, deleteTask, initializeAutoTasks, dismissTaskWarning, updateWeddingData, addPhase, archiveSubArea, unarchiveSubArea, taskModalTrigger } = useWeddingData();
-  const { getTaskTitle, getTaskDescription } = useTaskTemplates();
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showRecalculateDialog, setShowRecalculateDialog] = useState(false);

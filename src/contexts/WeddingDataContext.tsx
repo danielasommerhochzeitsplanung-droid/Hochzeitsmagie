@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef, useEffect } from 'react';
 import { storage, Guest, Event, Vendor, Location, SupportTeam, BudgetItem, Table, ProgramItem, WeddingData, DietaryRestriction, Task, Phase, SubArea, StorageError } from '../lib/storage-adapter';
 import { SaveStatusIndicator } from '../components/SaveStatusIndicator';
-import { handleDateChange, generateLocationTasksFromTemplates } from '../utils/taskAutomation';
 import { generateId } from '../lib/uuid';
 import { useImportFeedback } from '../hooks/useImportFeedback';
 import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
-import { migrateTaskSubAreasIfNeeded } from '../utils/taskSubAreaMigration';
 import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
 import { initializeSubAreasIfNeeded } from '../utils/subAreaInitialization';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +74,7 @@ interface WeddingDataContextType {
   addTask: (task: Omit<Task, 'id' | 'created_at'>) => Task;
   updateTask: (id: string, task: Partial<Task>) => void;
   deleteTask: (id: string) => void;
-  initializeAutoTasks: (weddingDate?: string, planningStartDate?: string) => Promise<void>;
+  initializeAutoTasks: () => Promise<void>;
   dismissTaskWarning: (id: string) => void;
 
   addPhase: (phase: Omit<Phase, 'id' | 'created_at'>) => Phase;
@@ -164,11 +162,6 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     return false;
   }, []);
 
-  useEffect(() => {
-    migrateTaskSubAreasIfNeeded().then(() => {
-      setTasks(storage.tasks.getAll());
-    });
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -565,54 +558,8 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const initializeAutoTasks = async (providedWeddingDate?: string, providedPlanningStartDate?: string) => {
-    console.log('[initializeAutoTasks] Starting...');
-
-    const weddingDateToUse = providedWeddingDate || weddingData.wedding_date;
-    console.log('[initializeAutoTasks] Wedding date:', weddingDateToUse);
-
-    if (!weddingDateToUse) {
-      console.error('Wedding date is required to initialize auto tasks');
-      return;
-    }
-
-    const planningStartDate = providedPlanningStartDate || weddingData.planning_start_date || new Date().toISOString().split('T')[0];
-    console.log('[initializeAutoTasks] Planning start date:', planningStartDate);
-
-    const currentLanguage = localStorage.getItem('i18nextLng') || 'de';
-    const language = currentLanguage.startsWith('de') ? 'de' : 'en';
-
-    const generatedTasks = await generateLocationTasksFromTemplates(
-      planningStartDate,
-      weddingDateToUse,
-      language
-    );
-    console.log('[initializeAutoTasks] Generated tasks:', generatedTasks.length);
-
-    if (generatedTasks.length === 0) {
-      console.error('No tasks were generated from templates');
-      return;
-    }
-
-    const createdTasks: Task[] = [];
-    generatedTasks.forEach((task, index) => {
-      console.log(`[initializeAutoTasks] Creating task ${index + 1}:`, task.template_id || 'manual task');
-      const newTask = addTask(task);
-      createdTasks.push(newTask);
-    });
-
-    console.log('[initializeAutoTasks] All tasks created, count:', createdTasks.length);
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    console.log('[initializeAutoTasks] Updating wedding data...');
-    await updateWeddingData({
-      auto_tasks_enabled: true,
-      auto_tasks_initialized: true,
-      last_planning_start_date: planningStartDate,
-      last_wedding_date: weddingDateToUse
-    });
-    console.log('[initializeAutoTasks] Done!');
+  const initializeAutoTasks = async () => {
+    console.log('[initializeAutoTasks] Function is deprecated and has been removed');
   };
 
   const dismissTaskWarning = (id: string) => {

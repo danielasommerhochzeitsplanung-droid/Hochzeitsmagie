@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { CheckCircle2, Circle, Calendar, Plus, Edit2, X } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, Plus, CreditCard as Edit2, X } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
-import { useTaskTemplates } from '../hooks/useTaskTemplates';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -148,7 +147,6 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
 
 export default function LocationTasksSection() {
   const { tasks, addTask, updateTask, deleteTask } = useWeddingData();
-  const { getTaskTitle, getTaskDescription } = useTaskTemplates();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
@@ -162,11 +160,7 @@ export default function LocationTasksSection() {
   };
 
   const handleEditTask = (task: Task) => {
-    setEditingTask({
-      ...task,
-      title: getTaskTitle(task),
-      description: getTaskDescription(task),
-    });
+    setEditingTask(task);
     setIsModalOpen(true);
   };
 
@@ -262,7 +256,7 @@ export default function LocationTasksSection() {
                       }`}
                       style={{ fontFamily: 'Open Sans, sans-serif' }}
                     >
-                      {getTaskTitle(task)}
+                      {task.title || 'Unbenannter Task'}
                     </h4>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {task.priority === 'high' && (
@@ -287,9 +281,9 @@ export default function LocationTasksSection() {
                     </div>
                   </div>
 
-                  {getTaskDescription(task) && (
+                  {task.description && (
                     <p className="text-sm text-gray-600 mt-1" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                      {getTaskDescription(task)}
+                      {task.description}
                     </p>
                   )}
 
