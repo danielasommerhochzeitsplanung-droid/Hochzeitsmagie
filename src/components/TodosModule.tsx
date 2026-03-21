@@ -1851,7 +1851,7 @@ export default function TodosModule() {
                                           }`}
                                           style={{ fontFamily: 'Open Sans, sans-serif' }}
                                         >
-                                          {task.title}
+                                          {getTaskTitle(task, t)}
                                           {isBlocked && !task.completed && (
                                             <span className="ml-2 text-xs text-amber-600">
                                               ({blockedBy.length} {blockedBy.length === 1 ? 'Abhängigkeit' : 'Abhängigkeiten'})
