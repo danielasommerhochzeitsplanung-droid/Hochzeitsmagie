@@ -563,6 +563,8 @@
   },
   "todos": {
     "categories": {
+      "location_flow": "Location & Schedule",
+      "ceremony_formalities": "Ceremony & Formalities",
       "location_venue": "Location & Schedule",
       "ceremony_legal": "Ceremony & Formalities",
       "vendors_services": "Vendors & Services",

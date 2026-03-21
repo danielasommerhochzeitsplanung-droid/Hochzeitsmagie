@@ -563,6 +563,8 @@
   },
   "todos": {
     "categories": {
+      "location_flow": "Location & Ablauf",
+      "ceremony_formalities": "Trauung & Formalitäten",
       "location_venue": "Location & Ablauf",
       "ceremony_legal": "Trauung & Formalitäten",
       "vendors_services": "Dienstleister & Leistungen",
