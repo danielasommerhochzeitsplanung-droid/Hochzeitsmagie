@@ -7,7 +7,7 @@ import { migrateCategoriesIfNeeded } from '../utils/categoryMigration';
 import { createDefaultPhases, calculatePhaseForTask, createCustomPhase } from '../utils/phaseManagement';
 import { initializeSubAreasIfNeeded } from '../utils/subAreaInitialization';
 import { useTranslation } from 'react-i18next';
-import { loadMasterTasksByCategories } from '../utils/masterTasksLoader';
+import { getTasksByCategories } from '../data/taskLibrary';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -578,15 +578,15 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
         return { category: cat };
       });
 
-      const masterTasks = await loadMasterTasksByCategories(filters);
+      const masterTasks = getTasksByCategories(filters);
 
       masterTasks.forEach(masterTask => {
         const newTask: Omit<Task, 'id' | 'created_at'> = {
-          title: masterTask.i18n_key,
+          title: masterTask.i18nKey,
           description: '',
           completed: false,
           category: masterTask.category,
-          sub_area: masterTask.sub_area || undefined,
+          sub_area: masterTask.sub_area,
           optional: masterTask.optional,
           is_system_generated: true,
         };
