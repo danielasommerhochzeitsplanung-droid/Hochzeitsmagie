@@ -19,13 +19,13 @@ interface TaskSelectionDialogProps {
 
 const mainCategories = [
   {
-    id: 'location_venue',
+    id: 'location_flow',
     icon: '🏛️',
     color: 'bg-emerald-500',
     subAreas: []
   },
   {
-    id: 'ceremony_legal',
+    id: 'ceremony_formalities',
     icon: '💒',
     color: 'bg-blue-500',
     subAreas: []
@@ -35,7 +35,6 @@ const mainCategories = [
     icon: '🤝',
     color: 'bg-purple-500',
     subAreas: [
-      { id: 'memories', icon: '📸' },
       { id: 'catering_drinks', icon: '🍽️' },
       { id: 'music_entertainment', icon: '🎵' },
       { id: 'transport_logistics', icon: '🚗' },
@@ -59,18 +58,13 @@ const mainCategories = [
     color: 'bg-rose-500',
     subAreas: [
       { id: 'outfits_accessories', icon: '👗' },
-      { id: 'beauty_styling', icon: '💄' },
-      { id: 'rings', icon: '💍' },
     ]
   },
   {
     id: 'organization_closure',
     icon: '📋',
     color: 'bg-pink-500',
-    subAreas: [
-      { id: 'support_team', icon: '💪' },
-      { id: 'guest_care', icon: '🎁' },
-    ]
+    subAreas: []
   },
 ];
 

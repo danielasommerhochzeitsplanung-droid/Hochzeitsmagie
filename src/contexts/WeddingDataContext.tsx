@@ -579,19 +579,29 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
       });
 
       const masterTasks = getTasksByCategories(filters);
+      const existingTasks = storage.tasks.getAll();
 
       masterTasks.forEach(masterTask => {
-        const newTask: Omit<Task, 'id' | 'created_at'> = {
-          title: masterTask.i18nKey,
-          description: '',
-          completed: false,
-          category: masterTask.category,
-          sub_area: masterTask.sub_area,
-          optional: masterTask.optional,
-          is_system_generated: true,
-        };
+        const isDuplicate = existingTasks.some(
+          existingTask =>
+            existingTask.title === masterTask.i18nKey &&
+            existingTask.category === masterTask.category &&
+            existingTask.sub_area === masterTask.sub_area
+        );
 
-        addTask(newTask);
+        if (!isDuplicate) {
+          const newTask: Omit<Task, 'id' | 'created_at'> = {
+            title: masterTask.i18nKey,
+            description: '',
+            completed: false,
+            category: masterTask.category,
+            sub_area: masterTask.sub_area,
+            optional: masterTask.optional,
+            is_system_generated: true,
+          };
+
+          addTask(newTask);
+        }
       });
     } catch (error) {
       console.error('Error loading tasks from master:', error);
