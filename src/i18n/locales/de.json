@@ -758,5 +758,44 @@
       "conflict": "Konflikt/Sensibel"
     },
     "categoryLegend": "Gast-Kategorien"
+  },
+  "master_tasks": {
+    "catering_drinks": {
+      "culinary_concept": "Kulinarisches Konzept festlegen",
+      "drinks_concept": "Getränkekonzept festlegen",
+      "research_caterers": "Caterer recherchieren",
+      "tasting_session": "Probeessen organisieren",
+      "book_catering": "Catering buchen",
+      "finalize_menu": "Menü und Getränke final abstimmen",
+      "coordinate_service": "Service und Ablauf koordinieren"
+    },
+    "transport_logistics": {
+      "clarify_needs": "Transportbedarf klären",
+      "define_transport_types": "Transportarten festlegen",
+      "research_providers": "Transportanbieter recherchieren",
+      "book_transport": "Transport buchen",
+      "create_plan": "Transportplan erstellen",
+      "finalize_schedule": "Fahrzeiten und Treffpunkte finalisieren",
+      "confirm_details": "Transportdetails bestätigen"
+    },
+    "music_entertainment": {
+      "define_areas": "Einsatzbereiche für Musik festlegen",
+      "define_music_style": "Musikform definieren",
+      "plan_budget": "Budget für Musik planen",
+      "research_compare_providers": "Musikanbieter recherchieren und vergleichen",
+      "book_main_provider": "Hauptanbieter für Musik beauftragen",
+      "coordinate_schedule_wishes": "Ablauf und Musikwünsche abstimmen",
+      "clarify_tech_setup": "Technik und Aufbauanforderungen klären",
+      "final_confirmation": "Finale Abstimmung und Bestätigung einholen"
+    },
+    "outfits_accessories": {
+      "collect_inspiration": "Inspirationen und Wünsche für die Outfits sammeln",
+      "define_style": "Stil für die Hochzeitsoutfits festlegen",
+      "research_outfits": "Brautkleid und Hochzeitsoutfits recherchieren",
+      "try_on_select": "Outfits anprobieren und auswählen",
+      "order_outfits": "Brautkleid oder Hochzeitsoutfits bestellen",
+      "select_accessories": "Accessoires auswählen",
+      "adjustments": "Kleid und Outfitanpassungen durchführen"
+    }
   }
 }

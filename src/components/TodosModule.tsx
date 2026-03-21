@@ -82,11 +82,17 @@ const categoryToMainCategory = (category: string): string => {
   return 'organization_closure';
 };
 
-const getTaskTitle = (task: Task): string => {
+const getTaskTitle = (task: Task, t: any): string => {
+  if (task.title && task.title.startsWith('master_tasks.')) {
+    return t(task.title);
+  }
   return task.title || 'Unbenannter Task';
 };
 
-const getTaskDescription = (task: Task): string => {
+const getTaskDescription = (task: Task, t: any): string => {
+  if (task.description && task.description.startsWith('master_tasks.')) {
+    return t(task.description);
+  }
   return task.description || '';
 };
 
@@ -263,7 +269,7 @@ export default function TodosModule() {
     autoTasks.forEach(task => {
       if (!task.template_id) return;
 
-      const template = standardTasks.find(t => t.title === getTaskTitle(task));
+      const template = standardTasks.find(st => st.title === getTaskTitle(task, t));
       if (!template) return;
 
       const normalizedPosition = (template.weeks_before_wedding - minWeeks) / (maxWeeks - minWeeks);
@@ -509,8 +515,8 @@ export default function TodosModule() {
       .filter(task => {
         if (searchQuery.trim()) {
           const query = searchQuery.toLowerCase();
-          const title = getTaskTitle(task).toLowerCase();
-          const description = getTaskDescription(task).toLowerCase();
+          const title = getTaskTitle(task, t).toLowerCase();
+          const description = getTaskDescription(task, t).toLowerCase();
           return title.includes(query) || description.includes(query);
         }
         return true;
@@ -528,7 +534,7 @@ export default function TodosModule() {
       });
 
     return groups;
-  }, [tasks, showArchived, showArchivedSubAreas, filterStatus, filterCategory, filterAssignee, searchQuery, getTaskTitle, getTaskDescription, subAreas]);
+  }, [tasks, showArchived, showArchivedSubAreas, filterStatus, filterCategory, filterAssignee, searchQuery, t, subAreas]);
 
   const completionStats = useMemo(() => {
     const activeTasks = tasks.filter(t => !t.archived);
@@ -601,8 +607,8 @@ export default function TodosModule() {
   const handleEditTask = (task: Task) => {
     setEditingTask({
       ...task,
-      title: getTaskTitle(task),
-      description: getTaskDescription(task),
+      title: getTaskTitle(task, t),
+      description: getTaskDescription(task, t),
     });
     setShowEditDialog(true);
   };
@@ -613,8 +619,8 @@ export default function TodosModule() {
     const originalTask = tasks.find(t => t.id === editingTask.id);
 
     const isModified = editingTask.is_system_generated && originalTask && (
-      getTaskTitle(originalTask) !== editingTask.title ||
-      getTaskDescription(originalTask) !== editingTask.description ||
+      getTaskTitle(originalTask, t) !== editingTask.title ||
+      getTaskDescription(originalTask, t) !== editingTask.description ||
       originalTask.due_date !== editingTask.due_date
     );
 
@@ -981,8 +987,8 @@ export default function TodosModule() {
             onUpdateTask={updateTask}
             onUpdateEvent={updateEvent}
             getBlockedTasks={getBlockedTasks}
-            getTaskTitle={getTaskTitle}
-            getTaskDescription={getTaskDescription}
+            getTaskTitle={(task) => getTaskTitle(task, t)}
+            getTaskDescription={(task) => getTaskDescription(task, t)}
           />
         ) : (
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
@@ -1006,8 +1012,8 @@ export default function TodosModule() {
             onEditTask={handleEditTask}
             onUpdateTask={updateTask}
             onUpdateEvent={updateEvent}
-            getTaskTitle={getTaskTitle}
-            getTaskDescription={getTaskDescription}
+            getTaskTitle={(task) => getTaskTitle(task, t)}
+            getTaskDescription={(task) => getTaskDescription(task, t)}
           />
         ) : (
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#e5e5e5' }}>
@@ -1216,7 +1222,7 @@ export default function TodosModule() {
                                             }`}
                                             style={{ fontFamily: 'Open Sans, sans-serif' }}
                                           >
-                                            {getTaskTitle(task)}
+                                            {getTaskTitle(task, t)}
                                             {isBlocked && !task.completed && (
                                               <span className="ml-2 text-xs text-amber-600">
                                                 ({blockedBy.length} {blockedBy.length === 1 ? t('todos.taskDetails.dependency') : t('todos.taskDetails.dependencies')})
@@ -1260,9 +1266,9 @@ export default function TodosModule() {
                                                   )}
                                                 </div>
 
-                                                {getTaskDescription(task) && (
+                                                {getTaskDescription(task, t) && (
                                                   <p className="text-sm text-gray-600 mt-2">
-                                                    {getTaskDescription(task)}
+                                                    {getTaskDescription(task, t)}
                                                   </p>
                                                 )}
 
@@ -1482,7 +1488,7 @@ export default function TodosModule() {
                                       }`}
                                       style={{ fontFamily: 'Open Sans, sans-serif' }}
                                     >
-                                      {getTaskTitle(task)}
+                                      {getTaskTitle(task, t)}
                                     </h4>
                                     {isTaskExpanded ? (
                                       <ChevronDown className="w-5 h-5 text-gray-400" />
@@ -1544,7 +1550,7 @@ export default function TodosModule() {
                                 }`}
                                 style={{ fontFamily: 'Open Sans, sans-serif' }}
                               >
-                                {getTaskTitle(task)}
+                                {getTaskTitle(task, t)}
                                 {isBlocked && !task.completed && (
                                   <span className="ml-2 text-xs text-amber-600">
                                     ({blockedBy.length} {blockedBy.length === 1 ? t('todos.taskDetails.dependency') : t('todos.taskDetails.dependencies')})
@@ -1588,9 +1594,9 @@ export default function TodosModule() {
                                       )}
                                     </div>
 
-                                    {getTaskDescription(task) && (
+                                    {getTaskDescription(task, t) && (
                                       <p className="text-sm text-gray-600 mt-2">
-                                        {getTaskDescription(task)}
+                                        {getTaskDescription(task, t)}
                                       </p>
                                     )}
                                   </div>

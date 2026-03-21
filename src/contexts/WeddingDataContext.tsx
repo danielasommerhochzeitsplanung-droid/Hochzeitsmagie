@@ -559,7 +559,7 @@ export function WeddingDataProvider({ children }: { children: ReactNode }) {
   };
 
   const initializeAutoTasks = async () => {
-    console.log('[initializeAutoTasks] Function is deprecated and has been removed');
+    console.log('[initializeAutoTasks] This function is now a no-op stub for compatibility');
   };
 
   const dismissTaskWarning = (id: string) => {
