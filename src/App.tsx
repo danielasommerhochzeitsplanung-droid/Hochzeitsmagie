@@ -16,6 +16,7 @@ import LocationsModule from './components/LocationsModule';
 import BudgetModule from './components/BudgetModule';
 import SeatingModule from './components/SeatingModule';
 import ScrollToTopButton from './components/ScrollToTopButton';
+import FirstSetupDialog from './components/FirstSetupDialog';
 
 interface WeddingData {
   id?: string;
@@ -30,13 +31,10 @@ function App() {
   const { t } = useTranslation();
   const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, taskModalTrigger, addGuest, loadTasksFromMaster, tasks } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
-  const [brideName, setBrideName] = useState('');
-  const [groomName, setGroomName] = useState('');
-  const [weddingDate, setWeddingDate] = useState('');
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [activeModule, setActiveModule] = useState<ModuleType>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  const [showSetupDialog, setShowSetupDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,6 +44,8 @@ function App() {
         groom_name: contextWeddingData.couple_name_2 || '',
         wedding_date: contextWeddingData.wedding_date,
       });
+    } else {
+      setShowSetupDialog(true);
     }
   }, [contextWeddingData]);
 
@@ -73,23 +73,26 @@ function App() {
     setDaysRemaining(days);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!brideName || !groomName || !weddingDate) return;
-
-    const planningStartDate = new Date().toISOString().split('T')[0];
-
+  const handleSetupComplete = async (data: {
+    partner1: string;
+    partner2: string;
+    gender1: 'male' | 'female' | '';
+    gender2: 'male' | 'female' | '';
+    weddingDate: string;
+    planningStartDate: string;
+  }) => {
     await updateWeddingData({
-      couple_name_1: brideName,
-      couple_name_2: groomName,
-      wedding_date: weddingDate,
-      planning_start_date: planningStartDate,
+      couple_name_1: data.partner1,
+      couple_name_2: data.partner2,
+      couple_gender_1: data.gender1,
+      couple_gender_2: data.gender2,
+      wedding_date: data.weddingDate,
+      planning_start_date: data.planningStartDate,
       auto_tasks_enabled: true,
     });
 
     addGuest({
-      name: brideName,
+      name: data.partner1,
       number_of_adults: 1,
       side: 'Beide',
       specific_relationship: 'other',
@@ -111,7 +114,7 @@ function App() {
     });
 
     addGuest({
-      name: groomName,
+      name: data.partner2,
       number_of_adults: 1,
       side: 'Beide',
       specific_relationship: 'other',
@@ -151,10 +154,11 @@ function App() {
 
     await loadTasksFromMaster(allCategories);
 
+    setShowSetupDialog(false);
     setWeddingData({
-      bride_name: brideName,
-      groom_name: groomName,
-      wedding_date: weddingDate,
+      bride_name: data.partner1,
+      groom_name: data.partner2,
+      wedding_date: data.weddingDate,
     });
   };
 
@@ -194,9 +198,10 @@ function App() {
   };
 
 
-  if (weddingData) {
-    if (activeModule) {
-      return (
+  return (
+    <>
+      <FirstSetupDialog isOpen={showSetupDialog} onComplete={handleSetupComplete} />
+      {weddingData && activeModule && (
         <div className="min-h-screen bg-white">
           <StorageQuotaBanner onExport={handleDownload} storageChangeCounter={storageChangeCounter} />
           <LanguageSwitcher />
@@ -283,14 +288,12 @@ function App() {
           </main>
           <ScrollToTopButton />
         </div>
-      );
-    }
-
-    return (
-      <div className="min-h-screen bg-white">
-        <StorageQuotaBanner onExport={handleDownload} storageChangeCounter={storageChangeCounter} />
-        <LanguageSwitcher />
-        <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      )}
+      {weddingData && !activeModule && (
+        <div className="min-h-screen bg-white">
+          <StorageQuotaBanner onExport={handleDownload} storageChangeCounter={storageChangeCounter} />
+          <LanguageSwitcher />
+          <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         <header className="bg-white border-b border-gray-200 py-7 px-6 relative">
           <div className="absolute top-6 right-6 flex gap-2">
             <button
@@ -352,66 +355,8 @@ function App() {
           </div>
         </main>
       </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-6">
-      <LanguageSwitcher />
-      <div className="w-full max-w-md">
-        <h1 className="text-3xl text-center mb-8" style={{ fontFamily: 'Cinzel, serif', color: '#3b3b3d', fontWeight: 'normal' }}>
-          {t('app.title')}
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block mb-2" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.85rem' }}>
-              {t('form.bride_name_label')}
-            </label>
-            <input
-              type="text"
-              value={brideName}
-              onChange={(e) => setBrideName(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all"
-              style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', borderColor: '#d6b15b', fontSize: '0.9rem' }}
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-2" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.85rem' }}>
-              {t('form.groom_name_label')}
-            </label>
-            <input
-              type="text"
-              value={groomName}
-              onChange={(e) => setGroomName(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all"
-              style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', borderColor: '#d6b15b', fontSize: '0.9rem' }}
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-2" style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.85rem' }}>
-              {t('form.wedding_date_label')}
-            </label>
-            <input
-              type="date"
-              value={weddingDate}
-              onChange={(e) => setWeddingDate(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all"
-              style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', borderColor: '#d6b15b', fontSize: '0.9rem' }}
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 rounded-lg text-white transition-all hover:opacity-90"
-            style={{ fontFamily: 'Open Sans, sans-serif', backgroundColor: '#d6b15b', fontSize: '0.9rem' }}
-          >
-            {t('form.submit_button')}
-          </button>
-        </form>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
