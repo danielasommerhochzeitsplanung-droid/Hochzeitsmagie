@@ -801,7 +801,25 @@
       "prepare_vows": "Prepare vows",
       "final_confirmation": "Final confirmation"
     },
+    "ceremony_formalities": {
+      "clarify_legal_requirements": "Clarify legal requirements",
+      "gather_documents": "Gather documents",
+      "book_appointment": "Book appointment at registry office",
+      "select_officiant": "Select officiant",
+      "plan_ceremony": "Plan ceremony",
+      "prepare_vows": "Prepare vows",
+      "final_confirmation": "Final confirmation"
+    },
     "location_venue": {
+      "define_requirements": "Define location requirements",
+      "research_locations": "Research locations",
+      "visit_locations": "Visit locations",
+      "book_location": "Book location",
+      "plan_flow": "Plan venue flow",
+      "coordinate_logistics": "Coordinate logistics",
+      "final_walkthrough": "Final walkthrough"
+    },
+    "location_flow": {
       "define_requirements": "Define location requirements",
       "research_locations": "Research locations",
       "visit_locations": "Visit locations",

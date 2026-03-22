@@ -801,7 +801,25 @@
       "prepare_vows": "Ehegelübde vorbereiten",
       "final_confirmation": "Finale Bestätigung einholen"
     },
+    "ceremony_formalities": {
+      "clarify_legal_requirements": "Rechtliche Anforderungen klären",
+      "gather_documents": "Dokumente zusammenstellen",
+      "book_appointment": "Termin beim Standesamt buchen",
+      "select_officiant": "Trauredner/in auswählen",
+      "plan_ceremony": "Zeremonie planen",
+      "prepare_vows": "Ehegelübde vorbereiten",
+      "final_confirmation": "Finale Bestätigung einholen"
+    },
     "location_venue": {
+      "define_requirements": "Anforderungen an die Location festlegen",
+      "research_locations": "Locations recherchieren",
+      "visit_locations": "Locations besichtigen",
+      "book_location": "Location buchen",
+      "plan_flow": "Ablauf in der Location planen",
+      "coordinate_logistics": "Logistik koordinieren",
+      "final_walkthrough": "Abschließende Begehung"
+    },
+    "location_flow": {
       "define_requirements": "Anforderungen an die Location festlegen",
       "research_locations": "Locations recherchieren",
       "visit_locations": "Locations besichtigen",
