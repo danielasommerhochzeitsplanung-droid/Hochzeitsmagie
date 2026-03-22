@@ -11,13 +11,13 @@ import TaskSelectionDialog from './TaskSelectionDialog';
 
 const mainCategories = [
   {
-    id: 'location_flow',
+    id: 'location_venue',
     icon: '🏛️',
     color: 'bg-emerald-500',
     subAreas: []
   },
   {
-    id: 'ceremony_formalities',
+    id: 'ceremony_legal',
     icon: '��',
     color: 'bg-blue-500',
     subAreas: []
@@ -63,12 +63,12 @@ const mainCategories = [
 const categoryToMainCategory = (category: string): string => {
   const categoryLower = category.toLowerCase();
 
-  if (categoryLower === 'location' || categoryLower === 'location_venue' || categoryLower === 'location_flow') return 'location_flow';
+  if (categoryLower === 'location' || categoryLower === 'location_venue' || categoryLower === 'location_flow') return 'location_venue';
   if (categoryLower === 'guests' || categoryLower === 'guests_communication') return 'guests_communication';
   if (categoryLower === 'catering' || categoryLower === 'vendors_services') return 'vendors_services';
   if (categoryLower === 'decoration' || categoryLower === 'styling_atmosphere') return 'styling_atmosphere';
   if (categoryLower === 'styling_outfit') return 'styling_outfit';
-  if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten' || categoryLower === 'ceremony_formalities') return 'ceremony_formalities';
+  if (categoryLower === 'planning' || categoryLower === 'ceremony_legal' || categoryLower === 'trauung_formalitaeten' || categoryLower === 'ceremony_formalities') return 'ceremony_legal';
   if (categoryLower === 'organization_closure') return 'organization_closure';
 
   return 'organization_closure';
@@ -1058,10 +1058,10 @@ export default function TodosModule() {
                     onClick={() => toggleMainCategoryExpansion(mainCategory.id)}
                   >
                     <div className="text-3xl flex-shrink-0">
-                      {mainCategory.icon}
+                      {t(`master_tasks.category_emoji.${mainCategory.id}`, { defaultValue: '📋' })}
                     </div>
                     <h3 className="text-lg flex-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 400 }}>
-                      {t(`todos.categories.${mainCategory.id}`)}
+                      {t(`master_tasks.categories.${mainCategory.id}`)}
                     </h3>
                     <span className="text-sm font-medium text-gray-500">
                       {completedCount}/{mainCategoryTasks.length}
