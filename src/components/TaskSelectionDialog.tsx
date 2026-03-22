@@ -19,14 +19,14 @@ interface TaskSelectionDialogProps {
 
 const mainCategories = [
   {
-    id: 'location_flow',
+    id: 'location_venue',
     icon: '🏛️',
     color: 'bg-emerald-500',
     subAreas: []
   },
   {
-    id: 'ceremony_formalities',
-    icon: '💒',
+    id: 'ceremony_legal',
+    icon: '💍',
     color: 'bg-blue-500',
     subAreas: []
   },
