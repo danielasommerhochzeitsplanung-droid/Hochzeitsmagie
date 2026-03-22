@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
+import { storage } from '../lib/storage-adapter';
 
 interface FirstSetupDialogProps {
   isOpen: boolean;
@@ -30,6 +31,50 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       alert('Bitte fülle alle Felder aus');
       return;
     }
+
+    storage.events.create({
+      name_de: 'Planungsstart',
+      name_en: 'Planning Start',
+      emoji: '💕',
+      active: true,
+      is_enabled: true,
+      date: planningStartDate,
+      time_start: null,
+      time_end: null,
+      location_id: null,
+      transport_info: '',
+      transport_time_start: null,
+      transport_time_end: null,
+      transport_type: '',
+      transport_from: '',
+      transport_to: '',
+      transport_provider: '',
+      transport_notes: 'Nun geht es los mit eurer gemeinsamen Planungsreise! 💕',
+      is_milestone: true,
+      archived: false
+    });
+
+    storage.events.create({
+      name_de: 'Hochzeitstag',
+      name_en: 'Wedding Day',
+      emoji: '💍',
+      active: true,
+      is_enabled: true,
+      date: weddingDate,
+      time_start: null,
+      time_end: null,
+      location_id: null,
+      transport_info: '',
+      transport_time_start: null,
+      transport_time_end: null,
+      transport_type: '',
+      transport_from: '',
+      transport_to: '',
+      transport_provider: '',
+      transport_notes: 'Der große Tag! Eure Hochzeit 💍✨',
+      is_milestone: true,
+      archived: false
+    });
 
     onComplete({
       partner1: partner1.trim(),

@@ -34,6 +34,7 @@ export interface Event {
   support_team_members?: Array<{ id: string; name: string; role: string }>;
   created_at?: string;
   archived?: boolean;
+  is_milestone?: boolean;
 }
 
 export default function EventsModule() {

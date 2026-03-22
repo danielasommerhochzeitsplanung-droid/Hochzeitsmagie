@@ -158,9 +158,14 @@ export default function EventTable({ events, onEdit, onDelete, onRestore, isArch
                       <span className="text-2xl">{event.emoji}</span>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <div className="font-medium" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                          <div className="font-medium" style={{ color: event.is_milestone ? '#d6b15b' : '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
                             {currentLang === 'de' ? event.name_de : event.name_en}
                           </div>
+                          {event.is_milestone && (
+                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#fef9ef', color: '#d6b15b', border: '1px solid #d6b15b', fontFamily: 'Open Sans, sans-serif' }}>
+                              ✨ Milestone
+                            </span>
+                          )}
                           {hasConflicts && (
                             <div
                               className="group relative"
@@ -251,13 +256,15 @@ export default function EventTable({ events, onEdit, onDelete, onRestore, isArch
                           <RotateCcw className="w-4 h-4" style={{ color: '#10b981' }} />
                         </button>
                       )}
-                      <button
-                        onClick={() => onDelete(event.id)}
-                        className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                        title={isArchived ? t('common.deletePermanently') : t('common.archive')}
-                      >
-                        <Trash2 className="w-4 h-4" style={{ color: '#ef4444' }} />
-                      </button>
+                      {!event.is_milestone && (
+                        <button
+                          onClick={() => onDelete(event.id)}
+                          className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                          title={isArchived ? t('common.deletePermanently') : t('common.archive')}
+                        >
+                          <Trash2 className="w-4 h-4" style={{ color: '#ef4444' }} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

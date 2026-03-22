@@ -97,6 +97,7 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
     transport_to: '',
     transport_provider: '',
     transport_notes: '',
+    is_milestone: false,
   });
 
   const [contacts, setContacts] = useState<EventContact[]>([]);
@@ -194,6 +195,7 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
         transport_to: event.transport_to || '',
         transport_provider: event.transport_provider || '',
         transport_notes: event.transport_notes || '',
+        is_milestone: event.is_milestone || false,
       });
       loadEventContacts(event.id);
       loadEventVendors(event.id);
@@ -218,6 +220,7 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
         transport_to: '',
         transport_provider: '',
         transport_notes: '',
+        is_milestone: false,
       });
       setContacts([]);
       setSelectedVendorIds([]);
@@ -620,6 +623,24 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
 
           {mode === 'create' && (
             <>
+          {formData.is_milestone && (
+            <div className="bg-gradient-to-r from-amber-50 to-rose-50 border-2 border-amber-300 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">✨</span>
+                <div>
+                  <h3 className="font-semibold" style={{ color: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}>
+                    {currentLang === 'de' ? 'Wichtiger Meilenstein' : 'Important Milestone'}
+                  </h3>
+                  <p className="text-sm mt-1" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
+                    {currentLang === 'de'
+                      ? 'Dieser besondere Termin kann verschoben, aber nicht gelöscht werden.'
+                      : 'This special date can be moved but not deleted.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <CollapsibleSection
             title={t('events.basicInformation')}
             isOpen={sectionsOpen.basic}
@@ -642,6 +663,7 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
                   style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
                   placeholder={currentLang === 'de' ? t('events.nameDeExample') : t('events.nameEnExample')}
                   required
+                  disabled={formData.is_milestone}
                 />
               </div>
             </div>
