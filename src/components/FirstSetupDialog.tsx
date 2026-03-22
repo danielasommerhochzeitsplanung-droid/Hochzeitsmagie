@@ -21,7 +21,7 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
   const [gender2, setGender2] = useState<'male' | 'female' | ''>('');
   const [weddingDate, setWeddingDate] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState('');
-  const [loadTasks, setLoadTasks] = useState<boolean | null>(null);
+  const [loadTasks, setLoadTasks] = useState<boolean>(true);
 
   if (!isOpen) return null;
 
@@ -30,11 +30,6 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
 
     if (!partner1.trim() || !partner2.trim() || !weddingDate || !planningStartDate) {
       alert('Bitte fülle alle Felder aus');
-      return;
-    }
-
-    if (loadTasks === null) {
-      alert('Bitte wählt aus, ob ihr Aufgaben laden möchtet');
       return;
     }
 
