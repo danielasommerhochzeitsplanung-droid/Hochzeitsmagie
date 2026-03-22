@@ -32,7 +32,18 @@ export default function CalendarModule() {
     vendors: vendors || []
   }), [weddingData, events, tasks, budgetItems, guests, vendors]);
 
-  const allEvents = useMemo(() => getAllCalendarEvents(calendarData), [calendarData]);
+  const allEvents = useMemo(() => {
+    const events = getAllCalendarEvents(calendarData);
+    console.log('Calendar Debug:', {
+      totalTasks: tasks.length,
+      tasksWithDueDate: tasks.filter(t => t.due_date).length,
+      calendarEvents: events.length,
+      taskEvents: events.filter(e => e.source === 'todos').length,
+      sampleTask: tasks[0],
+      sampleEvent: events[0]
+    });
+    return events;
+  }, [calendarData, tasks]);
 
   const filteredEvents = useMemo(() => {
     return allEvents.filter((event) => {
