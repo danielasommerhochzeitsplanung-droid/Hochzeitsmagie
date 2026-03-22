@@ -10,7 +10,7 @@ export interface TaskTemplate {
 
 export const taskCategories = [
   { id: 'location_venue', color: 'bg-emerald-500', icon: '🏛️' },
-  { id: 'ceremony_legal', color: 'bg-blue-500', icon: '💍' },
+  { id: 'ceremony_legal', color: 'bg-blue-500', icon: '📝' },
   { id: 'vendors_services', color: 'bg-purple-500', icon: '🎯' },
   { id: 'guests_communication', color: 'bg-amber-500', icon: '👥' },
   { id: 'styling_atmosphere', color: 'bg-cyan-500', icon: '🎨' },
