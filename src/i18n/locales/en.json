@@ -52,6 +52,10 @@
     "quickAddLocation": "Location",
     "quickAddVendor": "Vendor",
     "of": "of",
+    "filter": "Filter",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
     "openGuestsModule": "Go to Guests Module"
   },
   "guests": {
@@ -932,6 +936,49 @@
       "order_outfits": "Order bridal dress or wedding outfits",
       "select_accessories": "Select accessories",
       "adjustments": "Perform dress and outfit adjustments"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "emptyState": "No appointments yet",
+    "emptyStateHint": "As soon as you enter data in other areas, they will appear here.",
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "timeline": "Timeline",
+    "weddingDayTimeline": "Wedding Day Timeline",
+    "noWeddingDateSet": "No wedding date set yet",
+    "noWeddingDayEvents": "No events for the wedding day yet",
+    "addEventsToSeeTimeline": "Add events on the wedding day to see the timeline",
+    "noEventsThisDay": "No appointments for this day",
+    "more": "more",
+    "filterByType": "Filter by type",
+    "filterBySource": "Filter by source",
+    "eventDetails": "Event Details",
+    "date": "Date",
+    "time": "Time",
+    "noTime": "No time",
+    "until": "Until",
+    "location": "Location",
+    "participants": "Participants",
+    "notes": "Notes",
+    "additionalInfo": "Additional Information",
+    "openSourceModule": "Open Source Module",
+    "types": {
+      "wedding_day_event": "Wedding Day Event",
+      "todo": "Task",
+      "budget_deadline": "Budget Deadline",
+      "guest_deadline": "Guest Deadline",
+      "vendor_appointment": "Vendor Appointment",
+      "other_event": "Other Event"
+    },
+    "sources": {
+      "events": "Events",
+      "todos": "Tasks",
+      "budget": "Budget",
+      "guests": "Guests",
+      "vendors": "Vendors"
     }
   }
 }

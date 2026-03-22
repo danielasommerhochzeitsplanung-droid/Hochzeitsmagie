@@ -52,7 +52,11 @@
     "quickAddLocation": "Location",
     "quickAddVendor": "Dienstleister",
     "of": "von",
-    "openGuestsModule": "Zum Gästemodul"
+    "openGuestsModule": "Zum Gästemodul",
+    "filter": "Filter",
+    "yes": "Ja",
+    "no": "Nein",
+    "close": "Schließen"
   },
   "guests": {
     "addGuest": "Gast hinzufügen",
@@ -932,6 +936,49 @@
       "order_outfits": "Brautkleid oder Hochzeitsoutfits bestellen",
       "select_accessories": "Accessoires auswählen",
       "adjustments": "Kleid und Outfitanpassungen durchführen"
+    }
+  },
+  "calendar": {
+    "title": "Kalender",
+    "emptyState": "Noch keine Termine vorhanden",
+    "emptyStateHint": "Sobald ihr in anderen Bereichen Daten eintragt, erscheinen sie hier.",
+    "today": "Heute",
+    "month": "Monat",
+    "week": "Woche",
+    "day": "Tag",
+    "timeline": "Timeline",
+    "weddingDayTimeline": "Hochzeitstag-Timeline",
+    "noWeddingDateSet": "Noch kein Hochzeitsdatum festgelegt",
+    "noWeddingDayEvents": "Noch keine Events für den Hochzeitstag",
+    "addEventsToSeeTimeline": "Fügen Sie Events am Hochzeitstag hinzu, um die Timeline zu sehen",
+    "noEventsThisDay": "Keine Termine für diesen Tag",
+    "more": "weitere",
+    "filterByType": "Nach Typ filtern",
+    "filterBySource": "Nach Quelle filtern",
+    "eventDetails": "Termindetails",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "noTime": "Keine Zeit",
+    "until": "Bis",
+    "location": "Ort",
+    "participants": "Teilnehmer",
+    "notes": "Notizen",
+    "additionalInfo": "Zusätzliche Informationen",
+    "openSourceModule": "Zum Quellmodul",
+    "types": {
+      "wedding_day_event": "Hochzeitstag-Event",
+      "todo": "Aufgabe",
+      "budget_deadline": "Budget-Frist",
+      "guest_deadline": "Gäste-Frist",
+      "vendor_appointment": "Dienstleister-Termin",
+      "other_event": "Sonstiges Event"
+    },
+    "sources": {
+      "events": "Events",
+      "todos": "Aufgaben",
+      "budget": "Budget",
+      "guests": "Gäste",
+      "vendors": "Dienstleister"
     }
   }
 }
