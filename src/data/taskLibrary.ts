@@ -272,7 +272,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-001',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 1,
     planning_hint: 'start',
@@ -281,7 +281,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-002',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 2,
     planning_hint: 'start',
@@ -290,7 +290,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-003',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 3,
     planning_hint: 'middle',
@@ -299,7 +299,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-004',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 4,
     planning_hint: 'middle',
@@ -308,7 +308,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-005',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 5,
     planning_hint: 'middle',
@@ -317,7 +317,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-006',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 6,
     planning_hint: 'final',
@@ -326,7 +326,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'location-007',
-    category: 'location_flow',
+    category: 'location_venue',
     sub_area: 'general',
     sort_order: 7,
     planning_hint: 'final',
@@ -335,7 +335,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-001',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 1,
     planning_hint: 'start',
@@ -344,7 +344,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-002',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 2,
     planning_hint: 'start',
@@ -353,7 +353,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-003',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 3,
     planning_hint: 'middle',
@@ -362,7 +362,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-004',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 4,
     planning_hint: 'middle',
@@ -371,7 +371,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-005',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 5,
     planning_hint: 'middle',
@@ -380,7 +380,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-006',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 6,
     planning_hint: 'final',
@@ -389,7 +389,7 @@ export const TASK_LIBRARY: MasterTask[] = [
   },
   {
     id: 'ceremony-007',
-    category: 'ceremony_formalities',
+    category: 'ceremony_legal',
     sub_area: 'general',
     sort_order: 7,
     planning_hint: 'final',
