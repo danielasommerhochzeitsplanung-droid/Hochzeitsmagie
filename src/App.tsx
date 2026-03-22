@@ -138,20 +138,13 @@ function App() {
 
     if (data.loadTasks) {
       const allCategories = [
-        'location',
-        'catering:food',
-        'catering:drinks',
-        'styling:atmosphere',
-        'styling:outfit',
+        'ceremony_legal',
+        'location_venue',
+        'styling_atmosphere',
+        'styling_outfit',
         'vendors_services',
-        'memories',
-        'music_entertainment',
         'guests_communication',
-        'organization:planning',
-        'organization:transport_logistics',
-        'organization:guest_care',
-        'organization:support_team',
-        'organization:closure'
+        'organization_closure'
       ];
 
       await loadTasksFromMaster(allCategories);
