@@ -15,7 +15,7 @@ type ViewMode = 'month' | 'week' | 'day' | 'timeline';
 
 export default function CalendarModule() {
   const { t } = useTranslation();
-  const { data } = useWeddingData();
+  const { weddingData, events, tasks, budgetItems, guests, vendors } = useWeddingData();
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
@@ -23,7 +23,16 @@ export default function CalendarModule() {
   const [typeFilters, setTypeFilters] = useState<Set<CalendarEventType>>(new Set());
   const [sourceFilters, setSourceFilters] = useState<Set<CalendarEventSource>>(new Set());
 
-  const allEvents = useMemo(() => getAllCalendarEvents(data), [data]);
+  const calendarData = useMemo(() => ({
+    wedding_date: weddingData?.wedding_date,
+    events: events || [],
+    tasks: tasks || [],
+    budgetItems: budgetItems || [],
+    guests: guests || [],
+    vendors: vendors || []
+  }), [weddingData, events, tasks, budgetItems, guests, vendors]);
+
+  const allEvents = useMemo(() => getAllCalendarEvents(calendarData), [calendarData]);
 
   const filteredEvents = useMemo(() => {
     return allEvents.filter((event) => {
@@ -33,7 +42,7 @@ export default function CalendarModule() {
     });
   }, [allEvents, typeFilters, sourceFilters]);
 
-  const weddingDate = data?.settings?.weddingDate;
+  const weddingDate = weddingData?.wedding_date;
   const weddingDayEvents = useMemo(() => {
     if (!weddingDate) return [];
     return filteredEvents.filter(

@@ -1,23 +1,31 @@
 import { CalendarEvent } from '../types/calendar';
 import type {
   Event,
-  Todo,
   BudgetItem,
   Guest,
   Vendor,
-  WeddingData,
-} from '../schemas/weddingData.schema';
+  Task,
+} from '../lib/storage-adapter';
 
-export function getAllCalendarEvents(data: WeddingData | undefined): CalendarEvent[] {
+interface CalendarDataInput {
+  wedding_date?: string;
+  events: Event[];
+  tasks: Task[];
+  budgetItems: BudgetItem[];
+  guests: Guest[];
+  vendors: Vendor[];
+}
+
+export function getAllCalendarEvents(data: CalendarDataInput | undefined): CalendarEvent[] {
   if (!data) return [];
 
   const events: CalendarEvent[] = [];
 
-  const weddingDate = data.settings?.weddingDate;
+  const weddingDate = data.wedding_date;
 
   events.push(...mapEventsToCalendar(data.events || [], weddingDate));
-  events.push(...mapTodosToCalendar(data.todos || []));
-  events.push(...mapBudgetToCalendar(data.budget || []));
+  events.push(...mapTasksToCalendar(data.tasks || []));
+  events.push(...mapBudgetToCalendar(data.budgetItems || []));
   events.push(...mapGuestsToCalendar(data.guests || []));
   events.push(...mapVendorsToCalendar(data.vendors || []));
 
@@ -56,41 +64,40 @@ function mapEventsToCalendar(
     });
 }
 
-function mapTodosToCalendar(todos: Todo[]): CalendarEvent[] {
-  return todos
-    .filter((todo) => todo.dueDate)
-    .map((todo) => ({
-      id: `todo-${todo.id}`,
-      title: todo.title,
-      date: todo.dueDate!,
+function mapTasksToCalendar(tasks: Task[]): CalendarEvent[] {
+  return tasks
+    .filter((task) => task.due_date)
+    .map((task) => ({
+      id: `task-${task.id}`,
+      title: task.title,
+      date: task.due_date!,
       type: 'todo' as const,
       source: 'todos' as const,
-      sourceId: todo.id,
-      notes: todo.description,
+      sourceId: task.id,
+      notes: task.description,
       metadata: {
-        completed: todo.completed,
-        priority: todo.priority,
-        category: todo.category,
+        completed: task.completed,
+        priority: task.priority,
+        category: task.category,
       },
     }));
 }
 
 function mapBudgetToCalendar(budget: BudgetItem[]): CalendarEvent[] {
   return budget
-    .filter((item) => item.paymentDate || item.dueDate)
+    .filter((item) => item.paid)
     .map((item) => ({
       id: `budget-${item.id}`,
-      title: `${item.category}: ${item.item}`,
-      date: item.paymentDate || item.dueDate!,
+      title: `${item.category}: ${item.item_name || 'Budget Item'}`,
+      date: new Date().toISOString().split('T')[0],
       type: 'budget_deadline' as const,
       source: 'budget' as const,
       sourceId: item.id,
       notes: item.notes,
       metadata: {
-        estimatedCost: item.estimatedCost,
-        actualCost: item.actualCost,
+        estimatedCost: item.estimated_cost,
+        actualCost: item.actual_cost,
         paid: item.paid,
-        vendor: item.vendor,
       },
     }));
 }
@@ -99,11 +106,11 @@ function mapGuestsToCalendar(guests: Guest[]): CalendarEvent[] {
   const events: CalendarEvent[] = [];
 
   guests.forEach((guest) => {
-    if (guest.saveTheDateSent) {
+    if (guest.save_the_date_sent_date) {
       events.push({
         id: `guest-std-${guest.id}`,
-        title: `Save-the-Date: ${guest.firstName} ${guest.lastName}`,
-        date: guest.saveTheDateSent,
+        title: `Save-the-Date: ${guest.name}`,
+        date: guest.save_the_date_sent_date,
         type: 'guest_deadline' as const,
         source: 'guests' as const,
         sourceId: guest.id,
@@ -114,11 +121,11 @@ function mapGuestsToCalendar(guests: Guest[]): CalendarEvent[] {
       });
     }
 
-    if (guest.invitationSent) {
+    if (guest.invitation_sent_date) {
       events.push({
         id: `guest-inv-${guest.id}`,
-        title: `Einladung: ${guest.firstName} ${guest.lastName}`,
-        date: guest.invitationSent,
+        title: `Einladung: ${guest.name}`,
+        date: guest.invitation_sent_date,
         type: 'guest_deadline' as const,
         source: 'guests' as const,
         sourceId: guest.id,
@@ -129,17 +136,17 @@ function mapGuestsToCalendar(guests: Guest[]): CalendarEvent[] {
       });
     }
 
-    if (guest.rsvpDate) {
+    if (guest.rsvp_date) {
       events.push({
         id: `guest-rsvp-${guest.id}`,
-        title: `RSVP: ${guest.firstName} ${guest.lastName}`,
-        date: guest.rsvpDate,
+        title: `RSVP: ${guest.name}`,
+        date: guest.rsvp_date,
         type: 'guest_deadline' as const,
         source: 'guests' as const,
         sourceId: guest.id,
         metadata: {
           type: 'rsvp',
-          status: guest.status,
+          status: guest.rsvp_status,
         },
       });
     }
@@ -152,53 +159,50 @@ function mapVendorsToCalendar(vendors: Vendor[]): CalendarEvent[] {
   const events: CalendarEvent[] = [];
 
   vendors.forEach((vendor) => {
-    if (vendor.meetingDate) {
+    if (vendor.next_appointment) {
       events.push({
         id: `vendor-meeting-${vendor.id}`,
         title: `Termin: ${vendor.name}`,
-        date: vendor.meetingDate,
+        date: vendor.next_appointment,
         type: 'vendor_appointment' as const,
         source: 'vendors' as const,
         sourceId: vendor.id,
-        location: vendor.address,
         notes: vendor.notes,
         metadata: {
           type: 'meeting',
           category: vendor.category,
-          contactPerson: vendor.contactPerson,
           phone: vendor.phone,
           email: vendor.email,
         },
       });
     }
 
-    if (vendor.contractDate) {
+    if (vendor.first_contact_date) {
       events.push({
-        id: `vendor-contract-${vendor.id}`,
-        title: `Vertrag: ${vendor.name}`,
-        date: vendor.contractDate,
+        id: `vendor-contact-${vendor.id}`,
+        title: `Erstkontakt: ${vendor.name}`,
+        date: vendor.first_contact_date,
         type: 'vendor_appointment' as const,
         source: 'vendors' as const,
         sourceId: vendor.id,
         metadata: {
-          type: 'contract',
+          type: 'first_contact',
           category: vendor.category,
         },
       });
     }
 
-    if (vendor.paymentDueDate) {
+    if (vendor.final_payment_due) {
       events.push({
         id: `vendor-payment-${vendor.id}`,
         title: `Zahlung fällig: ${vendor.name}`,
-        date: vendor.paymentDueDate,
+        date: vendor.final_payment_due,
         type: 'vendor_appointment' as const,
         source: 'vendors' as const,
         sourceId: vendor.id,
         metadata: {
           type: 'payment',
-          estimatedCost: vendor.estimatedCost,
-          actualCost: vendor.actualCost,
+          estimatedCost: vendor.cost,
         },
       });
     }
