@@ -269,6 +269,321 @@ export const TASK_LIBRARY: MasterTask[] = [
     planning_hint: 'final',
     optional: false,
     i18nKey: 'master_tasks.music_entertainment.final_confirmation'
+  },
+  {
+    id: 'location-001',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 1,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.define_requirements'
+  },
+  {
+    id: 'location-002',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 2,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.research_locations'
+  },
+  {
+    id: 'location-003',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 3,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.visit_locations'
+  },
+  {
+    id: 'location-004',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 4,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.book_location'
+  },
+  {
+    id: 'location-005',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 5,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.plan_flow'
+  },
+  {
+    id: 'location-006',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 6,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.coordinate_logistics'
+  },
+  {
+    id: 'location-007',
+    category: 'location_flow',
+    sub_area: 'general',
+    sort_order: 7,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.location_flow.final_walkthrough'
+  },
+  {
+    id: 'ceremony-001',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 1,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.clarify_legal_requirements'
+  },
+  {
+    id: 'ceremony-002',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 2,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.gather_documents'
+  },
+  {
+    id: 'ceremony-003',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 3,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.book_appointment'
+  },
+  {
+    id: 'ceremony-004',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 4,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.select_officiant'
+  },
+  {
+    id: 'ceremony-005',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 5,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.plan_ceremony'
+  },
+  {
+    id: 'ceremony-006',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 6,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.prepare_vows'
+  },
+  {
+    id: 'ceremony-007',
+    category: 'ceremony_formalities',
+    sub_area: 'general',
+    sort_order: 7,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.ceremony_formalities.final_confirmation'
+  },
+  {
+    id: 'guests-001',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 1,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.create_guest_list'
+  },
+  {
+    id: 'guests-002',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 2,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.design_invitations'
+  },
+  {
+    id: 'guests-003',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 3,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.send_save_dates'
+  },
+  {
+    id: 'guests-004',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 4,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.send_invitations'
+  },
+  {
+    id: 'guests-005',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 5,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.track_rsvps'
+  },
+  {
+    id: 'guests-006',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 6,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.finalize_guest_count'
+  },
+  {
+    id: 'guests-007',
+    category: 'guests_communication',
+    sub_area: 'general',
+    sort_order: 7,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.guests_communication.send_final_info'
+  },
+  {
+    id: 'atmosphere-001',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 1,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.define_theme_colors'
+  },
+  {
+    id: 'atmosphere-002',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 2,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.create_mood_board'
+  },
+  {
+    id: 'atmosphere-003',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 3,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.select_decorations'
+  },
+  {
+    id: 'atmosphere-004',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 4,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.choose_flowers'
+  },
+  {
+    id: 'atmosphere-005',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 5,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.plan_lighting'
+  },
+  {
+    id: 'atmosphere-006',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 6,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.coordinate_setup'
+  },
+  {
+    id: 'atmosphere-007',
+    category: 'styling_atmosphere',
+    sub_area: 'general',
+    sort_order: 7,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.styling_atmosphere.final_decoration_check'
+  },
+  {
+    id: 'organization-001',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 1,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.create_master_plan'
+  },
+  {
+    id: 'organization-002',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 2,
+    planning_hint: 'start',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.assign_responsibilities'
+  },
+  {
+    id: 'organization-003',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 3,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.create_timeline'
+  },
+  {
+    id: 'organization-004',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 4,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.coordinate_vendors'
+  },
+  {
+    id: 'organization-005',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 5,
+    planning_hint: 'middle',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.prepare_emergency_plan'
+  },
+  {
+    id: 'organization-006',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 6,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.final_checklist'
+  },
+  {
+    id: 'organization-007',
+    category: 'organization_closure',
+    sub_area: 'general',
+    sort_order: 7,
+    planning_hint: 'final',
+    optional: false,
+    i18nKey: 'master_tasks.organization_closure.day_coordination'
   }
 ];
 
