@@ -771,7 +771,17 @@
       "styling_outfit": "Styling & Outfit",
       "organization_closure": "Organization & Closure"
     },
+    "category_emoji": {
+      "location_venue": "📍",
+      "ceremony_legal": "💒",
+      "vendors_services": "🤝",
+      "guests_communication": "👥",
+      "styling_atmosphere": "✨",
+      "styling_outfit": "👗",
+      "organization_closure": "📋"
+    },
     "sub_areas": {
+      "general": "General",
       "memories": "Memories",
       "catering_drinks": "Catering & Drinks",
       "music_entertainment": "Music & Entertainment",
@@ -782,6 +792,62 @@
       "support_team": "Support Team",
       "guest_care": "Guest Care"
     },
+    "ceremony_legal": {
+      "clarify_legal_requirements": "Clarify legal requirements",
+      "gather_documents": "Gather documents",
+      "book_appointment": "Book appointment at registry office",
+      "select_officiant": "Select officiant",
+      "plan_ceremony": "Plan ceremony",
+      "prepare_vows": "Prepare vows",
+      "final_confirmation": "Final confirmation"
+    },
+    "location_venue": {
+      "define_requirements": "Define location requirements",
+      "research_locations": "Research locations",
+      "visit_locations": "Visit locations",
+      "book_location": "Book location",
+      "plan_flow": "Plan venue flow",
+      "coordinate_logistics": "Coordinate logistics",
+      "final_walkthrough": "Final walkthrough"
+    },
+    "guests_communication": {
+      "create_guest_list": "Create guest list",
+      "design_invitations": "Design invitations",
+      "send_save_dates": "Send save-the-dates",
+      "send_invitations": "Send invitations",
+      "track_rsvps": "Track RSVPs",
+      "finalize_guest_count": "Finalize guest count",
+      "send_final_info": "Send final information"
+    },
+    "styling_atmosphere": {
+      "define_theme_colors": "Define theme and color concept",
+      "create_mood_board": "Create mood board",
+      "select_decorations": "Select decorations",
+      "choose_flowers": "Choose flowers",
+      "plan_lighting": "Plan lighting concept",
+      "coordinate_setup": "Coordinate setup",
+      "final_decoration_check": "Final decoration check"
+    },
+    "styling_outfit": {
+      "outfits_accessories": {
+        "gather_inspiration": "Gather inspiration and wishes for outfits",
+        "define_style": "Define style for wedding outfits",
+        "research_outfits": "Research bridal dress and wedding outfits",
+        "try_on_select": "Try on and select outfits",
+        "order_outfits": "Order bridal dress or wedding outfits",
+        "select_accessories": "Select accessories",
+        "final_alterations": "Final dress and outfit alterations"
+      }
+    },
+    "organization_closure": {
+      "create_master_plan": "Create master plan",
+      "assign_responsibilities": "Assign responsibilities",
+      "create_timeline": "Create timeline",
+      "coordinate_vendors": "Coordinate vendors",
+      "prepare_emergency_plan": "Prepare emergency plan",
+      "final_checklist": "Final checklist",
+      "day_coordination": "Day coordination"
+    },
     "catering_drinks": {
       "culinary_concept": "Define culinary concept",
       "drinks_concept": "Define drinks concept",
@@ -790,6 +856,36 @@
       "book_catering": "Book catering",
       "finalize_menu": "Finalize menu and drinks",
       "coordinate_service": "Coordinate service and schedule"
+    },
+    "vendors_services": {
+      "catering_drinks": {
+        "define_culinary_concept": "Define culinary concept",
+        "define_beverage_concept": "Define beverage concept",
+        "research_caterers": "Research caterers",
+        "organize_tasting": "Organize tasting",
+        "book_catering": "Book catering",
+        "finalize_menu_drinks": "Finalize menu and drinks",
+        "coordinate_service": "Coordinate service and schedule"
+      },
+      "music_entertainment": {
+        "define_music_areas": "Define music areas",
+        "define_music_type": "Define music type",
+        "plan_budget": "Plan music budget",
+        "research_compare_providers": "Research and compare music providers",
+        "book_main_provider": "Book main music provider",
+        "coordinate_schedule_wishes": "Coordinate schedule and music wishes",
+        "clarify_technical_requirements": "Clarify technical requirements",
+        "final_confirmation": "Final coordination and confirmation"
+      },
+      "transport_logistics": {
+        "clarify_transport_needs": "Clarify transportation needs",
+        "define_transport_types": "Define transport types",
+        "research_providers": "Research transport providers",
+        "book_transport": "Book transportation",
+        "create_transport_plan": "Create transportation plan",
+        "finalize_times_locations": "Finalize times and meeting points",
+        "confirm_details": "Confirm transportation details"
+      }
     },
     "transport_logistics": {
       "clarify_needs": "Clarify transportation needs",

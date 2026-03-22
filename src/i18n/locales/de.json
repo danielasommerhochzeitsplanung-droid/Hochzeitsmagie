@@ -771,7 +771,17 @@
       "styling_outfit": "Styling & Outfit",
       "organization_closure": "Organisation & Abschluss"
     },
+    "category_emoji": {
+      "location_venue": "📍",
+      "ceremony_legal": "💒",
+      "vendors_services": "🤝",
+      "guests_communication": "👥",
+      "styling_atmosphere": "✨",
+      "styling_outfit": "👗",
+      "organization_closure": "📋"
+    },
     "sub_areas": {
+      "general": "Allgemein",
       "memories": "Erinnerungen",
       "catering_drinks": "Kulinarik & Getränke",
       "music_entertainment": "Musik & Unterhaltung",
@@ -782,6 +792,62 @@
       "support_team": "Helfer & Supportteam",
       "guest_care": "Gästebetreuung"
     },
+    "ceremony_legal": {
+      "clarify_legal_requirements": "Rechtliche Anforderungen klären",
+      "gather_documents": "Dokumente zusammenstellen",
+      "book_appointment": "Termin beim Standesamt buchen",
+      "select_officiant": "Trauredner/in auswählen",
+      "plan_ceremony": "Zeremonie planen",
+      "prepare_vows": "Ehegelübde vorbereiten",
+      "final_confirmation": "Finale Bestätigung einholen"
+    },
+    "location_venue": {
+      "define_requirements": "Anforderungen an die Location festlegen",
+      "research_locations": "Locations recherchieren",
+      "visit_locations": "Locations besichtigen",
+      "book_location": "Location buchen",
+      "plan_flow": "Ablauf in der Location planen",
+      "coordinate_logistics": "Logistik koordinieren",
+      "final_walkthrough": "Abschließende Begehung"
+    },
+    "guests_communication": {
+      "create_guest_list": "Gästeliste erstellen",
+      "design_invitations": "Einladungen gestalten",
+      "send_save_dates": "Save-the-Dates versenden",
+      "send_invitations": "Einladungen versenden",
+      "track_rsvps": "Zusagen verfolgen",
+      "finalize_guest_count": "Endgültige Gästeanzahl festlegen",
+      "send_final_info": "Finale Informationen versenden"
+    },
+    "styling_atmosphere": {
+      "define_theme_colors": "Thema und Farbkonzept festlegen",
+      "create_mood_board": "Mood Board erstellen",
+      "select_decorations": "Dekoration auswählen",
+      "choose_flowers": "Blumenschmuck auswählen",
+      "plan_lighting": "Lichtkonzept planen",
+      "coordinate_setup": "Aufbau koordinieren",
+      "final_decoration_check": "Abschließende Dekorationskontrolle"
+    },
+    "styling_outfit": {
+      "outfits_accessories": {
+        "gather_inspiration": "Inspirationen und Wünsche für die Outfits sammeln",
+        "define_style": "Stil für die Hochzeitsoutfits festlegen",
+        "research_outfits": "Brautkleid und Hochzeitsoutfits recherchieren",
+        "try_on_select": "Outfits anprobieren und auswählen",
+        "order_outfits": "Brautkleid oder Hochzeitsoutfits bestellen",
+        "select_accessories": "Accessoires auswählen",
+        "final_alterations": "Kleid und Outfitanpassungen durchführen"
+      }
+    },
+    "organization_closure": {
+      "create_master_plan": "Masterplan erstellen",
+      "assign_responsibilities": "Verantwortlichkeiten zuweisen",
+      "create_timeline": "Zeitplan erstellen",
+      "coordinate_vendors": "Dienstleister koordinieren",
+      "prepare_emergency_plan": "Notfallplan vorbereiten",
+      "final_checklist": "Finale Checkliste",
+      "day_coordination": "Tageskoordination"
+    },
     "catering_drinks": {
       "culinary_concept": "Kulinarisches Konzept festlegen",
       "drinks_concept": "Getränkekonzept festlegen",
@@ -790,6 +856,36 @@
       "book_catering": "Catering buchen",
       "finalize_menu": "Menü und Getränke final abstimmen",
       "coordinate_service": "Service und Ablauf koordinieren"
+    },
+    "vendors_services": {
+      "catering_drinks": {
+        "define_culinary_concept": "Kulinarisches Konzept festlegen",
+        "define_beverage_concept": "Getränkekonzept festlegen",
+        "research_caterers": "Caterer recherchieren",
+        "organize_tasting": "Probeessen organisieren",
+        "book_catering": "Catering buchen",
+        "finalize_menu_drinks": "Menü und Getränke final abstimmen",
+        "coordinate_service": "Service und Ablauf koordinieren"
+      },
+      "music_entertainment": {
+        "define_music_areas": "Einsatzbereiche für Musik festlegen",
+        "define_music_type": "Musikform definieren",
+        "plan_budget": "Budget für Musik planen",
+        "research_compare_providers": "Musikanbieter recherchieren und vergleichen",
+        "book_main_provider": "Hauptanbieter für Musik beauftragen",
+        "coordinate_schedule_wishes": "Ablauf und Musikwünsche abstimmen",
+        "clarify_technical_requirements": "Technik und Aufbauanforderungen klären",
+        "final_confirmation": "Finale Abstimmung und Bestätigung einholen"
+      },
+      "transport_logistics": {
+        "clarify_transport_needs": "Transportbedarf klären",
+        "define_transport_types": "Transportarten festlegen",
+        "research_providers": "Transportanbieter recherchieren",
+        "book_transport": "Transport buchen",
+        "create_transport_plan": "Transportplan erstellen",
+        "finalize_times_locations": "Fahrzeiten und Treffpunkte finalisieren",
+        "confirm_details": "Transportdetails bestätigen"
+      }
     },
     "transport_logistics": {
       "clarify_needs": "Transportbedarf klären",
