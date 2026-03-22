@@ -10,6 +10,7 @@ interface FirstSetupDialogProps {
     gender2: 'male' | 'female' | '';
     weddingDate: string;
     planningStartDate: string;
+    loadTasks: boolean;
   }) => void;
 }
 
@@ -20,6 +21,7 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
   const [gender2, setGender2] = useState<'male' | 'female' | ''>('');
   const [weddingDate, setWeddingDate] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState('');
+  const [loadTasks, setLoadTasks] = useState<boolean | null>(null);
 
   if (!isOpen) return null;
 
@@ -31,6 +33,11 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       return;
     }
 
+    if (loadTasks === null) {
+      alert('Bitte wählt aus, ob ihr Aufgaben laden möchtet');
+      return;
+    }
+
     onComplete({
       partner1: partner1.trim(),
       partner2: partner2.trim(),
@@ -38,6 +45,7 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       gender2,
       weddingDate,
       planningStartDate,
+      loadTasks,
     });
   };
 
@@ -224,6 +232,55 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
                 </span>
               </p>
             </div>
+          </div>
+
+          <div>
+            <label
+              className="block mb-3 font-medium"
+              style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.9rem' }}
+            >
+              Möchtet ihr eure Aufgabenliste direkt mit empfohlenen Aufgabenbereichen füllen? *
+            </label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setLoadTasks(true)}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                  loadTasks === true
+                    ? 'text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+                style={{
+                  fontFamily: 'Open Sans, sans-serif',
+                  backgroundColor: loadTasks === true ? '#d6b15b' : undefined,
+                  fontSize: '0.9rem'
+                }}
+              >
+                Ja, Aufgaben laden
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoadTasks(false)}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                  loadTasks === false
+                    ? 'text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+                style={{
+                  fontFamily: 'Open Sans, sans-serif',
+                  backgroundColor: loadTasks === false ? '#d6b15b' : undefined,
+                  fontSize: '0.9rem'
+                }}
+              >
+                Nein, später auswählen
+              </button>
+            </div>
+            <p
+              className="text-sm text-gray-500 mt-2"
+              style={{ fontFamily: 'Open Sans, sans-serif' }}
+            >
+              Ihr könnt später jederzeit Aufgabenbereiche hinzufügen oder entfernen
+            </p>
           </div>
 
           <button
