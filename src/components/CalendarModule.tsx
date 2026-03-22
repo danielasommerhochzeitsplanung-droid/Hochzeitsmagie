@@ -33,7 +33,7 @@ export default function CalendarModule() {
     });
   }, [allEvents, typeFilters, sourceFilters]);
 
-  const weddingDate = data.settings?.weddingDate;
+  const weddingDate = data?.settings?.weddingDate;
   const weddingDayEvents = useMemo(() => {
     if (!weddingDate) return [];
     return filteredEvents.filter(
