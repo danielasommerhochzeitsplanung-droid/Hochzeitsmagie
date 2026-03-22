@@ -8,7 +8,9 @@ import type {
   WeddingData,
 } from '../schemas/weddingData.schema';
 
-export function getAllCalendarEvents(data: WeddingData): CalendarEvent[] {
+export function getAllCalendarEvents(data: WeddingData | undefined): CalendarEvent[] {
+  if (!data) return [];
+
   const events: CalendarEvent[] = [];
 
   const weddingDate = data.settings?.weddingDate;
