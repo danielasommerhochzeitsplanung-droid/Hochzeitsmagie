@@ -80,7 +80,6 @@ function App() {
     gender2: 'male' | 'female' | '';
     weddingDate: string;
     planningStartDate: string;
-    loadTasks: boolean;
   }) => {
     await updateWeddingData({
       couple_name_1: data.partner1,
@@ -136,19 +135,17 @@ function App() {
       archived: false,
     });
 
-    if (data.loadTasks) {
-      const allCategories = [
-        'ceremony_legal',
-        'location_venue',
-        'styling_atmosphere',
-        'styling_outfit',
-        'vendors_services',
-        'guests_communication',
-        'organization_closure'
-      ];
+    const allCategories = [
+      'ceremony_legal',
+      'location_venue',
+      'styling_atmosphere',
+      'styling_outfit',
+      'vendors_services',
+      'guests_communication',
+      'organization_closure'
+    ];
 
-      await loadTasksFromMaster(allCategories);
-    }
+    await loadTasksFromMaster(allCategories);
 
     setShowSetupDialog(false);
     setWeddingData({
