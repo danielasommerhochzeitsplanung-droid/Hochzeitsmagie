@@ -138,8 +138,8 @@ export default function CalendarModule() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <CalendarIcon className="w-8 h-8" style={{ color: '#3b3b3d' }} />
-          <h1 className="text-3xl font-bold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+          <span className="text-3xl">📅</span>
+          <h1 className="text-3xl" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
             {t('calendar.title')}
           </h1>
         </div>
@@ -152,14 +152,14 @@ export default function CalendarModule() {
           }`}
           style={
             showFilters || typeFilters.size > 0 || sourceFilters.size > 0
-              ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
-              : { color: '#3b3b3d', borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
+              ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
+              : { color: '#3b3b3d', borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif',  }
           }
         >
           <Filter className="w-4 h-4" />
           {t('common.filter')}
           {(typeFilters.size > 0 || sourceFilters.size > 0) && (
-            <span className="bg-white px-2 py-0.5 rounded-full text-xs font-medium" style={{ color: '#3b3b3d' }}>
+            <span className="bg-white px-2 py-0.5 rounded-full text-xs " style={{ color: '#3b3b3d' }}>
               {typeFilters.size + sourceFilters.size}
             </span>
           )}
@@ -169,7 +169,7 @@ export default function CalendarModule() {
       {showFilters && (
         <div className="bg-white rounded-lg shadow-md border p-4 space-y-4">
           <div>
-            <h3 className="text-sm font-medium mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }}>
+            <h3 className="text-sm mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
               {t('calendar.filterByType')}
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -178,7 +178,7 @@ export default function CalendarModule() {
                   <button
                     key={type}
                     onClick={() => toggleTypeFilter(type)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
                       typeFilters.has(type)
                         ? 'text-white'
                         : 'bg-gray-100 hover:bg-gray-200'
@@ -196,7 +196,7 @@ export default function CalendarModule() {
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-medium mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }}>
+            <h3 className="text-sm mb-2" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
               {t('calendar.filterBySource')}
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -205,7 +205,7 @@ export default function CalendarModule() {
                   <button
                     key={source}
                     onClick={() => toggleSourceFilter(source)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
                       sourceFilters.has(source)
                         ? 'text-white'
                         : 'bg-gray-100 hover:bg-gray-200'
@@ -245,13 +245,13 @@ export default function CalendarModule() {
               </button>
               <button
                 onClick={goToToday}
-                className="px-3 py-1.5 text-sm font-medium bg-white border rounded-lg hover:bg-gray-50 transition-colors"
-                style={{ color: '#3b3b3d', borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }}
+                className="px-3 py-1.5 text-sm bg-white border rounded-lg hover:bg-gray-50 transition-colors"
+                style={{ color: '#3b3b3d', borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
               >
                 {t('calendar.today')}
               </button>
             </div>
-            <h2 className="text-lg font-semibold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+            <h2 className="text-lg" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
               {viewMode === 'month' &&
                 selectedDate.toLocaleDateString('de-DE', {
                   month: 'long',
@@ -271,60 +271,60 @@ export default function CalendarModule() {
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode('month')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-3 py-1.5 text-sm  rounded-lg transition-colors ${
                   viewMode === 'month'
                     ? 'text-white'
                     : 'hover:bg-gray-100'
                 }`}
                 style={
                   viewMode === 'month'
-                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
-                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
+                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
+                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
                 }
               >
                 {t('calendar.month')}
               </button>
               <button
                 onClick={() => setViewMode('week')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-3 py-1.5 text-sm  rounded-lg transition-colors ${
                   viewMode === 'week'
                     ? 'text-white'
                     : 'hover:bg-gray-100'
                 }`}
                 style={
                   viewMode === 'week'
-                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
-                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
+                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
+                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
                 }
               >
                 {t('calendar.week')}
               </button>
               <button
                 onClick={() => setViewMode('day')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-3 py-1.5 text-sm  rounded-lg transition-colors ${
                   viewMode === 'day'
                     ? 'text-white'
                     : 'hover:bg-gray-100'
                 }`}
                 style={
                   viewMode === 'day'
-                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
-                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
+                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
+                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
                 }
               >
                 {t('calendar.day')}
               </button>
               <button
                 onClick={() => setViewMode('timeline')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-3 py-1.5 text-sm  rounded-lg transition-colors ${
                   viewMode === 'timeline'
                     ? 'text-white'
                     : 'hover:bg-gray-100'
                 }`}
                 style={
                   viewMode === 'timeline'
-                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
-                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }
+                    ? { backgroundColor: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
+                    : { color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }
                 }
               >
                 {t('calendar.timeline')}
@@ -431,8 +431,8 @@ function MonthView({
         {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) => (
           <div
             key={day}
-            className="bg-gray-50 p-2 text-center text-sm font-medium"
-            style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 600 }}
+            className="bg-gray-50 p-2 text-center text-sm "
+            style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif',  }}
           >
             {day}
           </div>
@@ -455,7 +455,7 @@ function MonthView({
               {day && (
                 <>
                   <div
-                    className={`text-sm font-semibold mb-1 ${
+                    className={`text-sm  mb-1 ${
                       isToday
                         ? 'text-white w-6 h-6 rounded-full flex items-center justify-center'
                         : ''
@@ -478,7 +478,7 @@ function MonthView({
                           backgroundColor: getTypeColorHex(event.type),
                         }}
                       >
-                        <div className="text-white font-medium truncate" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+                        <div className="text-white  truncate" style={{ fontFamily: 'Open Sans, sans-serif' }}>
                           {event.time && `${event.time.substring(0, 5)} `}
                           {event.title}
                         </div>
@@ -547,7 +547,7 @@ function WeekView({
           <div key={index} className="border rounded-lg p-3">
             <div
               className={`text-center mb-3 ${
-                isToday ? 'font-semibold' : ''
+                isToday ? '' : ''
               }`}
               style={{
                 color: isToday ? '#3b3b3d' : '#6b7280',
@@ -578,7 +578,7 @@ function WeekView({
                   )}`}
                   style={{ fontFamily: 'Open Sans, sans-serif' }}
                 >
-                  <div className="font-medium">
+                  <div className="">
                     {event.time && `${event.time.substring(0, 5)}`}
                   </div>
                   <div className="truncate">{event.title}</div>
@@ -638,7 +638,7 @@ function DayView({
             <div className={`w-1 h-full ${getTypeColor(event.type)} rounded`} />
             <div className="flex-1">
               <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{event.title}</h3>
+                <h3 className="" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{event.title}</h3>
                 {event.time && (
                   <span className="text-sm" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>
                     {event.time.substring(0, 5)}
@@ -708,7 +708,7 @@ function TimelineView({
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-xl font-semibold" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+        <h3 className="text-xl " style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
           {new Date(weddingDate).toLocaleDateString('de-DE', {
             weekday: 'long',
             day: 'numeric',
@@ -727,7 +727,7 @@ function TimelineView({
           >
             <div className="w-24 flex-shrink-0 text-right">
               {event.time ? (
-                <span className="text-sm font-medium" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                <span className="text-sm " style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
                   {event.time.substring(0, 5)}
                 </span>
               ) : (
@@ -742,7 +742,7 @@ function TimelineView({
               )} flex-shrink-0 relative z-10`}
             />
             <div className="flex-1">
-              <h4 className="font-semibold mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+              <h4 className=" mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
                 {event.title}
               </h4>
               {event.location && (
