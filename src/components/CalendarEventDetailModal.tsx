@@ -1,4 +1,4 @@
-import { X, Calendar, Clock, MapPin, Users, FileText, ExternalLink } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, Users, FileText, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { CalendarEvent } from '../types/calendar';
 import { useTranslation } from 'react-i18next';
 
@@ -13,10 +13,10 @@ export default function CalendarEventDetailModal({
   onClose,
   onOpenSource,
 }: CalendarEventDetailModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('de-DE', {
+    return new Date(date).toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -40,34 +40,49 @@ export default function CalendarEventDetailModal({
     return labels[type];
   };
 
-  const getSourceLabel = (source: CalendarEvent['source']) => {
-    const labels = {
-      events: t('calendar.sources.events'),
-      todos: t('calendar.sources.todos'),
-      budget: t('calendar.sources.budget'),
-      guests: t('calendar.sources.guests'),
-      vendors: t('calendar.sources.vendors'),
-    };
-    return labels[source];
+  const getCategoryLabel = (category: string) => {
+    const categoryKey = `master_tasks.categories.${category}`;
+    const translated = t(categoryKey);
+    return translated !== categoryKey ? translated : category;
   };
 
   const getTypeColor = (type: CalendarEvent['type']) => {
     const colors = {
-      wedding_day_event: 'bg-pink-100 text-pink-800',
-      todo: 'bg-blue-100 text-blue-800',
-      budget_deadline: 'bg-green-100 text-green-800',
-      guest_deadline: 'bg-purple-100 text-purple-800',
-      vendor_appointment: 'bg-orange-100 text-orange-800',
-      other_event: 'bg-gray-100 text-gray-800',
+      wedding_day_event: 'bg-pink-50 text-pink-700 border border-pink-200',
+      todo: 'bg-blue-50 text-blue-700 border border-blue-200',
+      budget_deadline: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      guest_deadline: 'bg-violet-50 text-violet-700 border border-violet-200',
+      vendor_appointment: 'bg-orange-50 text-orange-700 border border-orange-200',
+      other_event: 'bg-slate-50 text-slate-700 border border-slate-200',
     };
     return colors[type];
   };
 
+  const getPriorityLabel = (priority: string | undefined) => {
+    if (!priority) return null;
+    const labels: Record<string, string> = {
+      high: t('todos.taskDetails.priorityHigh'),
+      medium: t('todos.addDialog.priorityMedium'),
+      low: t('todos.addDialog.priorityLow'),
+    };
+    return labels[priority] || priority;
+  };
+
+  const getPriorityColor = (priority: string | undefined) => {
+    if (!priority) return '';
+    const colors: Record<string, string> = {
+      high: 'bg-red-50 text-red-700 border border-red-200',
+      medium: 'bg-amber-50 text-amber-700 border border-amber-200',
+      low: 'bg-slate-50 text-slate-600 border border-slate-200',
+    };
+    return colors[priority] || 'bg-slate-50 text-slate-600 border border-slate-200';
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" style={{ fontFamily: "'Open Sans', sans-serif" }}>
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl text-gray-900">
             {t('calendar.eventDetails')}
           </h2>
           <button
@@ -78,43 +93,52 @@ export default function CalendarEventDetailModal({
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-5">
           <div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-              {event.metadata?.is_wedding_day && '💍 '}
-              {event.metadata?.is_planning_start && '💍 '}
+            <h3 className="text-2xl text-gray-900 mb-3">
               {event.title}
-              {event.metadata?.is_wedding_day && ' ✨'}
-              {event.metadata?.is_planning_start && ' ✨'}
             </h3>
+
             <div className="flex flex-wrap gap-2">
+              {event.metadata?.completed && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  {t('supportTeam.completed')}
+                </span>
+              )}
+
               {event.metadata?.is_milestone ? (
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-pink-100 text-pink-800">
+                <span className="px-3 py-1 rounded-full text-sm bg-pink-50 text-pink-700 border border-pink-200">
                   {t('calendar.types.milestone')}
                 </span>
               ) : (
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
-                    event.type
-                  )}`}
-                >
+                <span className={`px-3 py-1 rounded-full text-sm ${getTypeColor(event.type)}`}>
                   {getTypeLabel(event.type)}
                 </span>
               )}
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-                {getSourceLabel(event.source)}
-              </span>
+
+              {event.metadata?.category && (
+                <span className="px-3 py-1 rounded-full text-sm bg-slate-50 text-slate-700 border border-slate-200">
+                  {getCategoryLabel(event.metadata.category)}
+                </span>
+              )}
+
+              {event.metadata?.priority && (
+                <span className={`px-3 py-1 rounded-full text-sm ${getPriorityColor(event.metadata.priority)}`}>
+                  {getPriorityLabel(event.metadata.priority)}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
-              <div>
+              <Calendar className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
                 <div className="text-sm text-gray-500">
                   {t('calendar.date')}
                 </div>
-                <div className="font-medium text-gray-900">
+                <div className="text-gray-900">
                   {formatDate(event.date)}
                 </div>
               </div>
@@ -122,12 +146,12 @@ export default function CalendarEventDetailModal({
 
             {event.time && (
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
+                <Clock className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
                   <div className="text-sm text-gray-500">
                     {t('calendar.time')}
                   </div>
-                  <div className="font-medium text-gray-900">
+                  <div className="text-gray-900">
                     {formatTime(event.time)}
                     {event.endTime && ` - ${formatTime(event.endTime)}`}
                   </div>
@@ -137,12 +161,12 @@ export default function CalendarEventDetailModal({
 
             {event.location && (
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
+                <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
                   <div className="text-sm text-gray-500">
                     {t('calendar.location')}
                   </div>
-                  <div className="font-medium text-gray-900">
+                  <div className="text-gray-900">
                     {event.location}
                   </div>
                 </div>
@@ -151,12 +175,12 @@ export default function CalendarEventDetailModal({
 
             {event.participants && event.participants.length > 0 && (
               <div className="flex items-start gap-3">
-                <Users className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
+                <Users className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
                   <div className="text-sm text-gray-500">
                     {t('calendar.participants')}
                   </div>
-                  <div className="font-medium text-gray-900">
+                  <div className="text-gray-900">
                     {event.participants.join(', ')}
                   </div>
                 </div>
@@ -165,49 +189,25 @@ export default function CalendarEventDetailModal({
 
             {event.notes && (
               <div className="flex items-start gap-3">
-                <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
+                <FileText className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
                   <div className="text-sm text-gray-500">
                     {t('calendar.notes')}
                   </div>
-                  <div className="font-medium text-gray-900 whitespace-pre-wrap">
+                  <div className="text-gray-900 whitespace-pre-wrap">
                     {event.notes}
                   </div>
                 </div>
               </div>
             )}
           </div>
-
-          {event.metadata &&
-           !event.metadata.is_milestone &&
-           Object.keys(event.metadata).length > 0 && (
-            <div className="border-t pt-4">
-              <div className="text-sm text-gray-500 mb-2">
-                {t('calendar.additionalInfo')}
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                {Object.entries(event.metadata).map(([key, value]) => (
-                  <div key={key} className="flex justify-between">
-                    <span className="text-gray-600 capitalize">{key}:</span>
-                    <span className="font-medium text-gray-900">
-                      {typeof value === 'boolean'
-                        ? value
-                          ? t('common.yes')
-                          : t('common.no')
-                        : String(value)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="sticky bottom-0 bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">
           {onOpenSource && (
             <button
               onClick={onOpenSource}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
               {t('calendar.openSourceModule')}
@@ -215,7 +215,7 @@ export default function CalendarEventDetailModal({
           )}
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 transition-colors"
+            className="px-4 py-2 text-sm text-white bg-gray-800 rounded-lg hover:bg-gray-900 transition-colors"
           >
             {t('common.close')}
           </button>
