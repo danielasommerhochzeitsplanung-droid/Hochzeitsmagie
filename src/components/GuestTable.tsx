@@ -96,7 +96,9 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
     if (!guest.specific_relationship && !guest.side) return null;
 
     if (guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom') {
-      const label = guest.specific_relationship === 'bride' ? 'Braut' : 'Bräutigam';
+      const label = guest.specific_relationship === 'bride'
+        ? (i18n.language === 'de' ? 'Braut' : 'Bride')
+        : (i18n.language === 'de' ? 'Bräutigam' : 'Groom');
       return (
         <div className="flex items-center gap-2">
           <span>{label}</span>
@@ -332,19 +334,19 @@ export default function GuestTable({ guests, events, onEdit, onDelete, onRestore
                   </td>
                   <td className="px-6 py-4 text-center">
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
-                      ? <span className="text-xl">⭐</span>
+                      ? <span style={{ fontSize: '1.25rem' }}>⭐</span>
                       : getStatusBadge(guest.save_the_date_status, guest.id, 'save_the_date_status')
                     }
                   </td>
                   <td className="px-6 py-4 text-center">
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
-                      ? <span className="text-xl">⭐</span>
+                      ? <span style={{ fontSize: '1.25rem' }}>⭐</span>
                       : getStatusBadge(guest.invitation_status, guest.id, 'invitation_status')
                     }
                   </td>
                   <td className="px-6 py-4 text-center">
                     {guest.specific_relationship === 'bride' || guest.specific_relationship === 'groom'
-                      ? <span className="text-xl">⭐</span>
+                      ? <span style={{ fontSize: '1.25rem' }}>⭐</span>
                       : getStatusBadge(guest.rsvp_status, guest.id, 'rsvp_status')
                     }
                   </td>
