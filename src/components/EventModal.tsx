@@ -623,7 +623,7 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
 
           {mode === 'create' && (
             <>
-          {formData.is_milestone && (
+          {(formData.is_milestone || event?.protected) && (
             <div className="bg-gradient-to-r from-amber-50 to-rose-50 border-2 border-amber-300 rounded-lg p-4 mb-4">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">✨</span>
@@ -633,8 +633,8 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
                   </h3>
                   <p className="text-sm mt-1" style={{ color: '#666', fontFamily: 'Open Sans, sans-serif' }}>
                     {currentLang === 'de'
-                      ? 'Dieser besondere Termin kann verschoben, aber nicht gelöscht werden.'
-                      : 'This special date can be moved but not deleted.'}
+                      ? 'Dieser besondere Termin kann bearbeitet, aber nicht gelöscht werden.'
+                      : 'This special date can be edited but not deleted.'}
                   </p>
                 </div>
               </div>
@@ -663,7 +663,7 @@ export default function EventModal({ isOpen, onClose, onSave, event, preselected
                   style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
                   placeholder={currentLang === 'de' ? t('events.nameDeExample') : t('events.nameEnExample')}
                   required
-                  disabled={formData.is_milestone}
+                  disabled={formData.is_milestone || event?.protected}
                 />
               </div>
             </div>

@@ -35,6 +35,7 @@ export interface Event {
   created_at?: string;
   archived?: boolean;
   is_milestone?: boolean;
+  protected?: boolean;
 }
 
 export default function EventsModule() {
@@ -230,6 +231,13 @@ export default function EventsModule() {
   };
 
   const handleArchiveEvent = (id: string) => {
+    const event = storage.events.get(id);
+    if (event?.protected) {
+      alert(currentLang === 'de'
+        ? 'Dieser wichtige Meilenstein kann nicht archiviert werden.'
+        : 'This important milestone cannot be archived.');
+      return;
+    }
     storage.events.update(id, { archived: true });
     loadEvents();
   };
@@ -240,6 +248,13 @@ export default function EventsModule() {
   };
 
   const handleDeletePermanently = (id: string) => {
+    const event = storage.events.get(id);
+    if (event?.protected) {
+      alert(currentLang === 'de'
+        ? 'Dieser wichtige Meilenstein kann nicht gelöscht werden. Du kannst ihn aber bearbeiten (z.B. das Datum ändern).'
+        : 'This important milestone cannot be deleted. However, you can edit it (e.g., change the date).');
+      return;
+    }
     if (window.confirm(t('events.confirmDelete'))) {
       storage.events.delete(id);
       loadEvents();

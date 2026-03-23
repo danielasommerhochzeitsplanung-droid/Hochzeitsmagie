@@ -35,7 +35,7 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
     storage.events.create({
       name_de: 'Planungsstart',
       name_en: 'Planning Start',
-      emoji: '💕',
+      emoji: '📝',
       active: true,
       is_enabled: true,
       date: planningStartDate,
@@ -49,15 +49,16 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       transport_from: '',
       transport_to: '',
       transport_provider: '',
-      transport_notes: 'Nun geht es los mit eurer gemeinsamen Planungsreise! 💕',
+      transport_notes: 'Heute beginnt eure gemeinsame Planungsreise! 💕✨',
       is_milestone: true,
-      archived: false
+      archived: false,
+      protected: true
     });
 
     storage.events.create({
       name_de: 'Hochzeitstag',
       name_en: 'Wedding Day',
-      emoji: '💍',
+      emoji: '💒',
       active: true,
       is_enabled: true,
       date: weddingDate,
@@ -71,9 +72,10 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
       transport_from: '',
       transport_to: '',
       transport_provider: '',
-      transport_notes: 'Der große Tag! Eure Hochzeit 💍✨',
+      transport_notes: 'Heute ist es soweit! Der schönste Tag eures Lebens 💍✨',
       is_milestone: true,
-      archived: false
+      archived: false,
+      protected: true
     });
 
     onComplete({

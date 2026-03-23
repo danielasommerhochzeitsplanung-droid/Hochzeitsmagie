@@ -256,7 +256,7 @@ export default function EventTable({ events, onEdit, onDelete, onRestore, isArch
                           <RotateCcw className="w-4 h-4" style={{ color: '#10b981' }} />
                         </button>
                       )}
-                      {!event.is_milestone && (
+                      {!event.is_milestone && !event.protected && (
                         <button
                           onClick={() => onDelete(event.id)}
                           className="p-2 hover:bg-gray-200 rounded-full transition-colors"

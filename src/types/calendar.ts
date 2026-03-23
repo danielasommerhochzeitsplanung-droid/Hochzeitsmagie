@@ -26,4 +26,5 @@ export interface CalendarEvent {
   notes?: string;
   participants?: string[];
   metadata?: Record<string, any>;
+  protected?: boolean;
 }
