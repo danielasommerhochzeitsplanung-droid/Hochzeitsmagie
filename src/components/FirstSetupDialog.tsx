@@ -242,10 +242,11 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
 
           <div>
             <label
-              className="block mb-2 font-medium"
+              className="block mb-2 font-medium flex items-center gap-2"
               style={{ fontFamily: 'Open Sans, sans-serif', color: '#3b3b3d', fontSize: '0.9rem' }}
             >
-              Wann möchtet ihr mit der Planung beginnen? *
+              <span>📝</span>
+              <span>Wann möchtet ihr mit der Planung beginnen? *</span>
             </label>
             <input
               type="date"
