@@ -971,7 +971,8 @@
       "budget_deadline": "Budget Deadline",
       "guest_deadline": "Guest Deadline",
       "vendor_appointment": "Vendor Appointment",
-      "other_event": "Other Event"
+      "other_event": "Other Event",
+      "milestone": "Milestone"
     },
     "sources": {
       "events": "Events",

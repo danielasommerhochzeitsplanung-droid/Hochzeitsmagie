@@ -80,17 +80,25 @@ export default function CalendarEventDetailModal({
 
         <div className="p-6 space-y-6">
           <div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
+              {event.metadata?.is_wedding_day ? '💍 ' : ''}
               {event.title}
+              {event.metadata?.is_wedding_day ? ' ✨' : ''}
             </h3>
             <div className="flex flex-wrap gap-2">
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
-                  event.type
-                )}`}
-              >
-                {getTypeLabel(event.type)}
-              </span>
+              {event.metadata?.is_milestone ? (
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-pink-100 text-pink-800">
+                  {t('calendar.types.milestone')}
+                </span>
+              ) : (
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
+                    event.type
+                  )}`}
+                >
+                  {getTypeLabel(event.type)}
+                </span>
+              )}
               <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                 {getSourceLabel(event.source)}
               </span>
@@ -168,7 +176,9 @@ export default function CalendarEventDetailModal({
             )}
           </div>
 
-          {event.metadata && Object.keys(event.metadata).length > 0 && (
+          {event.metadata &&
+           !event.metadata.is_milestone &&
+           Object.keys(event.metadata).length > 0 && (
             <div className="border-t pt-4">
               <div className="text-sm text-gray-500 mb-2">
                 {t('calendar.additionalInfo')}

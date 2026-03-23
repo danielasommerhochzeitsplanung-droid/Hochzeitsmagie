@@ -971,7 +971,8 @@
       "budget_deadline": "Budget-Frist",
       "guest_deadline": "Gäste-Frist",
       "vendor_appointment": "Dienstleister-Termin",
-      "other_event": "Sonstiges Event"
+      "other_event": "Sonstiges Event",
+      "milestone": "Meilenstein"
     },
     "sources": {
       "events": "Events",
