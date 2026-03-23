@@ -51,6 +51,9 @@ function mapEventsToCalendar(
         ? (lang === 'de' ? event.name_de : event.name_en)
         : event.title || 'Unnamed Event';
 
+      const isPlanningStart = (event.name_de === 'Planungsstart' || event.name_en === 'Planning Start');
+      const isWeddingDayEvent = (event.name_de === 'Hochzeitstag' || event.name_en === 'Wedding Day') || isWeddingDay;
+
       return {
         id: `event-${event.id}`,
         title,
@@ -67,6 +70,8 @@ function mapEventsToCalendar(
           category: event.category,
           is_milestone: event.is_milestone,
           protected: event.protected,
+          is_planning_start: isPlanningStart,
+          is_wedding_day: isWeddingDayEvent,
         },
       };
     });

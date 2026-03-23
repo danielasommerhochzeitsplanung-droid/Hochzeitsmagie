@@ -81,9 +81,11 @@ export default function CalendarEventDetailModal({
         <div className="p-6 space-y-6">
           <div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
-              {event.metadata?.is_wedding_day ? '💍 ' : ''}
+              {event.metadata?.is_wedding_day && '💍 '}
+              {event.metadata?.is_planning_start && '💍 '}
               {event.title}
-              {event.metadata?.is_wedding_day ? ' ✨' : ''}
+              {event.metadata?.is_wedding_day && ' ✨'}
+              {event.metadata?.is_planning_start && ' ✨'}
             </h3>
             <div className="flex flex-wrap gap-2">
               {event.metadata?.is_milestone ? (
