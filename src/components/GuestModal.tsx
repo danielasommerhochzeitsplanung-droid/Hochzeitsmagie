@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ChevronDown, ChevronUp, Shield, Baby, CreditCard as Edit, Plus } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Shield, Baby, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { generateId } from '../lib/uuid';
 
@@ -514,7 +514,7 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                               title={t('guests.edit')}
                             >
-                              <Edit className="w-4 h-4" />
+                              <Pencil className="w-4 h-4" />
                             </button>
                           </div>
                         ))}
