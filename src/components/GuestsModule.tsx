@@ -8,6 +8,7 @@ import QuickAddBar from './QuickAddBar';
 import EventModal from './EventModal';
 import LocationModal from './LocationModal';
 import SupportTeamModal from './SupportTeamModal';
+import { formatLocalDate } from '../utils/dateFormatter';
 
 interface DietaryRestriction {
   id?: string;
@@ -396,7 +397,7 @@ export default function GuestsModule() {
   };
 
   const handleBatchSaveTheDateSent = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatLocalDate(new Date());
     let updatedCount = 0;
 
     guests.forEach(guest => {
@@ -418,7 +419,7 @@ export default function GuestsModule() {
   };
 
   const handleBatchInvitationSent = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = formatLocalDate(new Date());
     let updatedCount = 0;
 
     guests.forEach(guest => {

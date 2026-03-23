@@ -8,6 +8,7 @@ import TimelineView from './TimelineView';
 import GanttChart from './GanttChart';
 import { getPhaseColor, PHASE_COLORS, createCustomPhase } from '../utils/phaseManagement';
 import TaskSelectionDialog from './TaskSelectionDialog';
+import { formatLocalDate } from '../utils/dateFormatter';
 
 const mainCategories = [
   {
@@ -221,8 +222,8 @@ export default function TodosModule() {
         title: template.title,
         description: template.description,
         category: template.category,
-        start_date: startDate.toISOString().split('T')[0],
-        due_date: dueDate.toISOString().split('T')[0],
+        start_date: formatLocalDate(startDate),
+        due_date: formatLocalDate(dueDate),
         completed: false,
         priority: template.priority,
         depends_on: [],
@@ -289,8 +290,8 @@ export default function TodosModule() {
         });
       } else {
         updateTask(task.id, {
-          start_date: startDate.toISOString().split('T')[0],
-          due_date: dueDate.toISOString().split('T')[0],
+          start_date: formatLocalDate(startDate),
+          due_date: formatLocalDate(dueDate),
         });
       }
     });

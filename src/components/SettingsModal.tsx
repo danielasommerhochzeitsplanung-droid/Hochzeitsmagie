@@ -3,6 +3,7 @@ import { X, Download, Upload, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { StorageInfo } from './StorageInfo';
+import { formatLocalDate } from '../utils/dateFormatter';
 
 interface Person {
   name: string;
@@ -215,11 +216,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           const daysBeforeOldWeddingStart = Math.floor((oldWeddingDate.getTime() - oldStartDate.getTime()) / (1000 * 60 * 60 * 24));
           const calculatedStartDate = new Date(newWeddingDate);
           calculatedStartDate.setDate(calculatedStartDate.getDate() - daysBeforeOldWeddingStart);
-          return calculatedStartDate.toISOString().split('T')[0];
+          return formatLocalDate(calculatedStartDate);
         })() : undefined;
 
         updateTask(task.id, {
-          due_date: newDueDate.toISOString().split('T')[0],
+          due_date: formatLocalDate(newDueDate),
           start_date: newStartDate,
         });
       } else {

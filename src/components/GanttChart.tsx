@@ -17,6 +17,7 @@ import {
 import { Task, Event, Vendor, Location, SupportTeam, Phase } from '../lib/storage-adapter';
 import { taskCategories } from './taskTemplates';
 import { getPhaseColor } from '../utils/phaseManagement';
+import { formatLocalDate } from '../utils/dateFormatter';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -348,8 +349,8 @@ export default function GanttChart({
 
     const handleMouseUp = () => {
       if (draggedItem) {
-        const formattedStart = draggedItem.startDate.toISOString().split('T')[0];
-        const formattedEnd = draggedItem.endDate.toISOString().split('T')[0];
+        const formattedStart = formatLocalDate(draggedItem.startDate);
+        const formattedEnd = formatLocalDate(draggedItem.endDate);
 
         if (draggedItem.type === 'task') {
           onUpdateTask(draggedItem.id, {
@@ -404,8 +405,8 @@ export default function GanttChart({
     const handleMouseUp = () => {
       if (resizingItem) {
         const { item } = resizingItem;
-        const formattedStart = item.startDate.toISOString().split('T')[0];
-        const formattedEnd = item.endDate.toISOString().split('T')[0];
+        const formattedStart = formatLocalDate(item.startDate);
+        const formattedEnd = formatLocalDate(item.endDate);
 
         if (item.type === 'task') {
           onUpdateTask(item.id, {

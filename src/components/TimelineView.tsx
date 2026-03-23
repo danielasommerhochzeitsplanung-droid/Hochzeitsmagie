@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Task, Event, Vendor, Location, SupportTeam } from '../lib/storage-adapter';
 import { taskCategories } from './taskTemplates';
+import { formatLocalDate } from '../utils/dateFormatter';
 
 interface TimelineViewProps {
   tasks: Task[];
@@ -416,8 +417,8 @@ export default function TimelineView({
       : 0;
     const newEndDate = duration > 0 ? new Date(newStartDate.getTime() + duration) : newStartDate;
 
-    const formattedStart = newStartDate.toISOString().split('T')[0];
-    const formattedEnd = newEndDate.toISOString().split('T')[0];
+    const formattedStart = formatLocalDate(newStartDate);
+    const formattedEnd = formatLocalDate(newEndDate);
 
     if (draggedItem.type === 'task') {
       onUpdateTask(draggedItem.id, {

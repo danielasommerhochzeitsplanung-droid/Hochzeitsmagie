@@ -10,6 +10,7 @@ import { getAllCalendarEvents } from '../utils/calendarMapper';
 import { CalendarEvent, CalendarEventType, CalendarEventSource } from '../types/calendar';
 import CalendarEventDetailModal from './CalendarEventDetailModal';
 import { useTranslation } from 'react-i18next';
+import { formatLocalDate } from '../utils/dateFormatter';
 
 type ViewMode = 'month' | 'week' | 'day' | 'timeline';
 
@@ -466,7 +467,7 @@ function WeekView({
   });
 
   const getEventsForDay = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = formatLocalDate(date);
     return events.filter((e) => e.date === dateStr);
   };
 
@@ -542,7 +543,7 @@ function DayView({
 }) {
   const { t } = useTranslation();
 
-  const dateStr = selectedDate.toISOString().split('T')[0];
+  const dateStr = formatLocalDate(selectedDate);
   const dayEvents = events.filter((e) => e.date === dateStr);
 
   const sortedEvents = [...dayEvents].sort((a, b) => {
