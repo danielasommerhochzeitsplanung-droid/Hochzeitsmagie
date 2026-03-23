@@ -1,4 +1,4 @@
-import { CreditCard as Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart, Award, UserCheck, Briefcase } from 'lucide-react';
+import { Pencil as Edit, Trash2, Users, ArchiveRestore, Hotel, UserPlus, Shield, Baby, Star, Heart, Award, UserCheck, Briefcase } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface DietaryRestriction {

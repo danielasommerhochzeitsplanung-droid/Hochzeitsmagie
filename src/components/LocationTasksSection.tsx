@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, Circle, Calendar, Plus, CreditCard as Edit2, X } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, Plus, Pencil as Edit2, X } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
 
