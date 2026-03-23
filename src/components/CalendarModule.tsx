@@ -302,6 +302,7 @@ export default function CalendarModule() {
               events={filteredEvents}
               onEventClick={setSelectedEvent}
               getTypeColor={getTypeColor}
+              getTypeColorHex={getTypeColorHex}
             />
           )}
           {viewMode === 'week' && (
@@ -346,11 +347,13 @@ function MonthView({
   events,
   onEventClick,
   getTypeColor,
+  getTypeColorHex,
 }: {
   selectedDate: Date;
   events: CalendarEvent[];
   onEventClick: (event: CalendarEvent) => void;
   getTypeColor: (type: CalendarEventType) => string;
+  getTypeColorHex: (type: CalendarEventType) => string;
 }) {
   const { t } = useTranslation();
 
