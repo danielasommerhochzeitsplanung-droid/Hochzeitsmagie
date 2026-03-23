@@ -37,28 +37,36 @@ export function getAllCalendarEvents(data: CalendarDataInput | undefined): Calen
 }
 
 function mapEventsToCalendar(
-  events: Event[],
+  events: any[],
   weddingDate?: string
 ): CalendarEvent[] {
+  const browserLang = navigator.language.split('-')[0];
+  const lang = browserLang === 'de' ? 'de' : 'en';
+
   return events
     .filter((event) => event.date)
     .map((event) => {
       const isWeddingDay = weddingDate && event.date === weddingDate;
+      const title = event.name_de && event.name_en
+        ? (lang === 'de' ? event.name_de : event.name_en)
+        : event.title || 'Unnamed Event';
 
       return {
         id: `event-${event.id}`,
-        title: event.title,
+        title,
         date: event.date!,
-        time: event.startTime,
-        endTime: event.endTime,
+        time: event.time_start || event.startTime,
+        endTime: event.time_end || event.endTime,
         type: isWeddingDay ? ('wedding_day_event' as const) : ('other_event' as const),
         source: 'events' as const,
         sourceId: event.id,
         location: event.location,
-        notes: event.notes,
+        notes: event.transport_notes || event.notes,
         participants: event.attendees,
         metadata: {
           category: event.category,
+          is_milestone: event.is_milestone,
+          protected: event.protected,
         },
       };
     });
