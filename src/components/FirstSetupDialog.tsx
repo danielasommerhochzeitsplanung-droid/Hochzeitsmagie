@@ -24,59 +24,13 @@ export default function FirstSetupDialog({ isOpen, onComplete }: FirstSetupDialo
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!partner1.trim() || !partner2.trim() || !weddingDate || !planningStartDate) {
       alert('Bitte fülle alle Felder aus');
       return;
     }
-
-    storage.events.create({
-      name_de: 'Planungsstart',
-      name_en: 'Planning Start',
-      emoji: '📝',
-      active: true,
-      is_enabled: true,
-      date: planningStartDate,
-      time_start: null,
-      time_end: null,
-      location_id: null,
-      transport_info: '',
-      transport_time_start: null,
-      transport_time_end: null,
-      transport_type: '',
-      transport_from: '',
-      transport_to: '',
-      transport_provider: '',
-      transport_notes: 'Heute beginnt eure gemeinsame Planungsreise! 💕✨',
-      is_milestone: true,
-      archived: false,
-      protected: true
-    });
-
-    storage.events.create({
-      name_de: 'Hochzeitstag',
-      name_en: 'Wedding Day',
-      emoji: '💒',
-      active: true,
-      is_enabled: true,
-      date: weddingDate,
-      time_start: null,
-      time_end: null,
-      location_id: null,
-      transport_info: '',
-      transport_time_start: null,
-      transport_time_end: null,
-      transport_type: '',
-      transport_from: '',
-      transport_to: '',
-      transport_provider: '',
-      transport_notes: 'Heute ist es soweit! Der schönste Tag eures Lebens 💍✨',
-      is_milestone: true,
-      archived: false,
-      protected: true
-    });
 
     onComplete({
       partner1: partner1.trim(),

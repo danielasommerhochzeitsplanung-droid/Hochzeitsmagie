@@ -91,6 +91,52 @@ function App() {
       auto_tasks_enabled: true,
     });
 
+    addEvent({
+      name_de: 'Planungsstart',
+      name_en: 'Planning Start',
+      emoji: '📝',
+      active: true,
+      is_enabled: true,
+      date: data.planningStartDate,
+      time_start: null,
+      time_end: null,
+      location_id: null,
+      transport_info: '',
+      transport_time_start: null,
+      transport_time_end: null,
+      transport_type: '',
+      transport_from: '',
+      transport_to: '',
+      transport_provider: '',
+      transport_notes: 'Heute beginnt eure gemeinsame Planungsreise! 💕✨',
+      is_milestone: true,
+      archived: false,
+      protected: true
+    });
+
+    addEvent({
+      name_de: 'Hochzeitstag',
+      name_en: 'Wedding Day',
+      emoji: '💒',
+      active: true,
+      is_enabled: true,
+      date: data.weddingDate,
+      time_start: null,
+      time_end: null,
+      location_id: null,
+      transport_info: '',
+      transport_time_start: null,
+      transport_time_end: null,
+      transport_type: '',
+      transport_from: '',
+      transport_to: '',
+      transport_provider: '',
+      transport_notes: 'Heute ist es soweit! Der schönste Tag eures Lebens 💍✨',
+      is_milestone: true,
+      archived: false,
+      protected: true
+    });
+
     addGuest({
       name: data.partner1,
       number_of_adults: 1,
