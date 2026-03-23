@@ -163,6 +163,7 @@ export default function GuestModal({ isOpen, onClose, onSave, onConfirmNames, gu
     if (guest) {
       setFormData({
         ...guest,
+        events: guest.events || [],
         dietary_restrictions: guest.dietary_restrictions || [],
         lactose_intolerant_count: guest.lactose_intolerant_count || 0,
         vegetarian_count: guest.vegetarian_count || 0,
