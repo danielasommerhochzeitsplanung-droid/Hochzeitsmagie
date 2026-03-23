@@ -122,6 +122,18 @@ export default function CalendarModule() {
     return colors[type];
   };
 
+  const getTypeColorHex = (type: CalendarEventType) => {
+    const colors = {
+      wedding_day_event: '#ec4899',
+      todo: '#3b82f6',
+      budget_deadline: '#22c55e',
+      guest_deadline: '#a855f7',
+      vendor_appointment: '#f97316',
+      other_event: '#6b7280',
+    };
+    return colors[type];
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -416,10 +428,7 @@ function MonthView({
                         onClick={() => onEventClick(event)}
                         className="w-full text-left text-xs p-1 rounded hover:opacity-80 transition-opacity"
                         style={{
-                          backgroundColor: getTypeColor(event.type).replace(
-                            'bg-',
-                            ''
-                          ),
+                          backgroundColor: getTypeColorHex(event.type),
                         }}
                       >
                         <div className="text-white font-medium truncate">
