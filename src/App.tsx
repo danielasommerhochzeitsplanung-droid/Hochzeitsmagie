@@ -242,7 +242,7 @@ function App() {
             </h1>
             <div className="text-center">
               <p className="text-xl" style={{ fontFamily: 'Open Sans, sans-serif', color: '#d6b15b' }}>
-                {t(daysRemaining === 1 ? 'dashboard.countdown_text_singular' : 'dashboard.countdown_text_plural', { days: daysRemaining })}
+                💍 {t(daysRemaining === 1 ? 'dashboard.countdown_text_singular' : 'dashboard.countdown_text_plural', { days: daysRemaining })} ✨
               </p>
             </div>
           </header>
@@ -330,7 +330,7 @@ function App() {
           </h1>
           <div className="text-center">
             <p className="text-xl" style={{ fontFamily: 'Open Sans, sans-serif', color: '#d6b15b' }}>
-              {t(daysRemaining === 1 ? 'dashboard.countdown_text_singular' : 'dashboard.countdown_text_plural', { days: daysRemaining })}
+              💍 {t(daysRemaining === 1 ? 'dashboard.countdown_text_singular' : 'dashboard.countdown_text_plural', { days: daysRemaining })} ✨
             </p>
           </div>
         </header>
