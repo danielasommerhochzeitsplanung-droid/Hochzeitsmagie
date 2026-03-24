@@ -872,18 +872,6 @@ export default function TodosModule() {
         </div>
 
         <select
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-3 py-2 rounded-md border-2 text-sm"
-          style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
-        >
-          <option value="all">{t('todos.filters.allCategories')}</option>
-          {mainCategories.map(cat => (
-            <option key={cat.id} value={cat.id}>{t(`todos.categories.${cat.id}`)}</option>
-          ))}
-        </select>
-
-        <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
           className="px-3 py-2 rounded-md border-2 text-sm"
