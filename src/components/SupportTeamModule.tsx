@@ -1,29 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Archive } from 'lucide-react';
-import { storage, Task } from '../lib/storage-adapter';
+import { Task } from '../lib/storage-adapter';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import SupportTeamModal, { SupportTeamMember } from './SupportTeamModal';
 import SupportTeamTable from './SupportTeamTable';
 
 export default function SupportTeamModule() {
   const { t } = useTranslation();
-  const { weddingData, updateWeddingData } = useWeddingData();
-  const [members, setMembers] = useState<SupportTeamMember[]>([]);
+  const { weddingData, supportTeam, addSupportTeamMember, updateSupportTeamMember, deleteSupportTeamMember } = useWeddingData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<SupportTeamMember | null>(null);
   const [showArchived, setShowArchived] = useState(false);
 
-  useEffect(() => {
-    loadMembers();
-  }, [showArchived]);
-
-  const loadMembers = () => {
-    const allMembers = storage.supportTeam.getAll();
-    const filtered = allMembers.filter(m => m.archived === showArchived);
-    const sorted = filtered.sort((a, b) => a.name.localeCompare(b.name));
-    setMembers(sorted);
-  };
+  const members = useMemo(() => {
+    const filtered = supportTeam.filter(m => m.archived === showArchived);
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+  }, [supportTeam, showArchived]);
 
   const handleAddMember = () => {
     setEditingMember(null);
@@ -37,33 +30,28 @@ export default function SupportTeamModule() {
 
   const handleSaveMember = (memberData: Omit<SupportTeamMember, 'id' | 'created_at'>) => {
     if (editingMember?.id) {
-      storage.supportTeam.update(editingMember.id, memberData);
-      loadMembers();
+      updateSupportTeamMember(editingMember.id, memberData);
       setIsModalOpen(false);
       setEditingMember(null);
     } else {
-      storage.supportTeam.create(memberData);
-      loadMembers();
+      addSupportTeamMember(memberData);
       setIsModalOpen(false);
     }
   };
 
   const handleArchiveMember = (id: string) => {
     if (window.confirm(t('supportTeam.confirmArchive'))) {
-      storage.supportTeam.update(id, { archived: true });
-      loadMembers();
+      updateSupportTeamMember(id, { archived: true });
     }
   };
 
   const handleRestoreMember = (id: string) => {
-    storage.supportTeam.update(id, { archived: false });
-    loadMembers();
+    updateSupportTeamMember(id, { archived: false });
   };
 
   const handleDeleteMember = (id: string) => {
     if (window.confirm(t('supportTeam.confirmDeletePermanently'))) {
-      storage.supportTeam.delete(id);
-      loadMembers();
+      deleteSupportTeamMember(id);
     }
   };
 
