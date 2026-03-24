@@ -1090,11 +1090,7 @@ export default function TodosModule() {
                             return false;
                           }
 
-                          const subAreaTasks = mainCategoryTasks.filter(task => {
-                            const taskSubArea = getSubAreaFromTask(task);
-                            return taskSubArea === subArea.id;
-                          });
-                          return subAreaTasks.length > 0;
+                          return true;
                         });
 
                         return (
@@ -1104,8 +1100,6 @@ export default function TodosModule() {
                                 const taskSubArea = getSubAreaFromTask(task);
                                 return taskSubArea === subArea.id;
                               });
-
-                              if (subAreaTasks.length === 0) return null;
 
                         const isSubAreaExpanded = expandedSubAreas.has(subArea.id);
                         const completedInSubArea = subAreaTasks.filter(t => t.completed).length;
