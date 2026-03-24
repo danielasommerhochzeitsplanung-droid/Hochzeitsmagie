@@ -244,9 +244,20 @@ export default function AssigneeMultiSelect({
               );
             })}
 
-            {filteredAssignees.length === 0 && (
+            {filteredAssignees.length === 0 && searchTerm && (
               <div className="px-3 py-8 text-center text-sm text-gray-500">
                 Keine Ergebnisse gefunden
+              </div>
+            )}
+
+            {assignees.length === 0 && !searchTerm && (
+              <div className="px-3 py-8 text-center">
+                <p className="text-sm font-medium mb-2" style={{ color: '#3b3b3d' }}>
+                  Keine Personen verfügbar
+                </p>
+                <p className="text-xs text-gray-500">
+                  Füge zuerst Partner-Namen in den Einstellungen hinzu, oder erstelle Support Team Mitglieder oder Dienstleister.
+                </p>
               </div>
             )}
           </div>
