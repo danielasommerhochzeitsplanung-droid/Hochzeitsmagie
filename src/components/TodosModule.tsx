@@ -804,42 +804,6 @@ export default function TodosModule() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex rounded-lg overflow-hidden border-2" style={{ borderColor: '#d6b15b' }}>
-            <button
-              onClick={() => setView('list')}
-              className={`px-4 py-2 text-sm font-medium transition-all ${
-                view === 'list'
-                  ? 'text-white'
-                  : 'text-gray-700 bg-white hover:bg-gray-50'
-              }`}
-              style={view === 'list' ? { backgroundColor: '#d6b15b' } : {}}
-            >
-              {t('todos.views.list')}
-            </button>
-            <button
-              onClick={() => setView('timeline')}
-              className={`px-4 py-2 text-sm font-medium transition-all ${
-                view === 'timeline'
-                  ? 'text-white'
-                  : 'text-gray-700 bg-white hover:bg-gray-50'
-              }`}
-              style={view === 'timeline' ? { backgroundColor: '#d6b15b' } : {}}
-            >
-              {t('todos.views.timeline')}
-            </button>
-            <button
-              onClick={() => setView('gantt')}
-              className={`px-4 py-2 text-sm font-medium transition-all ${
-                view === 'gantt'
-                  ? 'text-white'
-                  : 'text-gray-700 bg-white hover:bg-gray-50'
-              }`}
-              style={view === 'gantt' ? { backgroundColor: '#d6b15b' } : {}}
-            >
-              {t('todos.views.gantt')}
-            </button>
-          </div>
-
           <button
             onClick={() => setShowAddDialog(true)}
             className="px-6 py-2 rounded-md transition-all hover:opacity-90 flex items-center gap-2"
@@ -852,21 +816,6 @@ export default function TodosModule() {
           >
             <Plus className="w-4 h-4" />
             {t('todos.buttons.addTask')}
-          </button>
-
-          <button
-            onClick={() => setShowRecalculateDialog(true)}
-            className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2"
-            style={{
-              borderColor: '#d6b15b',
-              color: '#3b3b3d',
-              fontFamily: 'Open Sans, sans-serif',
-              fontWeight: 600
-            }}
-            title={t('todos.recalculateDialog.title')}
-          >
-            <RefreshCw className="w-4 h-4" />
-            {t('todos.buttons.recalculate')}
           </button>
 
           <button
