@@ -367,13 +367,27 @@ export default function TodosModule() {
   // }, [groupedTasks.size]);
 
   const toggleTaskExpansion = (taskId: string) => {
+    const clickedTask = tasks.find(t => t.id === taskId);
+    if (!clickedTask) return;
+
+    const clickedTaskMainCategory = categoryToMainCategory(clickedTask.category);
+
     setExpandedTasks(prev => {
       const newSet = new Set(prev);
+
       if (newSet.has(taskId)) {
         newSet.delete(taskId);
       } else {
+        tasks.forEach(task => {
+          const taskMainCategory = categoryToMainCategory(task.category);
+          if (taskMainCategory === clickedTaskMainCategory && task.id !== taskId) {
+            newSet.delete(task.id);
+          }
+        });
+
         newSet.add(taskId);
       }
+
       return newSet;
     });
   };
