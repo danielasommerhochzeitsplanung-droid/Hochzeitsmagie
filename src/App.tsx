@@ -29,7 +29,7 @@ type ModuleType = 'calendar' | 'guests' | 'todos' | 'vendors' | 'support_team' |
 
 function App() {
   const { t } = useTranslation();
-  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, taskModalTrigger, addGuest, loadTasksFromMaster, tasks } = useWeddingData();
+  const { weddingData: contextWeddingData, updateWeddingData, manualSave, exportData, importData, storageChangeCounter, taskModalTrigger, addGuest, addEvent, loadTasksFromMaster, tasks } = useWeddingData();
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [activeModule, setActiveModule] = useState<ModuleType>(null);
