@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CheckCircle2, Circle, Calendar, Plus, Pencil as Edit2, X } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
+import AssigneeMultiSelect from './AssigneeMultiSelect';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
     description: task?.description || '',
     due_date: task?.due_date || '',
     priority: task?.priority || 'medium' as 'high' | 'medium' | 'low',
+    assigned_to: task?.assigned_to || [] as string[],
   });
 
   if (!isOpen) return null;
@@ -29,6 +31,7 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
       category: 'location',
       due_date: formData.due_date || undefined,
       priority: formData.priority,
+      assigned_to: formData.assigned_to,
       completed: false,
       is_system_generated: false,
     });
@@ -38,6 +41,7 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
       description: '',
       due_date: '',
       priority: 'medium',
+      assigned_to: [],
     });
     onClose();
   };
@@ -113,6 +117,17 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
               <option value="medium">Mittel</option>
               <option value="high">Hoch</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1" style={{ color: '#3b3b3d' }}>
+              Zugewiesen an
+            </label>
+            <AssigneeMultiSelect
+              selectedIds={formData.assigned_to}
+              onChange={(ids) => setFormData({ ...formData, assigned_to: ids })}
+              placeholder="Personen zuweisen..."
+            />
           </div>
         </div>
 
@@ -297,6 +312,16 @@ export default function LocationTasksSection() {
                         {new Date(task.due_date).toLocaleDateString('de-DE')}
                         {isOverdue && ' (überfällig)'}
                       </span>
+                    </div>
+                  )}
+
+                  {task.assigned_to && task.assigned_to.length > 0 && (
+                    <div className="flex items-center gap-1 mt-2">
+                      <AssigneeMultiSelect
+                        selectedIds={task.assigned_to}
+                        onChange={(ids) => updateTask(task.id, { assigned_to: ids })}
+                        placeholder="Zugewiesen an..."
+                      />
                     </div>
                   )}
                 </div>

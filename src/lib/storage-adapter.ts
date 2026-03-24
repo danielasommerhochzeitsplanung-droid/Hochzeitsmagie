@@ -347,6 +347,8 @@ export interface WeddingData extends BaseEntity {
   couple_name_2?: string;
   couple_gender_1?: 'male' | 'female' | '';
   couple_gender_2?: 'male' | 'female' | '';
+  partner1_name?: string;
+  partner2_name?: string;
   wedding_date?: string;
   planning_start_date?: string;
   venue?: string;
@@ -384,7 +386,7 @@ export interface Task extends BaseEntity {
   completed_at?: string;
   priority: 'high' | 'medium' | 'low';
   depends_on?: string[];
-  assigned_to?: string;
+  assigned_to?: string[];
   notes?: string;
   is_system_task?: boolean;
   template_id?: string;
