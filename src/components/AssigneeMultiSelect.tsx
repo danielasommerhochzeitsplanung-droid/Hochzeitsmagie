@@ -123,7 +123,11 @@ export default function AssigneeMultiSelect({
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('AssigneeMultiSelect clicked, current isOpen:', isOpen, 'available assignees:', assignees.length);
+          setIsOpen(!isOpen);
+        }}
         className="min-h-[42px] px-3 py-2 border-2 rounded-md cursor-pointer hover:border-opacity-80 transition-colors"
         style={{ borderColor: '#d6b15b', fontFamily: 'Open Sans, sans-serif' }}
       >
