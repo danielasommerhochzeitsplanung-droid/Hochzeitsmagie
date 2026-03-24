@@ -44,6 +44,7 @@
     "delete": "Delete",
     "actions": "Actions",
     "archive": "Archive",
+    "archived": "Archived",
     "restore": "Restore",
     "deletePermanently": "Delete Permanently",
     "quickAdd": "Quick Add",
@@ -681,6 +682,11 @@
     "alerts": {
       "planningBeforeWedding": "The planning start date must be before the wedding date!",
       "setWeddingDate": "Please set a wedding date in settings first!"
+    },
+    "taskSelection": {
+      "title": "Select Tasks",
+      "description": "Choose the areas that are relevant for your wedding",
+      "addButton": "Add Tasks"
     }
   },
   "seating": {
@@ -795,6 +801,14 @@
       "rings": "Rings",
       "support_team": "Support Team",
       "guest_care": "Guest Care"
+    },
+    "guest_care": {
+      "clarify_guest_care_needs": "Clarify guest care needs",
+      "plan_accommodation": "Plan accommodation",
+      "organize_welcome_bags": "Organize welcome bags",
+      "plan_children_care": "Plan children care",
+      "coordinate_special_needs": "Coordinate special needs",
+      "finalize_guest_info": "Finalize guest information"
     },
     "ceremony_legal": {
       "clarify_legal_requirements": "Clarify legal requirements",

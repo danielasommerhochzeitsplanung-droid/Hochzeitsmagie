@@ -28,9 +28,9 @@ const mainCategories = [
     icon: '🤝',
     color: 'bg-purple-500',
     subAreas: [
-      { id: 'catering_drinks', icon: '🍽️', label: 'Kulinarik & Getränke' },
-      { id: 'music_entertainment', icon: '🎵', label: 'Musik & Unterhaltung' },
-      { id: 'transport_logistics', icon: '🚗', label: 'Transport & Logistik' },
+      { id: 'catering_drinks', icon: '🍽️' },
+      { id: 'music_entertainment', icon: '🎵' },
+      { id: 'transport_logistics', icon: '🚗' },
     ]
   },
   {
@@ -50,7 +50,7 @@ const mainCategories = [
     icon: '👗',
     color: 'bg-rose-500',
     subAreas: [
-      { id: 'outfits_accessories', icon: '👗', label: 'Outfits & Accessoires' },
+      { id: 'outfits_accessories', icon: '👗' },
     ]
   },
   {
@@ -791,7 +791,7 @@ export default function TodosModule() {
               }`}
             >
               <Archive className="w-4 h-4" />
-              Archivierte Bereiche {showArchivedSubAreas ? 'ausblenden' : 'anzeigen'}
+              {t('common.archived')}e Bereiche {showArchivedSubAreas ? 'ausblenden' : 'anzeigen'}
             </button>
           </div>
 
@@ -1083,10 +1083,10 @@ export default function TodosModule() {
                                   {subArea.icon}
                                 </div>
                                 <h4 className="text-sm flex-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif', fontWeight: 400 }}>
-                                  {subArea.label}
+                                  {t(`master_tasks.sub_areas.${subArea.id}`)}
                                   {isArchived && (
                                     <span className="ml-2 text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded">
-                                      Archiviert
+                                      {t('common.archived')}
                                     </span>
                                   )}
                                 </h4>

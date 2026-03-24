@@ -169,13 +169,13 @@ export default function TaskSelectionDialog({ isOpen, onComplete, onCancel }: Ta
             className="text-2xl mb-2"
             style={{ fontFamily: 'Cinzel, serif', color: '#3b3b3d', fontWeight: 'normal' }}
           >
-            Aufgaben auswählen
+            {t('todos.taskSelection.title')}
           </h2>
           <p
             className="text-gray-600"
             style={{ fontFamily: 'Open Sans, sans-serif', fontSize: '0.95rem' }}
           >
-            Wähle die Bereiche aus, die für deine Hochzeit relevant sind
+            {t('todos.taskSelection.description')}
           </p>
         </div>
 
@@ -287,7 +287,7 @@ export default function TaskSelectionDialog({ isOpen, onComplete, onCancel }: Ta
               className="flex-1 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold transition-all hover:bg-gray-50"
               style={{ fontFamily: 'Open Sans, sans-serif' }}
             >
-              Abbrechen
+              {t('common.cancel')}
             </button>
           )}
           <button
@@ -299,7 +299,7 @@ export default function TaskSelectionDialog({ isOpen, onComplete, onCancel }: Ta
               backgroundColor: '#d6b15b',
             }}
           >
-            Aufgaben hinzufügen
+            {t('todos.taskSelection.addButton')}
           </button>
         </div>
       </div>

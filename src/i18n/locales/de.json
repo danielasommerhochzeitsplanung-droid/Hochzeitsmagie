@@ -44,6 +44,7 @@
     "delete": "Löschen",
     "actions": "Aktionen",
     "archive": "Archivieren",
+    "archived": "Archiviert",
     "restore": "Wiederherstellen",
     "deletePermanently": "Endgültig löschen",
     "quickAdd": "Schnellzugriff",
@@ -681,6 +682,11 @@
     "alerts": {
       "planningBeforeWedding": "Das Planungsstartdatum muss vor dem Hochzeitsdatum liegen!",
       "setWeddingDate": "Bitte zuerst ein Hochzeitsdatum in den Einstellungen festlegen!"
+    },
+    "taskSelection": {
+      "title": "Aufgaben auswählen",
+      "description": "Wähle die Bereiche aus, die für deine Hochzeit relevant sind",
+      "addButton": "Aufgaben hinzufügen"
     }
   },
   "seating": {
