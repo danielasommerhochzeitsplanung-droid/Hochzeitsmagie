@@ -820,7 +820,7 @@ export default function TodosModule() {
 
           <button
             onClick={() => setShowTaskSelectionDialog(true)}
-            className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2"
+            className="px-4 py-2 rounded-md border-2 transition-all hover:bg-gray-50 flex items-center gap-2 hidden"
             style={{
               borderColor: '#d6b15b',
               color: '#3b3b3d',
