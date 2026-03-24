@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { CheckCircle2, Circle, Calendar, Plus, Pencil as Edit2, X } from 'lucide-react';
 import { useWeddingData } from '../contexts/WeddingDataContext';
 import { Task } from '../lib/storage-adapter';
@@ -13,12 +13,24 @@ interface TaskModalProps {
 
 function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
   const [formData, setFormData] = useState({
-    title: task?.title || '',
-    description: task?.description || '',
-    due_date: task?.due_date || '',
-    priority: task?.priority || 'medium' as 'high' | 'medium' | 'low',
-    assigned_to: task?.assigned_to || [] as string[],
+    title: '',
+    description: '',
+    due_date: '',
+    priority: 'medium' as 'high' | 'medium' | 'low',
+    assigned_to: [] as string[],
   });
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        title: task?.title || '',
+        description: task?.description || '',
+        due_date: task?.due_date || '',
+        priority: task?.priority || 'medium',
+        assigned_to: task?.assigned_to || [],
+      });
+    }
+  }, [isOpen, task]);
 
   if (!isOpen) return null;
 
@@ -161,7 +173,7 @@ function TaskModal({ isOpen, onClose, onSave, task }: TaskModalProps) {
 }
 
 export default function LocationTasksSection() {
-  const { tasks, addTask, updateTask, deleteTask } = useWeddingData();
+  const { tasks, addTask, updateTask, deleteTask, weddingData, supportTeam, vendors } = useWeddingData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
@@ -316,12 +328,34 @@ export default function LocationTasksSection() {
                   )}
 
                   {task.assigned_to && task.assigned_to.length > 0 && (
-                    <div className="flex items-center gap-1 mt-2">
-                      <AssigneeMultiSelect
-                        selectedIds={task.assigned_to}
-                        onChange={(ids) => updateTask(task.id, { assigned_to: ids })}
-                        placeholder="Zugewiesen an..."
-                      />
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {task.assigned_to.map((assigneeId) => {
+                        const assigneeName = (() => {
+                          if (assigneeId === 'partner1') return weddingData.partner1_name || weddingData.couple_name_1;
+                          if (assigneeId === 'partner2') return weddingData.partner2_name || weddingData.couple_name_2;
+                          if (assigneeId.startsWith('support_')) {
+                            const member = supportTeam.find(m => m.id === assigneeId.replace('support_', ''));
+                            return member?.name;
+                          }
+                          if (assigneeId.startsWith('vendor_')) {
+                            const vendor = vendors.find(v => v.id === assigneeId.replace('vendor_', ''));
+                            return vendor?.name;
+                          }
+                          return null;
+                        })();
+
+                        if (!assigneeName) return null;
+
+                        return (
+                          <span
+                            key={assigneeId}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                            style={{ backgroundColor: '#f3ebe0', color: '#3b3b3d' }}
+                          >
+                            {assigneeName}
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
