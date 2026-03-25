@@ -632,6 +632,8 @@
       "deleteTaskPermanently": "Aufgabe endgültig löschen",
       "priorityHigh": "Hoch",
       "overdue": "überfällig",
+      "completed": "Erledigt",
+      "markComplete": "Als erledigt markieren",
       "dependency": "Abhängigkeit",
       "dependencies": "Abhängigkeiten",
       "waitingFor": "Wartet auf:"

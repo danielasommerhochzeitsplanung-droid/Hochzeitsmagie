@@ -639,6 +639,8 @@ export default function TodosModule() {
       phase_id: editingTask.phase_id || undefined,
       due_date: editingTask.due_date,
       priority: editingTask.priority,
+      completed: editingTask.completed,
+      completed_at: editingTask.completed ? new Date().toISOString() : undefined,
       manually_modified: isModified || editingTask.manually_modified,
       date_change_notice: undefined,
     });
@@ -2462,6 +2464,25 @@ export default function TodosModule() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border-2" style={{ borderColor: '#d6b15b' }}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setEditingTask({ ...editingTask, completed: !editingTask.completed });
+                  }}
+                  className="flex-shrink-0"
+                >
+                  {editingTask.completed ? (
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  ) : (
+                    <Circle className="w-6 h-6 text-gray-400 hover:text-emerald-500 transition-colors" />
+                  )}
+                </button>
+                <label className="text-sm font-medium cursor-pointer" style={{ color: '#3b3b3d' }}>
+                  {editingTask.completed ? t('todos.taskDetails.completed') : t('todos.taskDetails.markComplete')}
+                </label>
               </div>
 
               {editingTask.is_system_generated && (
