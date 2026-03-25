@@ -46,7 +46,9 @@ export default function BudgetTable({ items, onEdit, onDelete }: BudgetTableProp
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   };
 

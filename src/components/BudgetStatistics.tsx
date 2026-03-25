@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TrendingUp, TrendingDown, Wallet, Edit2, Check, X } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, CreditCard as Edit2, Check, X } from 'lucide-react';
 import { BudgetItem } from './BudgetModule';
 
 interface BudgetStatisticsProps {
@@ -46,7 +46,9 @@ export default function BudgetStatistics({ items, totalBudget, onSaveTotalBudget
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
