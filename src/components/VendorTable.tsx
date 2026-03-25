@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Edit2, Trash2, Phone, Mail, Globe, Star, Calendar, Archive, RotateCcw } from 'lucide-react';
+import { CreditCard as Edit2, Trash2, Phone, Mail, Globe, Star, Calendar, Archive, RotateCcw } from 'lucide-react';
 import { Vendor } from './VendorsModule';
 import { getCategoryEmoji } from './vendorCategories';
 
@@ -222,23 +222,14 @@ export default function VendorTable({ vendors, onEdit, onArchive, onRestore, onD
                     </>
                   )}
                   {showArchived && (
-                    <>
-                      <button
-                        onClick={() => onRestore(vendor.id)}
-                        className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        style={{ color: '#d6b15b' }}
-                        title={t('common.restore')}
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => onDelete(vendor.id)}
-                        className="p-2 hover:bg-red-50 rounded transition-colors text-red-600"
-                        title={t('common.deletePermanently')}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </>
+                    <button
+                      onClick={() => onRestore(vendor.id)}
+                      className="p-2 hover:bg-gray-100 rounded transition-colors"
+                      style={{ color: '#d6b15b' }}
+                      title={t('common.restore')}
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
               </td>
