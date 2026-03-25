@@ -110,28 +110,52 @@ export default function CalendarModule() {
     setSelectedDate(new Date());
   };
 
-  const getTypeColor = (type: CalendarEventType) => {
-    const colors = {
-      wedding_day_event: 'bg-pink-500',
-      todo: 'bg-blue-500',
-      budget_deadline: 'bg-green-500',
-      guest_deadline: 'bg-purple-500',
-      vendor_appointment: 'bg-orange-500',
-      other_event: 'bg-gray-500',
+  const getSourceColor = (source: CalendarEventSource, priority?: string) => {
+    const baseColors = {
+      todos: 'bg-blue-500',
+      guests: 'bg-purple-500',
+      vendors: 'bg-orange-500',
+      locations: 'bg-teal-500',
+      events: 'bg-pink-500',
+      budget: 'bg-green-500',
+      support_team: 'bg-yellow-500',
     };
-    return colors[type];
+
+    const lightColors = {
+      todos: 'bg-blue-400',
+      guests: 'bg-purple-400',
+      vendors: 'bg-orange-400',
+      locations: 'bg-teal-400',
+      events: 'bg-pink-400',
+      budget: 'bg-green-400',
+      support_team: 'bg-yellow-400',
+    };
+
+    return priority === 'high' ? baseColors[source] : lightColors[source];
   };
 
-  const getTypeColorHex = (type: CalendarEventType) => {
-    const colors = {
-      wedding_day_event: '#ec4899',
-      todo: '#3b82f6',
-      budget_deadline: '#22c55e',
-      guest_deadline: '#a855f7',
-      vendor_appointment: '#f97316',
-      other_event: '#6b7280',
+  const getSourceColorHex = (source: CalendarEventSource, priority?: string) => {
+    const baseColors = {
+      todos: '#3b82f6',
+      guests: '#a855f7',
+      vendors: '#f97316',
+      locations: '#14b8a6',
+      events: '#ec4899',
+      budget: '#22c55e',
+      support_team: '#eab308',
     };
-    return colors[type];
+
+    const lightColors = {
+      todos: '#60a5fa',
+      guests: '#c084fc',
+      vendors: '#fb923c',
+      locations: '#2dd4bf',
+      events: '#f472b6',
+      budget: '#4ade80',
+      support_team: '#fbbf24',
+    };
+
+    return priority === 'high' ? baseColors[source] : lightColors[source];
   };
 
   return (
@@ -200,7 +224,7 @@ export default function CalendarModule() {
               {t('calendar.filterBySource')}
             </h3>
             <div className="flex flex-wrap gap-2">
-              {(['events', 'todos', 'budget', 'guests', 'vendors'] as CalendarEventSource[]).map(
+              {(['events', 'todos', 'budget', 'guests', 'vendors', 'locations', 'support_team'] as CalendarEventSource[]).map(
                 (source) => (
                   <button
                     key={source}
@@ -339,8 +363,8 @@ export default function CalendarModule() {
               selectedDate={selectedDate}
               events={filteredEvents}
               onEventClick={setSelectedEvent}
-              getTypeColor={getTypeColor}
-              getTypeColorHex={getTypeColorHex}
+              getSourceColor={getSourceColor}
+              getSourceColorHex={getSourceColorHex}
             />
           )}
           {viewMode === 'week' && (
@@ -348,7 +372,7 @@ export default function CalendarModule() {
               selectedDate={selectedDate}
               events={filteredEvents}
               onEventClick={setSelectedEvent}
-              getTypeColor={getTypeColor}
+              getSourceColor={getSourceColor}
             />
           )}
           {viewMode === 'day' && (
@@ -356,7 +380,7 @@ export default function CalendarModule() {
               selectedDate={selectedDate}
               events={filteredEvents}
               onEventClick={setSelectedEvent}
-              getTypeColor={getTypeColor}
+              getSourceColor={getSourceColor}
             />
           )}
           {viewMode === 'timeline' && (
@@ -364,7 +388,7 @@ export default function CalendarModule() {
               weddingDate={weddingDate}
               events={weddingDayEvents}
               onEventClick={setSelectedEvent}
-              getTypeColor={getTypeColor}
+              getSourceColor={getSourceColor}
             />
           )}
         </div>
@@ -384,14 +408,14 @@ function MonthView({
   selectedDate,
   events,
   onEventClick,
-  getTypeColor,
-  getTypeColorHex,
+  getSourceColor,
+  getSourceColorHex,
 }: {
   selectedDate: Date;
   events: CalendarEvent[];
   onEventClick: (event: CalendarEvent) => void;
-  getTypeColor: (type: CalendarEventType) => string;
-  getTypeColorHex: (type: CalendarEventType) => string;
+  getSourceColor: (source: CalendarEventSource, priority?: string) => string;
+  getSourceColorHex: (source: CalendarEventSource, priority?: string) => string;
 }) {
   const { t } = useTranslation();
 
@@ -470,9 +494,7 @@ function MonthView({
                   </div>
                   <div className="space-y-1">
                     {dayEvents.slice(0, 3).map((event) => {
-                      const isPlanningStart = event.metadata?.is_planning_start;
-                      const isWeddingDay = event.metadata?.is_wedding_day;
-                      const bgColor = isPlanningStart ? '#6366f1' : getTypeColorHex(event.type);
+                      const bgColor = getSourceColorHex(event.source, event.priority);
 
                       return (
                         <button
@@ -484,8 +506,7 @@ function MonthView({
                           }}
                         >
                           <div className="text-white truncate flex items-center gap-1" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                            {isPlanningStart && <span>📝</span>}
-                            {isWeddingDay && <span>⛪</span>}
+                            {event.icon && <span>{event.icon}</span>}
                             <span>
                               {event.time && `${event.time.substring(0, 5)} `}
                               {event.title}
@@ -514,12 +535,12 @@ function WeekView({
   selectedDate,
   events,
   onEventClick,
-  getTypeColor,
+  getSourceColor,
 }: {
   selectedDate: Date;
   events: CalendarEvent[];
   onEventClick: (event: CalendarEvent) => void;
-  getTypeColor: (type: CalendarEventType) => string;
+  getSourceColor: (source: CalendarEventSource, priority?: string) => string;
 }) {
   const { t } = useTranslation();
 
@@ -583,13 +604,15 @@ function WeekView({
                 <button
                   key={event.id}
                   onClick={() => onEventClick(event)}
-                  className={`w-full text-left text-xs p-2 rounded hover:opacity-80 transition-opacity text-white ${getTypeColor(
-                    event.type
+                  className={`w-full text-left text-xs p-2 rounded hover:opacity-80 transition-opacity text-white ${getSourceColor(
+                    event.source,
+                    event.priority
                   )}`}
                   style={{ fontFamily: 'Open Sans, sans-serif' }}
                 >
-                  <div className="">
-                    {event.time && `${event.time.substring(0, 5)}`}
+                  <div className="flex items-center gap-1">
+                    {event.icon && <span>{event.icon}</span>}
+                    <span>{event.time && `${event.time.substring(0, 5)}`}</span>
                   </div>
                   <div className="truncate">{event.title}</div>
                 </button>
@@ -606,12 +629,12 @@ function DayView({
   selectedDate,
   events,
   onEventClick,
-  getTypeColor,
+  getSourceColor,
 }: {
   selectedDate: Date;
   events: CalendarEvent[];
   onEventClick: (event: CalendarEvent) => void;
-  getTypeColor: (type: CalendarEventType) => string;
+  getSourceColor: (source: CalendarEventSource, priority?: string) => string;
 }) {
   const { t } = useTranslation();
 
@@ -645,10 +668,13 @@ function DayView({
           className="w-full text-left p-4 border rounded-lg hover:shadow-md transition-shadow"
         >
           <div className="flex items-start gap-4">
-            <div className={`w-1 h-full ${getTypeColor(event.type)} rounded`} />
+            <div className={`w-1 h-full ${getSourceColor(event.source, event.priority)} rounded`} />
             <div className="flex-1">
               <div className="flex items-start justify-between mb-2">
-                <h3 className="" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{event.title}</h3>
+                <div className="flex items-center gap-2">
+                  {event.icon && <span>{event.icon}</span>}
+                  <h3 className="" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>{event.title}</h3>
+                </div>
                 {event.time && (
                   <span className="text-sm" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>
                     {event.time.substring(0, 5)}
@@ -676,12 +702,12 @@ function TimelineView({
   weddingDate,
   events,
   onEventClick,
-  getTypeColor,
+  getSourceColor,
 }: {
   weddingDate?: string;
   events: CalendarEvent[];
   onEventClick: (event: CalendarEvent) => void;
-  getTypeColor: (type: CalendarEventType) => string;
+  getSourceColor: (source: CalendarEventSource, priority?: string) => string;
 }) {
   const { t } = useTranslation();
 
@@ -747,14 +773,18 @@ function TimelineView({
               )}
             </div>
             <div
-              className={`w-3 h-3 rounded-full ${getTypeColor(
-                event.type
+              className={`w-3 h-3 rounded-full ${getSourceColor(
+                event.source,
+                event.priority
               )} flex-shrink-0 relative z-10`}
             />
             <div className="flex-1">
-              <h4 className=" mb-1" style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
-                {event.title}
-              </h4>
+              <div className="flex items-center gap-2 mb-1">
+                {event.icon && <span>{event.icon}</span>}
+                <h4 style={{ color: '#3b3b3d', fontFamily: 'Open Sans, sans-serif' }}>
+                  {event.title}
+                </h4>
+              </div>
               {event.location && (
                 <p className="text-sm mb-1" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>{event.location}</p>
               )}

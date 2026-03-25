@@ -987,7 +987,9 @@
       "todos": "Aufgaben",
       "budget": "Budget",
       "guests": "Gäste",
-      "vendors": "Dienstleister"
+      "vendors": "Dienstleister",
+      "locations": "Locations",
+      "support_team": "Support-Team"
     }
   }
 }

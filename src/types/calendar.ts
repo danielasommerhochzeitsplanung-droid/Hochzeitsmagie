@@ -11,7 +11,11 @@ export type CalendarEventSource =
   | 'todos'
   | 'budget'
   | 'guests'
-  | 'vendors';
+  | 'vendors'
+  | 'locations'
+  | 'support_team';
+
+export type EventPriority = 'high' | 'medium' | 'low';
 
 export interface CalendarEvent {
   id: string;
@@ -27,4 +31,6 @@ export interface CalendarEvent {
   participants?: string[];
   metadata?: Record<string, any>;
   protected?: boolean;
+  priority?: EventPriority;
+  icon?: string;
 }

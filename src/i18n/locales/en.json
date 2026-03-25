@@ -995,7 +995,9 @@
       "todos": "Tasks",
       "budget": "Budget",
       "guests": "Guests",
-      "vendors": "Vendors"
+      "vendors": "Vendors",
+      "locations": "Locations",
+      "support_team": "Support Team"
     }
   }
 }
