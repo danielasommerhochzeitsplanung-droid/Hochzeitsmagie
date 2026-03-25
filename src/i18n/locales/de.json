@@ -484,6 +484,8 @@
   "cancel": "Abbrechen",
   "save": "Speichern",
   "budget": {
+    "activeItems": "Aktive Positionen",
+    "archivedItems": "Archivierte Positionen",
     "addItem": "Budget-Position hinzufügen",
     "editItem": "Budget-Position bearbeiten",
     "noItems": "Noch keine Budget-Positionen vorhanden",

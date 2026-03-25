@@ -484,6 +484,8 @@
   "cancel": "Cancel",
   "save": "Save",
   "budget": {
+    "activeItems": "Active Items",
+    "archivedItems": "Archived Items",
     "addItem": "Add Budget Item",
     "editItem": "Edit Budget Item",
     "noItems": "No budget items yet",
