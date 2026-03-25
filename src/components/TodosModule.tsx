@@ -641,6 +641,7 @@ export default function TodosModule() {
       priority: editingTask.priority,
       completed: editingTask.completed,
       completed_at: editingTask.completed ? new Date().toISOString() : undefined,
+      assigned_to: editingTask.assigned_to || undefined,
       manually_modified: isModified || editingTask.manually_modified,
       date_change_notice: undefined,
     });
