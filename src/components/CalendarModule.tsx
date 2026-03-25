@@ -469,21 +469,31 @@ function MonthView({
                     {day}
                   </div>
                   <div className="space-y-1">
-                    {dayEvents.slice(0, 3).map((event) => (
-                      <button
-                        key={event.id}
-                        onClick={() => onEventClick(event)}
-                        className="w-full text-left text-xs p-1 rounded hover:opacity-80 transition-opacity"
-                        style={{
-                          backgroundColor: getTypeColorHex(event.type),
-                        }}
-                      >
-                        <div className="text-white  truncate" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                          {event.time && `${event.time.substring(0, 5)} `}
-                          {event.title}
-                        </div>
-                      </button>
-                    ))}
+                    {dayEvents.slice(0, 3).map((event) => {
+                      const isPlanningStart = event.metadata?.is_planning_start;
+                      const isWeddingDay = event.metadata?.is_wedding_day;
+                      const bgColor = isPlanningStart ? '#6366f1' : getTypeColorHex(event.type);
+
+                      return (
+                        <button
+                          key={event.id}
+                          onClick={() => onEventClick(event)}
+                          className="w-full text-left text-xs p-1 rounded hover:opacity-80 transition-opacity"
+                          style={{
+                            backgroundColor: bgColor,
+                          }}
+                        >
+                          <div className="text-white truncate flex items-center gap-1" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+                            {isPlanningStart && <span>📝</span>}
+                            {isWeddingDay && <span>⛪</span>}
+                            <span>
+                              {event.time && `${event.time.substring(0, 5)} `}
+                              {event.title}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
                     {dayEvents.length > 3 && (
                       <div className="text-xs pl-1" style={{ color: '#6b7280', fontFamily: 'Open Sans, sans-serif' }}>
                         +{dayEvents.length - 3} {t('calendar.more')}
